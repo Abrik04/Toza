@@ -47,6 +47,23 @@ input:focus-visible+.opt{outline:3px solid var(--gold)}
 .promo .btn{background:var(--ink);color:#fff;padding:13px 20px}
 #pm,#err{font-size:14px;font-weight:700}#err{color:#c0392b;margin-top:10px}
 #am{font-size:14px;font-weight:700}
+.mh{border-radius:26px;padding:20px;margin-bottom:14px;color:#fff;background:var(--deep) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' fill='none' stroke='%23fff' stroke-opacity='.13'%3E%3Crect x='12' y='12' width='36' height='36'/%3E%3Crect x='12' y='12' width='36' height='36' transform='rotate(45 30 30)'/%3E%3C/svg%3E")}
+.mr{display:flex;gap:14px;align-items:center}
+.av{flex:none;width:64px;height:64px;border-radius:50%;display:grid;place-items:center;font:700 26px Unbounded,sans-serif;background:var(--gold);color:var(--ink);box-shadow:0 0 0 4px #ffffff33}
+.mr b{display:block;font:700 19px Unbounded,sans-serif;line-height:1.2}
+.mr small{opacity:.8;word-break:break-all}
+.lvl{margin-top:18px}
+.lvl span{display:inline-block;background:#ffffff26;border-radius:99px;padding:4px 12px;font-weight:700;font-size:14px}
+.pb{height:8px;background:#ffffff33;border-radius:9px;margin:10px 0 6px;overflow:hidden}
+.pb i{display:block;height:100%;width:0;background:var(--gold);border-radius:9px;transition:width .4s}
+.lvl small{opacity:.9}
+.card h3{font:700 16px Unbounded,sans-serif;margin-bottom:12px}
+.lab{font-weight:700;font-size:14px;margin:14px 0 8px}
+#svd{display:block;min-height:22px;margin-top:8px;color:var(--deep);font-weight:700}
+.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:12px}
+.tile{display:flex;flex-direction:column;align-items:center;gap:4px;padding:14px 6px;border:2px solid var(--ln);border-radius:18px;background:#fff;color:var(--ink);font:700 13px Manrope,sans-serif;text-decoration:none;text-align:center;cursor:pointer}
+.tile span{font-size:26px}
+.lnk{display:block;margin:18px auto 0;background:none;border:0;color:#c0392b;font:700 14px Manrope,sans-serif;padding:10px;cursor:pointer}
 .card{background:#fff;border:2px solid var(--ln);border-radius:18px;padding:14px 16px;margin-bottom:12px}
 .card small{opacity:.65}.card .t{font:700 18px Unbounded,sans-serif;margin:6px 0 12px}
 .acts{display:flex;gap:8px;flex-wrap:wrap}.acts .btn{flex:1;padding:12px 14px}
@@ -82,16 +99,25 @@ dialog::backdrop{background:#0b2e3399}
 </div>
 <div id="v-hist" hidden></div>
 <div id="v-me" hidden>
-  <div id="auth" hidden>
-    <h2>Аккаунт</h2>
-    <div id="in" class="f"><input id="em" type="email" placeholder="Эл. почта" autocomplete="email"><input id="pw" type="password" placeholder="Пароль, от 6 символов" autocomplete="current-password"><div class="acts"><button class="btn" id="li" type="button">Войти</button><button class="btn alt" id="su" type="button">Регистрация</button></div></div>
-    <div id="out" hidden><p>Вы вошли как <b id="who"></b>. Данные и заказы сохраняются в аккаунте и доступны на любом телефоне.</p><button class="btn alt" id="lo" type="button">Выйти</button></div>
+  <div class="mh">
+    <div class="mr"><div class="av" id="avt">👤</div><div><b id="mn">Гость</b><small id="ms"></small></div></div>
+    <div class="lvl"><span id="lvn"></span><div class="pb"><i id="lvb"></i></div><small id="lvx"></small></div>
+  </div>
+  <div id="auth" class="card" hidden>
+    <div id="in" class="f"><b>Войдите, чтобы данные и заказы были на любом телефоне</b><input id="em" type="email" placeholder="Эл. почта" autocomplete="email"><input id="pw" type="password" placeholder="Пароль, от 6 символов" autocomplete="current-password"><div class="acts"><button class="btn" id="li" type="button">Войти</button><button class="btn alt" id="su" type="button">Регистрация</button></div></div>
+    <div id="out" hidden><p>Вы вошли как <b id="who"></b></p><button class="btn alt" id="lo" type="button">Выйти</button></div>
     <p id="am"></p>
   </div>
-  <h2>Связаться с нами</h2>
-  <div class="acts"><a class="btn" id="call">Позвонить</a><a class="btn alt" id="tgc" target="_blank" rel="noopener">Telegram</a></div>
-  <div id="insb"><h2>Приложение на экране телефона</h2><p id="ins"></p><button class="btn alt" id="inst" type="button" hidden>Установить</button></div>
-  <h2>Мои данные</h2><p>Имя, телефон, адрес и история заказов хранятся только на этом телефоне.</p><button class="btn alt" id="clr" type="button">Стереть данные</button>
+  <div class="card" id="pfc">
+    <h3>Мои данные</h3>
+    <div class="f"><input id="p-nm" placeholder="Имя" autocomplete="name"><input id="p-ph" placeholder="Телефон, +998" inputmode="tel" autocomplete="tel"><select id="p-ds" aria-label="Район"></select><input id="p-ad" placeholder="Адрес: улица, дом, квартира" autocomplete="street-address"><input id="p-door" placeholder="Как войти: домофон, этаж, код"></div>
+    <div class="lab">Питомцы дома</div><div class="opts sm" id="p-pets"></div>
+    <div class="lab">Чаще всего убираем</div><div class="opts sm" id="p-obj"></div>
+    <small id="svd"></small><small>Подставим это в каждый заказ автоматически.</small>
+  </div>
+  <div class="tiles"><a class="tile" id="call"><span>📞</span>Позвонить</a><a class="tile" id="tgc" target="_blank" rel="noopener"><span>💬</span>Написать</a><button class="tile" id="shr" type="button"><span>🎁</span>Подарить скидку</button></div>
+  <div id="insb" class="card"><h3>Приложение на экране</h3><p id="ins"></p><button class="btn alt" id="inst" type="button" hidden>Установить</button></div>
+  <button class="lnk" id="clr" type="button">Стереть данные на этом телефоне</button>
 </div>
 </main>
 
@@ -107,16 +133,8 @@ dialog::backdrop{background:#0b2e3399}
 </dialog>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="config.js"></script>
 <script>
-/* ===== НАСТРОЙКИ: поменяйте под свою компанию ===== */
-const CFG={tg:'toza_cleaning',phone:'+998998040025',min:150000,promo:{TOZA10:0.1},
-  sb:{url:'https://grvhsahdlnypjlrvjmge.supabase.co',key:'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdydmhzYWhkbG55cGpscnZqbWdlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA5NDEyOTQsImV4cCI6MjEwNjUxNzI5NH0.hnt2L4vCav4goGduVEYWd7b0Tx3BR6EJ1CX0HS7gnrY'}}; /* Supabase: адрес проекта и ключ anon, см. README */
-const OBJ=[['🏢','Квартира',1],['🏡','Дом',1.15],['💼','Офис',0.85]];
-const TYPES=[['✨','Поддерживающая','Пыль, полы, кухня и санузел',8000],['🧽','Генеральная','До блеска, включая труднодоступное',14000],['🏗️','После ремонта','Строительная пыль, пятна, плёнка',20000]];
-const EXTRA=[['Окна (до 5 шт)',80000],['Духовка',50000],['Холодильник',40000],['Балкон',60000],['Чистка дивана',150000]];
-const DIST=['Алмазарский','Бектемирский','Мирабадский','Мирзо-Улугбекский','Сергелийский','Учтепинский','Чиланзарский','Шайхантахурский','Юнусабадский','Яккасарайский','Яшнабадский','Янгихайотский'];
-const TIMES=['09:00','11:00','13:00','15:00','17:00','19:00'];
-/* ================================================== */
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const fmt=n=>n.toLocaleString('ru-RU');
 const opt=(n,v,h,t,c)=>`<label><input type="${t||'radio'}" name="${n}" value="${v}" ${c?'checked':''}><div class="opt">${h}</div></label>`;
@@ -135,12 +153,12 @@ $('#tm').innerHTML=TIMES.map((t,i)=>opt('tm',t,`<b>${t}</b>`,0,i==1)).join('');
 $('#ds').innerHTML='<option value="">Район</option>'+DIST.map(d=>`<option>${d}</option>`).join('');
 $('#call').href='tel:'+CFG.phone;$('#tgc').href='https://t.me/'+CFG.tg;
 
-let disc=0;
+let LV=0,CNT=0,disc=0;
 function calc(){
   const o=OBJ[val('obj')],t=TYPES[val('typ')],a=+$('#area').value;
   const base=Math.max(CFG.min,Math.round(a*t[3]*o[2]/1000)*1000);
   const ex=$$('[name=ext]:checked').reduce((s,e)=>s+EXTRA[e.value][1],0);
-  const off=Math.round(base*disc/1000)*1000;
+  const off=Math.round(base*Math.max(disc,CFG.levels[LV][2])/1000)*1000;
   return{o,t,a,off,total:base+ex-off}
 }
 function upd(){const c=calc();$('#av').textContent=c.a;$('#tot').textContent=fmt(c.total)}
@@ -169,7 +187,7 @@ function tab(v){
   view=v;['order','hist','me'].forEach(k=>$('#v-'+k).hidden=k!=v);
   $$('.tabs button').forEach(b=>b.classList.toggle('on',b.dataset.v==v));
   $('#bar').hidden=$('#prog').hidden=v!='order';
-  if(v=='hist')hist();head();scrollTo(0,0)
+  if(v=='hist')hist();if(v=='me')me();head();scrollTo(0,0)
 }
 $$('.tabs button').forEach(b=>b.onclick=()=>tab(b.dataset.v));
 
@@ -182,20 +200,20 @@ function submit(){
     $('#err').textContent='Заполните имя, телефон, район и адрес — так мы сможем приехать.';return
   }
   $('#err').textContent='';
-  store('toza',{nm:g('nm'),ph:g('ph'),ds:g('ds'),ad:g('ad')});
+  const P2=Object.assign(load('toza',{}),{nm:g('nm'),ph:g('ph'),ds:g('ds'),ad:g('ad')});store('toza',P2);
   const c=calc(),id='№'+Math.floor(1000+Math.random()*9000);
   const ex=$$('[name=ext]:checked').map(e=>EXTRA[e.value][0]).join(', ')||'нет';
   text=[`Заказ ${id}`,`${c.o[1]}: ${c.t[1]} уборка, ${c.a} м²`,`Дополнительно: ${ex}`,
     `Когда: ${ds(D[val('day')])} в ${val('tm')}`,`Куда: ${g('ds')} р-н, ${g('ad')}`,
-    `Клиент: ${g('nm')}, ${g('ph')}`,g('cm')&&`Комментарий: ${g('cm')}`,
+    `Клиент: ${g('nm')}, ${g('ph')}`,P2.pets&&'Питомцы дома: есть',P2.door&&`Как войти: ${P2.door}`,g('cm')&&`Комментарий: ${g('cm')}`,
     `Итого: ${fmt(c.total)} сум${c.off?` (скидка ${fmt(c.off)} сум)`:''}`].filter(Boolean).join('\n');
   const a=load('toza_orders',[]),sel={obj:val('obj'),typ:val('typ'),area:$('#area').value,ext:$$('[name=ext]:checked').map(e=>e.value)};
   a.unshift({id,at:new Date().toLocaleDateString('ru-RU'),t:text,total:c.total,sel});
   store('toza_orders',a.slice(0,30));
   if(user){
-    sb.auth.updateUser({data:{nm:g('nm'),ph:g('ph'),ds:g('ds'),ad:g('ad')}});
-    sb.from('orders').insert({code:id,details:text,total:c.total,sel}).then(r=>r.error&&console.warn(r.error.message))
-  }
+    sb.auth.updateUser({data:P2});
+    sb.from('orders').insert({code:id,details:text,total:c.total,sel}).then(r=>{r.error&&console.warn(r.error.message);me()})
+  }else me();
   $('#oid').textContent=id;$('#sum').textContent=text;
   $('#tg').href=`https://t.me/${CFG.tg}?text=${encodeURIComponent(text)}`;
   $('#ok').showModal()
@@ -205,13 +223,16 @@ $('#cl').onclick=()=>{$('#ok').close();$('#cp').textContent='Скопирова�
 
 /* история */
 let ORD=[];
-async function hist(){
+async function orders(){
   let a=load('toza_orders',[]);
   if(user){
     const r=await sb.from('orders').select('code,details,total,sel,created_at').order('created_at',{ascending:false}).limit(30);
     if(r.data)a=r.data.map(o=>({id:o.code,at:new Date(o.created_at).toLocaleDateString('ru-RU'),t:o.details,total:o.total,sel:o.sel}))
   }
-  ORD=a;
+  return a
+}
+async function hist(){
+  const a=ORD=await orders();
   $('#v-hist').innerHTML=a.length?a.map((o,i)=>`<div class="card"><b>${o.id}</b> <small>${o.at}</small><p>${o.t.split('\n').slice(1,4).join('<br>')}</p><div class="t">${fmt(o.total)} сум</div><div class="acts"><button class="btn alt" data-r="${i}" type="button">Повторить</button><a class="btn alt" target="_blank" rel="noopener" href="https://t.me/${CFG.tg}?text=${encodeURIComponent(o.t)}">В Telegram</a></div></div>`).join('')
    :'<div class="empty"><b>Заказов пока нет</b><br>Оформите первый, и в следующий раз его можно будет повторить одним нажатием.</div>'
 }
@@ -227,7 +248,7 @@ $('#v-hist').onclick=e=>{
 $('#clr').onclick=()=>{
   if(!confirm('Стереть сохранённые данные и историю заказов?'))return;
   store('toza');store('toza_orders');['nm','ph','ds','ad'].forEach(k=>$('#'+k).value='');
-  $('#clr').textContent='Стёрто'
+  fillP();me();$('#clr').textContent='Стёрто'
 };
 let dp;
 addEventListener('beforeinstallprompt',e=>{e.preventDefault();dp=e;$('#inst').hidden=false;$('#ins').textContent='Установите Toza на экран: открывается без браузера, как обычное приложение.'});
@@ -237,16 +258,63 @@ else if(/iphone|ipad/i.test(navigator.userAgent))$('#ins').textContent='На iPh
 else $('#ins').textContent='В меню браузера выберите «Установить приложение» или «Добавить на главный экран».';
 if('serviceWorker' in navigator)addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
 
+/* профиль */
+const PF={nm:'p-nm',ph:'p-ph',ds:'p-ds',ad:'p-ad',door:'p-door'};
+$('#p-ds').innerHTML=$('#ds').innerHTML;
+$('#p-pets').innerHTML=[['0','🐾','Без питомцев'],['1','🐶','Есть питомцы']].map(o=>opt('ppet',o[0],`<span>${o[1]}</span><b>${o[2]}</b>`,0,o[0]=='0')).join('');
+$('#p-obj').innerHTML=OBJ.map((o,i)=>opt('pobj',i,`<span>${o[0]}</span><b>${o[1]}</b>`,0,!i)).join('');
+['#p-ph','#ph'].forEach(s=>$(s).addEventListener('focus',e=>e.target.value||(e.target.value='+998 ')));
+function fillP(){
+  const P=load('toza',{});
+  Object.entries(PF).forEach(([k,id])=>$('#'+id).value=P[k]||'');
+  $$('[name=ppet]').forEach(x=>x.checked=x.value==(P.pets?1:0));
+  $$('[name=pobj]').forEach(x=>x.checked=x.value==(P.obj||0));
+  if(P.obj!=null)$$('[name=obj]').forEach(x=>x.checked=x.value==P.obj)
+}
+function savP(e){
+  const P=load('toza',{});
+  Object.entries(PF).forEach(([k,id])=>P[k]=$('#'+id).value.trim());
+  if(P.ph.replace(/\D/g,'').length<4)P.ph='';
+  P.pets=val('ppet')=='1';P.obj=+val('pobj');
+  store('toza',P);
+  ['nm','ph','ds','ad'].forEach(k=>$('#'+k).value=P[k]);
+  if(e.target.name=='pobj')$$('[name=obj]').forEach(x=>x.checked=x.value==P.obj);
+  if(user)sb.auth.updateUser({data:P});
+  $('#svd').textContent='Сохранено ✓';setTimeout(()=>$('#svd').textContent='',1800);me()
+}
+$('#pfc').addEventListener('change',savP);
+const pl=n=>n%10==1&&n%100!=11?'заказ':n%10>1&&n%10<5&&(n%100<10||n%100>20)?'заказа':'заказов';
+async function me(){
+  const a=await orders(),L=CFG.levels,P=load('toza',{});
+  CNT=a.length;LV=0;L.forEach((l,i)=>CNT>=l[0]&&(LV=i));upd();
+  const nx=L[LV+1],nm=P.nm||'';
+  $('#mn').textContent=nm||'Гость';
+  $('#avt').textContent=nm?nm[0].toUpperCase():'👤';
+  $('#ms').textContent=user?user.email:(P.ph||'Войдите, чтобы данные были на любом телефоне');
+  $('#lvn').textContent=L[LV][1]+(L[LV][2]?` · скидка ${Math.round(L[LV][2]*100)}%`:'');
+  $('#lvb').style.width=(nx?Math.min(100,(CNT-L[LV][0])/(nx[0]-L[LV][0])*100):100)+'%';
+  $('#lvx').textContent=nx?`Ещё ${nx[0]-CNT} ${pl(nx[0]-CNT)} до уровня «${nx[1]}»${nx[2]?`, скидка ${Math.round(nx[2]*100)}%`:''}`:'Высший уровень. Спасибо, что вы с нами!'
+}
+$('#shr').onclick=async()=>{
+  const k=Object.keys(CFG.promo)[0],t=`Закажи уборку в Toza со скидкой ${Math.round(CFG.promo[k]*100)}%, промокод ${k}`;
+  try{
+    if(navigator.share)await navigator.share({text:t,url:location.href});
+    else{await navigator.clipboard.writeText(t+' '+location.href);$('#shr').innerHTML='<span>✅</span>Скопировано'}
+  }catch(e){}
+};
+
 /* вход и регистрация (Supabase) */
 let sb=null,user=null;
 function authUI(){
   $('#in').hidden=!!user;$('#out').hidden=!user;
   if(user){
     $('#who').textContent=user.email;
-    const m=user.user_metadata||{};
-    ['nm','ph','ds','ad'].forEach(k=>m[k]&&!$('#'+k).value&&($('#'+k).value=m[k]))
+    const m=user.user_metadata||{},P=load('toza',{});
+    [...Object.keys(PF),'pets','obj'].forEach(k=>!P[k]&&m[k]&&(P[k]=m[k]));
+    store('toza',P);$('#pfc').contains(document.activeElement)||fillP();
+    ['nm','ph','ds','ad'].forEach(k=>!$('#'+k).value&&($('#'+k).value=P[k]||''))
   }
-  if(view=='hist')hist()
+  me();if(view=='hist')hist()
 }
 async function auth(up){
   const email=$('#em').value.trim(),password=$('#pw').value,am=t=>$('#am').textContent=t;
@@ -263,6 +331,7 @@ if(CFG.sb.url&&window.supabase){
   sb.auth.onAuthStateChange((_,se)=>{user=se?se.user:null;authUI()})
 }
 
+fillP();me();
 show(0);
 </script>
 </body>
