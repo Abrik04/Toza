@@ -24,3 +24,15 @@
 
 ## Google Play
 Для магазина приложений вставьте ссылку на ваш сайт на pwabuilder.com и скачайте Android-пакет.
+
+## Вход и регистрация (Supabase, бесплатно)
+Пока ключи не вписаны, блок «Аккаунт» скрыт и приложение работает как раньше.
+1. Зарегистрируйтесь на supabase.com и создайте проект (New project).
+2. SQL Editor -> New query -> вставьте содержимое supabase.sql -> Run. Создастся таблица заказов, каждый клиент видит только свои.
+3. Project Settings -> API: скопируйте Project URL и ключ anon public.
+4. В index.html в блоке НАСТРОЙКИ впишите их в `sb:{url:'...',key:'...'}` и загрузите файл на GitHub (замена файла перетаскиванием).
+5. Authentication -> URL Configuration: в Site URL вставьте адрес вашего сайта на GitHub Pages.
+6. По умолчанию после регистрации приходит письмо для подтверждения почты. Для проверки можно отключить: Authentication -> Providers -> Email -> Confirm email.
+
+Все заказы вошедших клиентов видны вам в Supabase: Table Editor -> orders.
+Ключ anon публичный, это нормально: данные защищены правилами в supabase.sql.

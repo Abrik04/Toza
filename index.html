@@ -46,6 +46,7 @@ input:focus-visible+.opt{outline:3px solid var(--gold)}
 .promo input{flex:1;min-width:120px;border:2px dashed var(--tq);text-transform:uppercase}
 .promo .btn{background:var(--ink);color:#fff;padding:13px 20px}
 #pm,#err{font-size:14px;font-weight:700}#err{color:#c0392b;margin-top:10px}
+#am{font-size:14px;font-weight:700}
 .card{background:#fff;border:2px solid var(--ln);border-radius:18px;padding:14px 16px;margin-bottom:12px}
 .card small{opacity:.65}.card .t{font:700 18px Unbounded,sans-serif;margin:6px 0 12px}
 .acts{display:flex;gap:8px;flex-wrap:wrap}.acts .btn{flex:1;padding:12px 14px}
@@ -81,6 +82,12 @@ dialog::backdrop{background:#0b2e3399}
 </div>
 <div id="v-hist" hidden></div>
 <div id="v-me" hidden>
+  <div id="auth" hidden>
+    <h2>Аккаунт</h2>
+    <div id="in" class="f"><input id="em" type="email" placeholder="Эл. почта" autocomplete="email"><input id="pw" type="password" placeholder="Пароль, от 6 символов" autocomplete="current-password"><div class="acts"><button class="btn" id="li" type="button">Войти</button><button class="btn alt" id="su" type="button">Регистрация</button></div></div>
+    <div id="out" hidden><p>Вы вошли как <b id="who"></b>. Данные и заказы сохраняются в аккаунте и доступны на любом телефоне.</p><button class="btn alt" id="lo" type="button">Выйти</button></div>
+    <p id="am"></p>
+  </div>
   <h2>Связаться с нами</h2>
   <div class="acts"><a class="btn" id="call">Позвонить</a><a class="btn alt" id="tgc" target="_blank" rel="noopener">Telegram</a></div>
   <div id="insb"><h2>Приложение на экране телефона</h2><p id="ins"></p><button class="btn alt" id="inst" type="button" hidden>Установить</button></div>
@@ -99,9 +106,11 @@ dialog::backdrop{background:#0b2e3399}
   <div class="acts"><a class="btn" id="tg" target="_blank" rel="noopener">Отправить в Telegram</a><button class="btn alt" id="cp" type="button">Скопировать</button><button class="btn alt" id="cl" type="button">Закрыть</button></div>
 </dialog>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 /* ===== НАСТРОЙКИ: поменяйте под свою компанию ===== */
-const CFG={tg:'toza_cleaning',phone:'+998998040025',min:150000,promo:{TOZA10:0.1}};
+const CFG={tg:'toza_cleaning',phone:'+998901234567',min:150000,promo:{TOZA10:0.1},
+  sb:{url:'grvhsahdlnypjlrvjmge',key:'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdydmhzYWhkbG55cGpscnZqbWdlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA5NDEyOTQsImV4cCI6MjEwNjUxNzI5NH0.hnt2L4vCav4goGduVEYWd7b0Tx3BR6EJ1CX0HS7gnrY'}}; /* Supabase: адрес проекта и ключ anon, см. README */
 const OBJ=[['🏢','Квартира',1],['🏡','Дом',1.15],['💼','Офис',0.85]];
 const TYPES=[['✨','Поддерживающая','Пыль, полы, кухня и санузел',8000],['🧽','Генеральная','До блеска, включая труднодоступное',14000],['🏗️','После ремонта','Строительная пыль, пятна, плёнка',20000]];
 const EXTRA=[['Окна (до 5 шт)',80000],['Духовка',50000],['Холодильник',40000],['Балкон',60000],['Чистка дивана',150000]];
@@ -180,10 +189,13 @@ function submit(){
     `Когда: ${ds(D[val('day')])} в ${val('tm')}`,`Куда: ${g('ds')} р-н, ${g('ad')}`,
     `Клиент: ${g('nm')}, ${g('ph')}`,g('cm')&&`Комментарий: ${g('cm')}`,
     `Итого: ${fmt(c.total)} сум${c.off?` (скидка ${fmt(c.off)} сум)`:''}`].filter(Boolean).join('\n');
-  const a=load('toza_orders',[]);
-  a.unshift({id,at:new Date().toLocaleDateString('ru-RU'),t:text,total:c.total,
-    sel:{obj:val('obj'),typ:val('typ'),area:$('#area').value,ext:$$('[name=ext]:checked').map(e=>e.value)}});
+  const a=load('toza_orders',[]),sel={obj:val('obj'),typ:val('typ'),area:$('#area').value,ext:$$('[name=ext]:checked').map(e=>e.value)};
+  a.unshift({id,at:new Date().toLocaleDateString('ru-RU'),t:text,total:c.total,sel});
   store('toza_orders',a.slice(0,30));
+  if(user){
+    sb.auth.updateUser({data:{nm:g('nm'),ph:g('ph'),ds:g('ds'),ad:g('ad')}});
+    sb.from('orders').insert({code:id,details:text,total:c.total,sel}).then(r=>r.error&&console.warn(r.error.message))
+  }
   $('#oid').textContent=id;$('#sum').textContent=text;
   $('#tg').href=`https://t.me/${CFG.tg}?text=${encodeURIComponent(text)}`;
   $('#ok').showModal()
@@ -192,14 +204,20 @@ $('#cp').onclick=async()=>{try{await navigator.clipboard.writeText(text);$('#cp'
 $('#cl').onclick=()=>{$('#ok').close();$('#cp').textContent='Скопировать';show(0);tab('hist')};
 
 /* история */
-function hist(){
-  const a=load('toza_orders',[]);
+let ORD=[];
+async function hist(){
+  let a=load('toza_orders',[]);
+  if(user){
+    const r=await sb.from('orders').select('code,details,total,sel,created_at').order('created_at',{ascending:false}).limit(30);
+    if(r.data)a=r.data.map(o=>({id:o.code,at:new Date(o.created_at).toLocaleDateString('ru-RU'),t:o.details,total:o.total,sel:o.sel}))
+  }
+  ORD=a;
   $('#v-hist').innerHTML=a.length?a.map((o,i)=>`<div class="card"><b>${o.id}</b> <small>${o.at}</small><p>${o.t.split('\n').slice(1,4).join('<br>')}</p><div class="t">${fmt(o.total)} сум</div><div class="acts"><button class="btn alt" data-r="${i}" type="button">Повторить</button><a class="btn alt" target="_blank" rel="noopener" href="https://t.me/${CFG.tg}?text=${encodeURIComponent(o.t)}">В Telegram</a></div></div>`).join('')
    :'<div class="empty"><b>Заказов пока нет</b><br>Оформите первый, и в следующий раз его можно будет повторить одним нажатием.</div>'
 }
 $('#v-hist').onclick=e=>{
   const r=e.target.dataset.r;if(r==null)return;
-  const o=load('toza_orders',[])[r].sel;
+  const o=ORD[r].sel;
   ['obj','typ'].forEach(n=>$$(`[name=${n}]`).forEach(x=>x.checked=x.value==o[n]));
   $('#area').value=o.area;$$('[name=ext]').forEach(x=>x.checked=o.ext.includes(x.value));
   upd();tab('order');show(2)
@@ -218,6 +236,32 @@ if(matchMedia('(display-mode: standalone)').matches||navigator.standalone)$('#in
 else if(/iphone|ipad/i.test(navigator.userAgent))$('#ins').textContent='На iPhone: в Safari нажмите «Поделиться», затем «На экран Домой».';
 else $('#ins').textContent='В меню браузера выберите «Установить приложение» или «Добавить на главный экран».';
 if('serviceWorker' in navigator)addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
+
+/* вход и регистрация (Supabase) */
+let sb=null,user=null;
+function authUI(){
+  $('#in').hidden=!!user;$('#out').hidden=!user;
+  if(user){
+    $('#who').textContent=user.email;
+    const m=user.user_metadata||{};
+    ['nm','ph','ds','ad'].forEach(k=>m[k]&&!$('#'+k).value&&($('#'+k).value=m[k]))
+  }
+  if(view=='hist')hist()
+}
+async function auth(up){
+  const email=$('#em').value.trim(),password=$('#pw').value,am=t=>$('#am').textContent=t;
+  if(!email||password.length<6)return am('Введите почту и пароль от 6 символов');
+  am('Подождите…');
+  const r=up?await sb.auth.signUp({email,password}):await sb.auth.signInWithPassword({email,password});
+  if(r.error)return am(/invalid login/i.test(r.error.message)?'Неверная почта или пароль':r.error.message);
+  am(up&&!r.data.session?'Мы отправили письмо: подтвердите почту и затем войдите':'')
+}
+if(CFG.sb.url&&window.supabase){
+  sb=supabase.createClient(CFG.sb.url,CFG.sb.key);
+  $('#auth').hidden=false;
+  $('#li').onclick=()=>auth(0);$('#su').onclick=()=>auth(1);$('#lo').onclick=()=>sb.auth.signOut();
+  sb.auth.onAuthStateChange((_,se)=>{user=se?se.user:null;authUI()})
+}
 
 show(0);
 </script>
