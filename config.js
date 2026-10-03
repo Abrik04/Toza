@@ -2,7 +2,7 @@
 /* ===== НАСТРОЙКИ: поменяйте под свою компанию ===== */
 const CFG={tg:'toza_cleaning',phone:'+998998040025',min:150000,promo:{TOZA10:0.1},
   levels:[[0,'Новичок',0],[3,'Постоянный клиент',0.05],[7,'VIP',0.1]], /* [от скольки заказов, название, скидка]; скидка 0 = без скидки */
-  sb:{url:'https://grvhsahdlnypilrvjmge.supabase.co',key:'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdydmhzYWhkbG55cGpscnZqbWdlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA5NDEyOTQsImV4cCI6MjEwNjUxNzI5NH0.hnt2L4vCav4goGduVEYWd7b0Tx3BR6EJ1CX0HS7gnrY'}}; /* Supabase: адрес проекта и ключ anon, см. README */
+  sb:{url:'https://grvhsahdlnypjlrvjmge.supabase.co',key:'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdydmhzYWhkbG55cGpscnZqbWdlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA5NDEyOTQsImV4cCI6MjEwNjUxNzI5NH0.hnt2L4vCav4goGduVEYWd7b0Tx3BR6EJ1CX0HS7gnrY'}}; /* Supabase: адрес проекта и ключ anon, см. README */
 const OBJ=[['🏢','Квартира',1],['🏡','Дом',1.15],['💼','Офис',0.85]];
 const TYPES=[['✨','Поддерживающая','Пыль, полы, кухня и санузел',8000],['🧽','Генеральная','До блеска, включая труднодоступное',14000],['🏗️','После ремонта','Строительная пыль, пятна, плёнка',20000]];
 const EXTRA=[['Окна (до 5 шт)',80000],['Духовка',50000],['Холодильник',40000],['Балкон',60000],['Чистка дивана',150000]];
