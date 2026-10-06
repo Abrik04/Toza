@@ -47,6 +47,10 @@ input:focus-visible+.opt{outline:3px solid var(--gold)}
 .promo .btn{background:var(--ink);color:#fff;padding:13px 20px}
 #pm,#err{font-size:14px;font-weight:700}#err{color:#c0392b;margin-top:10px}
 #am{font-size:14px;font-weight:700}
+.st{display:inline-block;margin-left:8px;padding:2px 10px;border-radius:99px;background:var(--tile);color:var(--deep);font-weight:700;font-size:12px}
+.ag{display:flex;gap:10px;align-items:flex-start;margin-top:14px;font-size:14px}
+.ag input{flex:none;width:20px;height:20px;margin-top:2px;accent-color:var(--tq)}
+.ag a{color:var(--deep)}
 .mh{border-radius:26px;padding:20px;margin-bottom:14px;color:#fff;background:var(--deep) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' fill='none' stroke='%23fff' stroke-opacity='.13'%3E%3Crect x='12' y='12' width='36' height='36'/%3E%3Crect x='12' y='12' width='36' height='36' transform='rotate(45 30 30)'/%3E%3C/svg%3E")}
 .mr{display:flex;gap:14px;align-items:center}
 .av{flex:none;width:64px;height:64px;border-radius:50%;display:grid;place-items:center;font:700 26px Unbounded,sans-serif;background:var(--gold);color:var(--ink);box-shadow:0 0 0 4px #ffffff33}
@@ -89,11 +93,14 @@ dialog::backdrop{background:#0b2e3399}
 <main>
 <div id="v-order">
   <div class="step"><h2>Что убираем?</h2><div class="opts" id="obj"></div><h2>Какая уборка нужна?</h2><div class="opts" id="typ"></div></div>
-  <div class="step"><h2>Какая площадь?</h2><div class="area"><output><span id="av">60</span> м²</output><input type="range" id="area" min="20" max="300" step="5" value="60" aria-label="Площадь, м²"></div><h2>Что добавить?</h2><div class="opts" id="ext"></div></div>
+  <div class="step"><h2>Какая площадь?</h2><div class="area"><output><span id="av">60</span> м²</output><input type="range" id="area" min="20" max="300" step="5" value="60" aria-label="Площадь, м²"></div><h2>Что добавить?</h2><div class="opts" id="ext"></div><h2>Как часто убираем?</h2><div class="opts" id="rep"></div></div>
   <div class="step"><h2>Выберите день</h2><div class="opts sm" id="day"></div><h2>Выберите время</h2><div class="opts sm" id="tm"></div></div>
   <div class="step"><h2>Куда приезжать?</h2>
     <div class="f"><input id="nm" placeholder="Ваше имя" autocomplete="name"><input id="ph" placeholder="Телефон, +998" inputmode="tel" autocomplete="tel"><select id="ds" aria-label="Район"></select><input id="ad" placeholder="Улица, дом, квартира или офис" autocomplete="street-address"><textarea id="cm" rows="2" placeholder="Комментарий: домофон, питомцы, что важно"></textarea></div>
     <div class="promo"><input id="pc" placeholder="Промокод"><button class="btn" id="pa" type="button">Применить</button><span id="pm"></span></div>
+    <div class="lab">Оплата</div><div class="opts sm" id="pay"></div>
+    <div class="promo"><button class="btn alt" id="geo" type="button">📍 Отметить, где я</button><small id="gm"></small></div>
+    <label class="ag"><input type="checkbox" id="agr"><span>Согласен на обработку персональных данных (<a href="privacy.html" target="_blank">политика</a>)</span></label>
     <div id="err" role="alert"></div>
   </div>
 </div>
@@ -127,7 +134,7 @@ dialog::backdrop{background:#0b2e3399}
 
 <dialog id="ok">
   <h2 style="margin-top:0">Заказ <span id="oid"></span> готов</h2>
-  <p>Осталось отправить его нам. Нажмите «Отправить в Telegram», мы подтвердим время.</p>
+  <p id="dtx">Осталось отправить его нам. Нажмите «Отправить в Telegram», мы подтвердим время.</p>
   <pre id="sum"></pre>
   <div class="acts"><a class="btn" id="tg" target="_blank" rel="noopener">Отправить в Telegram</a><button class="btn alt" id="cp" type="button">Скопировать</button><button class="btn alt" id="cl" type="button">Закрыть</button></div>
 </dialog>
@@ -145,6 +152,12 @@ const load=(k,d)=>{try{return JSON.parse(localStorage.getItem(k))||d}catch(e){re
 $('#obj').innerHTML=OBJ.map((o,i)=>opt('obj',i,`<span>${o[0]}</span><b>${o[1]}</b>`,0,!i)).join('');
 $('#typ').innerHTML=TYPES.map((o,i)=>opt('typ',i,`<span>${o[0]}</span><b>${o[1]}</b><small>${o[2]}</small><small class="pr">${fmt(o[3])} сум/м²</small>`,0,!i)).join('');
 $('#ext').innerHTML=EXTRA.map((o,i)=>opt('ext',i,`<b>${o[0]}</b><small>+${fmt(o[1])} сум</small>`,'checkbox')).join('');
+CFG.levels=CFG.levels||[[0,'Новичок',0],[3,'Постоянный клиент',0.05],[7,'VIP',0.1]];
+CFG.repeat=CFG.repeat||[['Разово',0],['Каждую неделю',0.1],['Раз в 2 недели',0.07]];
+CFG.pay=CFG.pay||['Наличными','Картой','Переводом'];
+const ST={new:'Принят',way:'Выезжаем',done:'Выполнен',cancel:'Отменён'};
+$('#rep').innerHTML=CFG.repeat.map((o,i)=>opt('rep',i,`<b>${o[0]}</b><small>${o[1]?'скидка '+Math.round(o[1]*100)+'%':'без подписки'}</small>`,0,!i)).join('');
+$('#pay').innerHTML=CFG.pay.map((o,i)=>opt('pay',i,`<b>${o}</b>`,0,!i)).join('');
 const wd=['вс','пн','вт','ср','чт','пт','сб'];
 const D=[...Array(7)].map((_,i)=>{const d=new Date();d.setDate(d.getDate()+i);return d});
 const ds=d=>d.getDate()+'.'+String(d.getMonth()+1).padStart(2,'0');
@@ -158,7 +171,7 @@ function calc(){
   const o=OBJ[val('obj')],t=TYPES[val('typ')],a=+$('#area').value;
   const base=Math.max(CFG.min,Math.round(a*t[3]*o[2]/1000)*1000);
   const ex=$$('[name=ext]:checked').reduce((s,e)=>s+EXTRA[e.value][1],0);
-  const off=Math.round(base*Math.max(disc,CFG.levels[LV][2])/1000)*1000;
+  const off=Math.round(base*(Math.max(disc,CFG.levels[LV][2])+CFG.repeat[val('rep')||0][1])/1000)*1000;
   return{o,t,a,off,total:base+ex-off}
 }
 function upd(){const c=calc();$('#av').textContent=c.a;$('#tot').textContent=fmt(c.total)}
@@ -199,21 +212,24 @@ function submit(){
   if(!g('nm')||g('ph').replace(/\D/g,'').length<9||!g('ds')||!g('ad')){
     $('#err').textContent='Заполните имя, телефон, район и адрес — так мы сможем приехать.';return
   }
+  if(!$('#agr').checked)return $('#err').textContent='Нужно согласие на обработку данных.';
   $('#err').textContent='';
   const P2=Object.assign(load('toza',{}),{nm:g('nm'),ph:g('ph'),ds:g('ds'),ad:g('ad')});store('toza',P2);
   const c=calc(),id='№'+Math.floor(1000+Math.random()*9000);
   const ex=$$('[name=ext]:checked').map(e=>EXTRA[e.value][0]).join(', ')||'нет';
   text=[`Заказ ${id}`,`${c.o[1]}: ${c.t[1]} уборка, ${c.a} м²`,`Дополнительно: ${ex}`,
-    `Когда: ${ds(D[val('day')])} в ${val('tm')}`,`Куда: ${g('ds')} р-н, ${g('ad')}`,
+    `Когда: ${ds(D[val('day')])} в ${val('tm')}${+val('rep')?`, повтор: ${CFG.repeat[val('rep')][0].toLowerCase()}`:''}`,`Куда: ${g('ds')} р-н, ${g('ad')}`,`Оплата: ${CFG.pay[val('pay')||0].toLowerCase()}`,GEO&&`Карта: ${GEO}`,
     `Клиент: ${g('nm')}, ${g('ph')}`,P2.pets&&'Питомцы дома: есть',P2.door&&`Как войти: ${P2.door}`,g('cm')&&`Комментарий: ${g('cm')}`,
     `Итого: ${fmt(c.total)} сум${c.off?` (скидка ${fmt(c.off)} сум)`:''}`].filter(Boolean).join('\n');
   const a=load('toza_orders',[]),sel={obj:val('obj'),typ:val('typ'),area:$('#area').value,ext:$$('[name=ext]:checked').map(e=>e.value)};
   a.unshift({id,at:new Date().toLocaleDateString('ru-RU'),t:text,total:c.total,sel});
   store('toza_orders',a.slice(0,30));
-  if(user){
-    sb.auth.updateUser({data:P2});
-    sb.from('orders').insert({code:id,details:text,total:c.total,sel}).then(r=>{r.error&&console.warn(r.error.message);me()})
-  }else me();
+  if(user)sb.auth.updateUser({data:P2});
+  if(sb)sb.from('orders').insert({code:id,details:text,total:c.total,sel}).then(r=>{
+    r.error?console.warn(r.error.message):$('#dtx').textContent='Заказ принят, мы свяжемся с вами. Можно также отправить его в Telegram, чтобы мы увидели быстрее.';
+    me()
+  });
+  else me();
   $('#oid').textContent=id;$('#sum').textContent=text;
   $('#tg').href=`https://t.me/${CFG.tg}?text=${encodeURIComponent(text)}`;
   $('#ok').showModal()
@@ -226,14 +242,14 @@ let ORD=[];
 async function orders(){
   let a=load('toza_orders',[]);
   if(user){
-    const r=await sb.from('orders').select('code,details,total,sel,created_at').order('created_at',{ascending:false}).limit(30);
-    if(r.data)a=r.data.map(o=>({id:o.code,at:new Date(o.created_at).toLocaleDateString('ru-RU'),t:o.details,total:o.total,sel:o.sel}))
+    const r=await sb.from('orders').select('code,details,total,sel,created_at,status').order('created_at',{ascending:false}).limit(30);
+    if(r.data)a=r.data.map(o=>({id:o.code,at:new Date(o.created_at).toLocaleDateString('ru-RU'),t:o.details,total:o.total,sel:o.sel,status:o.status}))
   }
   return a
 }
 async function hist(){
   const a=ORD=await orders();
-  $('#v-hist').innerHTML=a.length?a.map((o,i)=>`<div class="card"><b>${o.id}</b> <small>${o.at}</small><p>${o.t.split('\n').slice(1,4).join('<br>')}</p><div class="t">${fmt(o.total)} сум</div><div class="acts"><button class="btn alt" data-r="${i}" type="button">Повторить</button><a class="btn alt" target="_blank" rel="noopener" href="https://t.me/${CFG.tg}?text=${encodeURIComponent(o.t)}">В Telegram</a></div></div>`).join('')
+  $('#v-hist').innerHTML=a.length?a.map((o,i)=>`<div class="card"><b>${o.id}</b> <small>${o.at}</small>${o.status?`<span class="st">${ST[o.status]||o.status}</span>`:''}<p>${o.t.split('\n').slice(1,4).join('<br>')}</p><div class="t">${fmt(o.total)} сум</div><div class="acts"><button class="btn alt" data-r="${i}" type="button">Повторить</button><a class="btn alt" target="_blank" rel="noopener" href="https://t.me/${CFG.tg}?text=${encodeURIComponent(o.t)}">В Telegram</a></div></div>`).join('')
    :'<div class="empty"><b>Заказов пока нет</b><br>Оформите первый, и в следующий раз его можно будет повторить одним нажатием.</div>'
 }
 $('#v-hist').onclick=e=>{
@@ -303,6 +319,12 @@ $('#shr').onclick=async()=>{
   }catch(e){}
 };
 
+/* геопозиция */
+let GEO='';
+$('#geo').onclick=()=>navigator.geolocation?navigator.geolocation.getCurrentPosition(
+  p=>{GEO=`https://maps.google.com/?q=${p.coords.latitude.toFixed(5)},${p.coords.longitude.toFixed(5)}`;$('#gm').textContent='Точка сохранена ✓'},
+  ()=>$('#gm').textContent='Не удалось определить, укажите адрес словами'):0;
+
 /* вход и регистрация (Supabase) */
 let sb=null,user=null;
 function authUI(){
@@ -320,15 +342,28 @@ async function auth(up){
   const email=$('#em').value.trim(),password=$('#pw').value,am=t=>$('#am').textContent=t;
   if(!email||password.length<6)return am('Введите почту и пароль от 6 символов');
   am('Подождите…');
-  const r=up?await sb.auth.signUp({email,password}):await sb.auth.signInWithPassword({email,password});
-  if(r.error)return am(/invalid login/i.test(r.error.message)?'Неверная почта или пароль':r.error.message);
+  let r;
+  try{r=up?await sb.auth.signUp({email,password}):await sb.auth.signInWithPassword({email,password})}
+  catch(e){r={error:e}}
+  if(r.error){
+    const m=String(r.error.message||r.error);
+    return am(/invalid login|invalid_credentials/i.test(m)?'Неверная почта или пароль'
+      :/not confirmed/i.test(m)?'Сначала подтвердите почту: откройте письмо от Supabase'
+      :/fetch|load failed|type error|network|invalid path|invalid url/i.test(m)?'Нет связи с Supabase. Проверьте url и ключ в config.js (url вида https://xxxx.supabase.co) и интернет'
+      :m)
+  }
   am(up&&!r.data.session?'Мы отправили письмо: подтвердите почту и затем войдите':'')
 }
+const SBU=(()=>{
+  let u=(CFG.sb.url||'').trim().replace(/^['"\s]+|['"\s]+$/g,'');
+  if(!/^https?:\/\//i.test(u))u='https://'+u;
+  try{return new URL(u).origin}catch(e){return u}
+})();
 if(CFG.sb.url&&window.supabase){
-  sb=supabase.createClient(CFG.sb.url,CFG.sb.key);
+  try{sb=supabase.createClient(SBU,(CFG.sb.key||'').trim())}catch(e){console.warn(e)}
   $('#auth').hidden=false;
   $('#li').onclick=()=>auth(0);$('#su').onclick=()=>auth(1);$('#lo').onclick=()=>sb.auth.signOut();
-  sb.auth.onAuthStateChange((_,se)=>{user=se?se.user:null;authUI()})
+  sb&&sb.auth.onAuthStateChange((_,se)=>{user=se?se.user:null;authUI()})
 }
 
 fillP();me();

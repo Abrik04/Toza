@@ -1,0 +1,35 @@
+<!DOCTYPE html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Toza — заказы</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;700&family=Unbounded:wght@700&display=swap" rel="stylesheet">
+<style>
+body{margin:0 auto;padding:16px;max-width:760px;font:500 16px/1.5 Manrope,system-ui,sans-serif;background:#f2f7f6;color:#0b2e33}
+h1{font:700 22px Unbounded,sans-serif}
+input,button{font:inherit;padding:11px 14px;border:2px solid #d5e3e1;border-radius:12px;background:#fff;color:#0b2e33}
+button{cursor:pointer;font-weight:700}.go{background:#f4b63f;border:0}
+.c{background:#fff;border:2px solid #d5e3e1;border-radius:18px;padding:14px;margin:12px 0}
+.c pre{white-space:pre-wrap;font:inherit;font-size:14px;margin:8px 0}
+.row{display:flex;gap:8px;flex-wrap:wrap}.row input{flex:1;min-width:140px}
+.s{padding:8px 12px;border-radius:99px;font-size:13px}.s.on{background:#0e8c8c;color:#fff;border-color:#0e8c8c}
+</style></head><body>
+<h1>Toza · заказы</h1>
+<div id="lg" class="row"><input id="em" type="email" placeholder="Почта"><input id="pw" type="password" placeholder="Пароль"><button class="go" id="li" type="button">Войти</button></div>
+<p id="m"></p><div id="ls"></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="config.js"></script>
+<script>
+const $=s=>document.querySelector(s),ST={new:'Принят',way:'Выезжаем',done:'Выполнен',cancel:'Отменён'};
+const esc=s=>String(s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const U=new URL(/^https?:/i.test(CFG.sb.url.trim())?CFG.sb.url.trim():'https://'+CFG.sb.url.trim()).origin;
+const sb=supabase.createClient(U,CFG.sb.key.trim());
+async function load(){
+  const a=await sb.from('staff').select('email');
+  if(!a.data||!a.data.length){$('#m').textContent='Нет доступа: эта почта не добавлена в таблицу staff.';return}
+  $('#lg').hidden=true;$('#m').textContent='';
+  const r=await sb.from('orders').select('*').order('created_at',{ascending:false}).limit(100);
+  $('#ls').innerHTML=(r.data||[]).map(o=>`<div class="c" data-id="${o.id}"><b>${esc(o.code)}</b> · ${new Date(o.created_at).toLocaleString('ru-RU')}<pre>${esc(o.details)}</pre><div class="row">${Object.keys(ST).map(k=>`<button class="s ${o.status==k?'on':''}" data-s="${k}" type="button">${ST[k]}</button>`).join('')}</div><div class="row" style="margin-top:8px"><input placeholder="Кто выезжает" value="${esc(o.assignee)}"></div></div>`).join('')||'Заказов пока нет';
+}
+$('#ls').onclick=async e=>{const s=e.target.dataset.s;if(!s)return;await sb.from('orders').update({status:s}).eq('id',e.target.closest('.c').dataset.id);load()};
+$('#ls').onchange=e=>{if(e.target.tagName=='INPUT')sb.from('orders').update({assignee:e.target.value.trim()}).eq('id',e.target.closest('.c').dataset.id).then(()=>{})};
+$('#li').onclick=async()=>{const r=await sb.auth.signInWithPassword({email:$('#em').value.trim(),password:$('#pw').value});r.error?$('#m').textContent='Неверная почта или пароль':load()};
+sb.auth.getSession().then(({data})=>data.session&&load());
+setInterval(()=>{$('#lg').hidden&&document.activeElement.tagName!='INPUT'&&load()},30000);
+</script></body></html>
