@@ -51,6 +51,8 @@ input:focus-visible+.opt{outline:3px solid var(--gold)}
 .ag{display:flex;gap:10px;align-items:flex-start;margin-top:14px;font-size:14px}
 .ag input{flex:none;width:20px;height:20px;margin-top:2px;accent-color:var(--tq)}
 .ag a{color:var(--deep)}
+.lg{display:flex;gap:4px}.lg button{border:0;border-radius:99px;padding:5px 9px;font:700 12px Manrope,sans-serif;background:#ffffff26;color:#fff;cursor:pointer}.lg .on{background:var(--gold);color:var(--ink)}
+#stp{white-space:nowrap;font-size:13px}
 .mh{border-radius:26px;padding:20px;margin-bottom:14px;color:#fff;background:var(--deep) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' fill='none' stroke='%23fff' stroke-opacity='.13'%3E%3Crect x='12' y='12' width='36' height='36'/%3E%3Crect x='12' y='12' width='36' height='36' transform='rotate(45 30 30)'/%3E%3C/svg%3E")}
 .mr{display:flex;gap:14px;align-items:center}
 .av{flex:none;width:64px;height:64px;border-radius:50%;display:grid;place-items:center;font:700 26px Unbounded,sans-serif;background:var(--gold);color:var(--ink);box-shadow:0 0 0 4px #ffffff33}
@@ -87,7 +89,7 @@ dialog::backdrop{background:#0b2e3399}
 </style>
 </head>
 <body>
-<header class="top"><div class="logo">Toza<span>.</span></div><div id="stp"></div></header>
+<header class="top"><div class="logo">Toza<span>.</span></div><div id="stp"></div><div class="lg"><button data-l="ru" type="button">RU</button><button data-l="uz" type="button">UZ</button><button data-l="en" type="button">EN</button></div></header>
 <div id="prog"><i></i></div>
 
 <main>
@@ -100,7 +102,7 @@ dialog::backdrop{background:#0b2e3399}
     <div class="promo"><input id="pc" placeholder="Промокод"><button class="btn" id="pa" type="button">Применить</button><span id="pm"></span></div>
     <div class="lab">Оплата</div><div class="opts sm" id="pay"></div>
     <div class="promo"><button class="btn alt" id="geo" type="button">📍 Отметить, где я</button><small id="gm"></small></div>
-    <label class="ag"><input type="checkbox" id="agr"><span>Согласен на обработку персональных данных (<a href="privacy.html" target="_blank">политика</a>)</span></label>
+    <label class="ag"><input type="checkbox" id="agr"><span><span>Согласен на обработку персональных данных</span> <a href="privacy.html" target="_blank">политика</a></span></label>
     <div id="err" role="alert"></div>
   </div>
 </div>
@@ -133,10 +135,9 @@ dialog::backdrop{background:#0b2e3399}
 <nav class="tabs"><button data-v="order" class="on"><span>🧼</span>Заказ</button><button data-v="hist"><span>🕘</span>Заказы</button><button data-v="me"><span>👤</span>Профиль</button></nav>
 
 <dialog id="ok">
-  <h2 style="margin-top:0">Заказ <span id="oid"></span> готов</h2>
-  <p id="dtx">Осталось отправить его нам. Нажмите «Отправить в Telegram», мы подтвердим время.</p>
-  <pre id="sum"></pre>
-  <div class="acts"><a class="btn" id="tg" target="_blank" rel="noopener">Отправить в Telegram</a><button class="btn alt" id="cp" type="button">Скопировать</button><button class="btn alt" id="cl" type="button">Закрыть</button></div>
+  <h2 style="margin-top:0"><span>Заказ</span> <span id="oid"></span></h2>
+  <p id="dtx"></p>
+  <div class="acts"><a class="btn" id="tg" target="_blank" rel="noopener" hidden>Отправить в Telegram</a><a class="btn alt" id="dcall">Позвонить</a><a class="btn alt" id="dsup" target="_blank" rel="noopener">Написать</a><button class="btn" id="cl" type="button">Готово</button></div>
 </dialog>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -148,22 +149,89 @@ const opt=(n,v,h,t,c)=>`<label><input type="${t||'radio'}" name="${n}" value="${
 const val=n=>(document.querySelector(`[name=${n}]:checked`)||{}).value;
 const store=(k,v)=>{try{v===undefined?localStorage.removeItem(k):localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
 const load=(k,d)=>{try{return JSON.parse(localStorage.getItem(k))||d}catch(e){return d}};
+const L=[
+['Заказ','Buyurtma','Order'],['Заказы','Buyurtmalar','Orders'],['Профиль','Profil','Profile'],['Мои заказы','Buyurtmalarim','My orders'],
+['Шаг {1} из 4','{1}-qadam / 4','Step {1} of 4'],
+['Что убираем?','Nimani tozalaymiz?','What are we cleaning?'],['Какая уборка нужна?','Qanday tozalash kerak?','Which cleaning do you need?'],
+['Квартира','Kvartira','Apartment'],['Дом','Uy','House'],['Офис','Ofis','Office'],
+['Поддерживающая','Muntazam','Regular'],['Генеральная','Chuqur tozalash','Deep cleaning'],['После ремонта','Taʼmirdan keyin','After renovation'],
+['Пыль, полы, кухня и санузел','Chang, pollar, oshxona va hammom','Dust, floors, kitchen and bathroom'],
+['До блеска, включая труднодоступное','Yaltirab turguncha, qiyin joylar ham','Spotless, including hard-to-reach places'],
+['Строительная пыль, пятна, плёнка','Qurilish changi, dog‘lar, plyonka','Construction dust, stains, film'],
+['сум','soʻm','UZS'],['/м²','/m²','/m²'],['м²','m²','m²'],
+['Какая площадь?','Maydon qancha?','What is the area?'],['Что добавить?','Nima qoʻshamiz?','Add-ons'],['Как часто убираем?','Qanchalik tez-tez tozalaymiz?','How often?'],
+['Окна (до 5 шт)','Derazalar (5 tagacha)','Windows (up to 5)'],['Духовка','Duxovka','Oven'],['Холодильник','Muzlatgich','Fridge'],['Балкон','Balkon','Balcony'],['Чистка дивана','Divan tozalash','Sofa cleaning'],
+['Разово','Bir martalik','One-time'],['Каждую неделю','Har hafta','Every week'],['Раз в 2 недели','2 haftada bir','Every 2 weeks'],
+['скидка','chegirma','discount'],['без подписки','obunasiz','no subscription'],
+['Выберите день','Kunni tanlang','Choose a day'],['Выберите время','Vaqtni tanlang','Choose a time'],
+['сегодня','bugun','today'],['пн','du','Mon'],['вт','se','Tue'],['ср','chor','Wed'],['чт','pay','Thu'],['пт','jum','Fri'],['сб','shan','Sat'],['вс','yak','Sun'],
+['Куда приезжать?','Qayerga boramiz?','Where should we come?'],
+['Ваше имя','Ismingiz','Your name'],['Телефон, +998','Telefon, +998','Phone, +998'],
+['Улица, дом, квартира или офис','Koʻcha, uy, xonadon yoki ofis','Street, building, apartment or office'],
+['Комментарий: домофон, питомцы, что важно','Izoh: domofon, uy hayvonlari, muhim narsalar','Notes: door code, pets, anything important'],
+['Промокод','Promokod','Promo code'],['Применить','Qoʻllash','Apply'],['Район','Tuman','District'],
+['Алмазарский','Olmazor','Almazar'],['Бектемирский','Bektemir','Bektemir'],['Мирабадский','Mirobod','Mirabad'],['Мирзо-Улугбекский','Mirzo Ulugʻbek','Mirzo Ulugbek'],
+['Сергелийский','Sergeli','Sergeli'],['Учтепинский','Uchtepa','Uchtepa'],['Чиланзарский','Chilonzor','Chilanzar'],['Шайхантахурский','Shayxontohur','Shaykhantakhur'],
+['Юнусабадский','Yunusobod','Yunusabad'],['Яккасарайский','Yakkasaroy','Yakkasaray'],['Яшнабадский','Yashnobod','Yashnabad'],['Янгихайотский','Yangihayot','Yangihayot'],
+['Оплата','Toʻlov','Payment'],['Наличными','Naqd','Cash'],['Картой','Karta bilan','Card'],['Переводом','Oʻtkazma','Transfer'],
+['📍 Отметить, где я','📍 Joylashuvimni belgilash','📍 Share my location'],
+['Согласен на обработку персональных данных','Shaxsiy maʼlumotlarni qayta ishlashga roziman','I agree to personal data processing'],['политика','siyosat','policy'],
+['Заполните имя, телефон, район и адрес — так мы сможем приехать.','Ism, telefon, tuman va manzilni toʻldiring, shunda biz yetib boramiz.','Please fill in your name, phone, district and address so we can come.'],
+['Нужно согласие на обработку данных.','Maʼlumotlarni qayta ishlashga rozilik kerak.','Consent to data processing is required.'],
+['Скидка {1}% применена','{1}% chegirma qoʻllandi','{1}% discount applied'],['Такого промокода нет','Bunday promokod yoʻq','Promo code not found'],
+['Точка сохранена ✓','Joylashuv saqlandi ✓','Location saved ✓'],['Не удалось определить, укажите адрес словами','Aniqlab boʻlmadi, manzilni yozib bering','Couldn’t detect it, please type the address'],
+['Стоимость','Narxi','Total'],['Назад','Orqaga','Back'],['Далее','Keyingisi','Next'],['Заказать','Buyurtma berish','Place order'],
+['Заказ принят. Мы свяжемся с вами, чтобы подтвердить время.','Buyurtma qabul qilindi. Vaqtni tasdiqlash uchun siz bilan bogʻlanamiz.','Order received. We will contact you to confirm the time.'],
+['Не удалось отправить заказ. Нажмите «Отправить в Telegram», и мы его получим.','Buyurtmani yuborib boʻlmadi. «Telegram orqali yuborish» tugmasini bosing.','Couldn’t send the order. Tap “Send via Telegram” and we’ll receive it.'],
+['Отправить в Telegram','Telegram orqali yuborish','Send via Telegram'],['Позвонить','Qoʻngʻiroq qilish','Call'],['Написать','Yozish','Message'],['Готово','Tayyor','Done'],
+['Гость','Mehmon','Guest'],['Войдите, чтобы данные были на любом телефоне','Maʼlumotlar istalgan telefonda boʻlishi uchun kiring','Sign in to keep your data on any phone'],
+['Новичок','Yangi mijoz','Newcomer'],['Постоянный клиент','Doimiy mijoz','Regular customer'],
+['До уровня «{1}» осталось заказов: {2}','«{1}» darajasigacha buyurtmalar: {2} ta','Orders left to reach “{1}”: {2}'],
+['Высший уровень. Спасибо, что вы с нами!','Eng yuqori daraja. Biz bilan boʻlganingiz uchun rahmat!','Top level. Thank you for being with us!'],
+['Войдите, чтобы данные и заказы были на любом телефоне','Maʼlumotlar va buyurtmalar istalgan telefonda boʻlishi uchun kiring','Sign in to keep your data and orders on any phone'],
+['Эл. почта','E-pochta','Email'],['Пароль, от 6 символов','Parol, kamida 6 belgi','Password, 6+ characters'],
+['Войти','Kirish','Sign in'],['Регистрация','Roʻyxatdan oʻtish','Sign up'],['Вы вошли как','Siz quyidagi hisobdasiz:','Signed in as'],['Выйти','Chiqish','Sign out'],
+['Введите почту и пароль от 6 символов','E-pochta va kamida 6 belgili parolni kiriting','Enter your email and a password of 6+ characters'],
+['Подождите…','Kuting…','Please wait…'],['Неверная почта или пароль','E-pochta yoki parol notoʻgʻri','Wrong email or password'],
+['Сначала подтвердите почту: откройте письмо, которое мы отправили','Avval e-pochtani tasdiqlang: biz yuborgan xatni oching','Please confirm your email first: open the message we sent'],
+['Нет связи с сервером. Проверьте интернет и попробуйте ещё раз','Serverga ulanib boʻlmadi. Internetni tekshirib, qayta urinib koʻring','Can’t reach the server. Check your connection and try again'],
+['Мы отправили письмо: подтвердите почту и затем войдите','Xat yubordik: e-pochtani tasdiqlang va keyin kiring','We sent you an email: confirm it, then sign in'],
+['Мои данные','Maʼlumotlarim','My details'],['Имя','Ism','Name'],
+['Адрес: улица, дом, квартира','Manzil: koʻcha, uy, xonadon','Address: street, building, apartment'],
+['Как войти: домофон, этаж, код','Qanday kirish: domofon, qavat, kod','How to enter: intercom, floor, code'],
+['Питомцы дома','Uyda hayvonlar','Pets at home'],['Без питомцев','Hayvonlarsiz','No pets'],['Есть питомцы','Hayvonlar bor','Has pets'],
+['Чаще всего убираем','Odatda nimani tozalaymiz','What we usually clean'],
+['Подставим это в каждый заказ автоматически.','Buni har bir buyurtmaga avtomatik qoʻshamiz.','We’ll add this to every order automatically.'],
+['Сохранено ✓','Saqlandi ✓','Saved ✓'],['Подарить скидку','Chegirma sovgʻa qilish','Gift a discount'],['Скопировано','Nusxalandi','Copied'],
+['Закажи уборку в Toza со скидкой {1}%, промокод {2}','Toza’dan tozalash buyurtma qiling: {1}% chegirma, promokod {2}','Order a cleaning from Toza with {1}% off, promo code {2}'],
+['Приложение на экране','Ilova ekranda','App on your screen'],['Установить','Oʻrnatish','Install'],
+['Стереть данные на этом телефоне','Bu telefondagi maʼlumotlarni oʻchirish','Erase data on this phone'],
+['Стереть сохранённые данные и историю заказов?','Saqlangan maʼlumotlar va buyurtmalar tarixi oʻchirilsinmi?','Erase saved data and order history?'],['Стёрто','Oʻchirildi','Erased'],
+['Заказов пока нет','Hozircha buyurtmalar yoʻq','No orders yet'],
+['Оформите первый, и в следующий раз его можно будет повторить одним нажатием.','Birinchisini rasmiylashtiring, keyingi safar uni bir bosishda takrorlaysiz.','Place your first one and next time you can repeat it with one tap.'],
+['Повторить','Takrorlash','Repeat'],
+['Принят','Qabul qilindi','Received'],['Выезжаем','Yoʻldamiz','On the way'],['Выполнен','Bajarildi','Done'],['Отменён','Bekor qilindi','Cancelled']
+];
+const DT={uz:{},en:{}};L.forEach(r=>{DT.uz[r[0]]=r[1];DT.en[r[0]]=r[2]});
+let LANG=load('toza_lang','');
+if(!LANG)LANG=/^uz/i.test(navigator.language)?'uz':'ru';
+const tr=(s,a,b)=>(LANG=='ru'?s:(DT[LANG][s]||s)).replace('{1}',a).replace('{2}',b);
 
 $('#obj').innerHTML=OBJ.map((o,i)=>opt('obj',i,`<span>${o[0]}</span><b>${o[1]}</b>`,0,!i)).join('');
-$('#typ').innerHTML=TYPES.map((o,i)=>opt('typ',i,`<span>${o[0]}</span><b>${o[1]}</b><small>${o[2]}</small><small class="pr">${fmt(o[3])} сум/м²</small>`,0,!i)).join('');
-$('#ext').innerHTML=EXTRA.map((o,i)=>opt('ext',i,`<b>${o[0]}</b><small>+${fmt(o[1])} сум</small>`,'checkbox')).join('');
+$('#typ').innerHTML=TYPES.map((o,i)=>opt('typ',i,`<span>${o[0]}</span><b>${o[1]}</b><small>${o[2]}</small><small class="pr">${fmt(o[3])} <span>сум</span>/м²</small>`,0,!i)).join('');
+$('#ext').innerHTML=EXTRA.map((o,i)=>opt('ext',i,`<b>${o[0]}</b><small>+${fmt(o[1])} <span>сум</span></small>`,'checkbox')).join('');
 CFG.levels=CFG.levels||[[0,'Новичок',0],[3,'Постоянный клиент',0.05],[7,'VIP',0.1]];
 CFG.repeat=CFG.repeat||[['Разово',0],['Каждую неделю',0.1],['Раз в 2 недели',0.07]];
 CFG.pay=CFG.pay||['Наличными','Картой','Переводом'];
 const ST={new:'Принят',way:'Выезжаем',done:'Выполнен',cancel:'Отменён'};
-$('#rep').innerHTML=CFG.repeat.map((o,i)=>opt('rep',i,`<b>${o[0]}</b><small>${o[1]?'скидка '+Math.round(o[1]*100)+'%':'без подписки'}</small>`,0,!i)).join('');
+$('#rep').innerHTML=CFG.repeat.map((o,i)=>opt('rep',i,`<b>${o[0]}</b><small>${o[1]?'<span>скидка</span> '+Math.round(o[1]*100)+'%':'<span>без подписки</span>'}</small>`,0,!i)).join('');
 $('#pay').innerHTML=CFG.pay.map((o,i)=>opt('pay',i,`<b>${o}</b>`,0,!i)).join('');
 const wd=['вс','пн','вт','ср','чт','пт','сб'];
 const D=[...Array(7)].map((_,i)=>{const d=new Date();d.setDate(d.getDate()+i);return d});
 const ds=d=>d.getDate()+'.'+String(d.getMonth()+1).padStart(2,'0');
 $('#day').innerHTML=D.map((d,i)=>opt('day',i,`<small>${i?wd[d.getDay()]:'сегодня'}</small><b>${ds(d)}</b>`,0,!i)).join('');
 $('#tm').innerHTML=TIMES.map((t,i)=>opt('tm',t,`<b>${t}</b>`,0,i==1)).join('');
-$('#ds').innerHTML='<option value="">Район</option>'+DIST.map(d=>`<option>${d}</option>`).join('');
+$('#ds').innerHTML='<option value="">Район</option>'+DIST.map(d=>`<option value="${d}">${d}</option>`).join('');
 $('#call').href='tel:'+CFG.phone;$('#tgc').href='https://t.me/'+CFG.tg;
 
 let LV=0,CNT=0,disc=0;
@@ -179,7 +247,7 @@ document.addEventListener('input',upd);upd();
 
 $('#pa').onclick=()=>{
   disc=CFG.promo[$('#pc').value.trim().toUpperCase()]||0;
-  $('#pm').textContent=disc?`Скидка ${disc*100}% применена`:'Такого промокода нет';
+  $('#pm').textContent=disc?tr('Скидка {1}% применена',Math.round(disc*100)):'Такого промокода нет';
   $('#pm').style.color=disc?'#0a5f63':'#c0392b';upd()
 };
 
@@ -191,7 +259,7 @@ function show(n){
   $('#bk').hidden=!n;$('#nx').textContent=n==3?'Заказать':'Далее';
   head();scrollTo(0,0)
 }
-function head(){$('#stp').textContent=view=='order'?`Шаг ${s+1} из 4`:{hist:'Мои заказы',me:'Профиль'}[view]}
+function head(){$('#stp').textContent=view=='order'?tr('Шаг {1} из 4',s+1):{hist:tr('Мои заказы'),me:tr('Профиль')}[view]}
 $('#nx').onclick=()=>s<3?show(s+1):submit();
 $('#bk').onclick=()=>show(s-1);
 
@@ -207,7 +275,7 @@ $$('.tabs button').forEach(b=>b.onclick=()=>tab(b.dataset.v));
 /* заказ */
 const saved=load('toza',{});['nm','ph','ds','ad'].forEach(k=>saved[k]&&($('#'+k).value=saved[k]));
 let text='';
-function submit(){
+async function submit(){
   const g=k=>$('#'+k).value.trim();
   if(!g('nm')||g('ph').replace(/\D/g,'').length<9||!g('ds')||!g('ad')){
     $('#err').textContent='Заполните имя, телефон, район и адрес — так мы сможем приехать.';return
@@ -219,23 +287,23 @@ function submit(){
   const ex=$$('[name=ext]:checked').map(e=>EXTRA[e.value][0]).join(', ')||'нет';
   text=[`Заказ ${id}`,`${c.o[1]}: ${c.t[1]} уборка, ${c.a} м²`,`Дополнительно: ${ex}`,
     `Когда: ${ds(D[val('day')])} в ${val('tm')}${+val('rep')?`, повтор: ${CFG.repeat[val('rep')][0].toLowerCase()}`:''}`,`Куда: ${g('ds')} р-н, ${g('ad')}`,`Оплата: ${CFG.pay[val('pay')||0].toLowerCase()}`,GEO&&`Карта: ${GEO}`,
-    `Клиент: ${g('nm')}, ${g('ph')}`,P2.pets&&'Питомцы дома: есть',P2.door&&`Как войти: ${P2.door}`,g('cm')&&`Комментарий: ${g('cm')}`,
+    `Клиент: ${g('nm')}, ${g('ph')}`,LANG!='ru'&&`Язык клиента: ${LANG.toUpperCase()}`,P2.pets&&'Питомцы дома: есть',P2.door&&`Как войти: ${P2.door}`,g('cm')&&`Комментарий: ${g('cm')}`,
     `Итого: ${fmt(c.total)} сум${c.off?` (скидка ${fmt(c.off)} сум)`:''}`].filter(Boolean).join('\n');
   const a=load('toza_orders',[]),sel={obj:val('obj'),typ:val('typ'),area:$('#area').value,ext:$$('[name=ext]:checked').map(e=>e.value)};
   a.unshift({id,at:new Date().toLocaleDateString('ru-RU'),t:text,total:c.total,sel});
   store('toza_orders',a.slice(0,30));
   if(user)sb.auth.updateUser({data:P2});
-  if(sb)sb.from('orders').insert({code:id,details:text,total:c.total,sel}).then(r=>{
-    r.error?console.warn(r.error.message):$('#dtx').textContent='Заказ принят, мы свяжемся с вами. Можно также отправить его в Telegram, чтобы мы увидели быстрее.';
-    me()
-  });
-  else me();
-  $('#oid').textContent=id;$('#sum').textContent=text;
-  $('#tg').href=`https://t.me/${CFG.tg}?text=${encodeURIComponent(text)}`;
-  $('#ok').showModal()
+  $('#nx').disabled=true;
+  let ok=false;
+  if(sb){const r=await sb.from('orders').insert({code:id,details:text,total:c.total,sel});ok=!r.error;r.error&&console.warn(r.error.message)}
+  $('#nx').disabled=false;
+  $('#oid').textContent=id;
+  $('#dtx').textContent=ok?'Заказ принят. Мы свяжемся с вами, чтобы подтвердить время.':'Не удалось отправить заказ. Нажмите «Отправить в Telegram», и мы его получим.';
+  $('#tg').hidden=ok;$('#tg').href=`https://t.me/${CFG.tg}?text=${encodeURIComponent(text)}`;
+  $('#dcall').href='tel:'+CFG.phone;$('#dsup').href='https://t.me/'+CFG.tg;
+  $('#ok').showModal();me()
 }
-$('#cp').onclick=async()=>{try{await navigator.clipboard.writeText(text);$('#cp').textContent='Скопировано'}catch(e){}};
-$('#cl').onclick=()=>{$('#ok').close();$('#cp').textContent='Скопировать';show(0);tab('hist')};
+$('#cl').onclick=()=>{$('#ok').close();show(0);tab('hist')};
 
 /* история */
 let ORD=[];
@@ -249,7 +317,7 @@ async function orders(){
 }
 async function hist(){
   const a=ORD=await orders();
-  $('#v-hist').innerHTML=a.length?a.map((o,i)=>`<div class="card"><b>${o.id}</b> <small>${o.at}</small>${o.status?`<span class="st">${ST[o.status]||o.status}</span>`:''}<p>${o.t.split('\n').slice(1,4).join('<br>')}</p><div class="t">${fmt(o.total)} сум</div><div class="acts"><button class="btn alt" data-r="${i}" type="button">Повторить</button><a class="btn alt" target="_blank" rel="noopener" href="https://t.me/${CFG.tg}?text=${encodeURIComponent(o.t)}">В Telegram</a></div></div>`).join('')
+  $('#v-hist').innerHTML=a.length?a.map((o,i)=>`<div class="card"><b>${o.id}</b> <small>${o.at}</small>${o.status?`<span class="st">${ST[o.status]||o.status}</span>`:''}<p>${o.t.split('\n').slice(1,4).join('<br>')}</p><div class="t">${fmt(o.total)} <span>сум</span></div><div class="acts"><button class="btn alt" data-r="${i}" type="button">Повторить</button></div></div>`).join('')
    :'<div class="empty"><b>Заказов пока нет</b><br>Оформите первый, и в следующий раз его можно будет повторить одним нажатием.</div>'
 }
 $('#v-hist').onclick=e=>{
@@ -262,7 +330,7 @@ $('#v-hist').onclick=e=>{
 
 /* профиль и установка */
 $('#clr').onclick=()=>{
-  if(!confirm('Стереть сохранённые данные и историю заказов?'))return;
+  if(!confirm(tr('Стереть сохранённые данные и историю заказов?')))return;
   store('toza');store('toza_orders');['nm','ph','ds','ad'].forEach(k=>$('#'+k).value='');
   fillP();me();$('#clr').textContent='Стёрто'
 };
@@ -307,12 +375,12 @@ async function me(){
   $('#mn').textContent=nm||'Гость';
   $('#avt').textContent=nm?nm[0].toUpperCase():'👤';
   $('#ms').textContent=user?user.email:(P.ph||'Войдите, чтобы данные были на любом телефоне');
-  $('#lvn').textContent=L[LV][1]+(L[LV][2]?` · скидка ${Math.round(L[LV][2]*100)}%`:'');
+  $('#lvn').textContent=tr(L[LV][1])+(L[LV][2]?` · ${tr('скидка')} ${Math.round(L[LV][2]*100)}%`:'');
   $('#lvb').style.width=(nx?Math.min(100,(CNT-L[LV][0])/(nx[0]-L[LV][0])*100):100)+'%';
-  $('#lvx').textContent=nx?`Ещё ${nx[0]-CNT} ${pl(nx[0]-CNT)} до уровня «${nx[1]}»${nx[2]?`, скидка ${Math.round(nx[2]*100)}%`:''}`:'Высший уровень. Спасибо, что вы с нами!'
+  $('#lvx').textContent=nx?tr('До уровня «{1}» осталось заказов: {2}',tr(nx[1]),nx[0]-CNT)+(nx[2]?`, ${tr('скидка')} ${Math.round(nx[2]*100)}%`:''):'Высший уровень. Спасибо, что вы с нами!'
 }
 $('#shr').onclick=async()=>{
-  const k=Object.keys(CFG.promo)[0],t=`Закажи уборку в Toza со скидкой ${Math.round(CFG.promo[k]*100)}%, промокод ${k}`;
+  const k=Object.keys(CFG.promo)[0],t=tr('Закажи уборку в Toza со скидкой {1}%, промокод {2}',Math.round(CFG.promo[k]*100),k);
   try{
     if(navigator.share)await navigator.share({text:t,url:location.href});
     else{await navigator.clipboard.writeText(t+' '+location.href);$('#shr').innerHTML='<span>✅</span>Скопировано'}
@@ -347,9 +415,9 @@ async function auth(up){
   catch(e){r={error:e}}
   if(r.error){
     const m=String(r.error.message||r.error);
-    return am(/invalid login|invalid_credentials/i.test(m)?'Неверная почта или пароль'
-      :/not confirmed/i.test(m)?'Сначала подтвердите почту: откройте письмо от Supabase'
-      :/fetch|load failed|type error|network|invalid path|invalid url/i.test(m)?'Нет связи с Supabase. Проверьте url и ключ в config.js (url вида https://xxxx.supabase.co) и интернет'
+    console.warn(m);return am(/invalid login|invalid_credentials/i.test(m)?'Неверная почта или пароль'
+      :/not confirmed/i.test(m)?'Сначала подтвердите почту: откройте письмо, которое мы отправили'
+      :/fetch|load failed|type error|network|invalid path|invalid url/i.test(m)?'Нет связи с сервером. Проверьте интернет и попробуйте ещё раз'
       :m)
   }
   am(up&&!r.data.session?'Мы отправили письмо: подтвердите почту и затем войдите':'')
@@ -366,8 +434,30 @@ if(CFG.sb.url&&window.supabase){
   sb&&sb.auth.onAuthStateChange((_,se)=>{user=se?se.user:null;authUI()})
 }
 
+/* язык */
+function tx(){
+  const w=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT);let n;
+  while(n=w.nextNode()){
+    if(/^(SCRIPT|STYLE)$/.test(n.parentNode.tagName))continue;
+    if(n._o==null)n._o=n.nodeValue;
+    const s=n._o.trim();if(!s)continue;
+    const v=n._o.replace(s,()=>tr(s));
+    if(n.nodeValue!==v)n.nodeValue=v
+  }
+  $$('[placeholder]').forEach(e=>{e._p=e._p||e.placeholder;const v=tr(e._p);if(e.placeholder!==v)e.placeholder=v})
+}
+let qf=0;
+new MutationObserver(()=>{qf||(qf=requestAnimationFrame(()=>{qf=0;tx()}))}).observe(document.body,{childList:true,subtree:true,characterData:true});
+function setLang(l,init){
+  LANG=l;store('toza_lang',l);document.documentElement.lang=l;
+  $$('.lg button').forEach(b=>b.classList.toggle('on',b.dataset.l==l));
+  tx();head();init||me();if(view=='hist')hist()
+}
+$$('.lg button').forEach(b=>b.onclick=()=>setLang(b.dataset.l));
+
 fillP();me();
 show(0);
+setLang(LANG,1);
 </script>
 </body>
 </html>
