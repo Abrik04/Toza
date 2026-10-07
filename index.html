@@ -53,6 +53,8 @@ input:focus-visible+.opt{outline:3px solid var(--gold)}
 .ag a{color:var(--deep)}
 .lg{display:flex;gap:4px}.lg button{border:0;border-radius:99px;padding:5px 9px;font:700 12px Manrope,sans-serif;background:#ffffff26;color:#fff;cursor:pointer}.lg .on{background:var(--gold);color:var(--ink)}
 #stp{white-space:nowrap;font-size:13px}
+.rf{background:var(--tile);border-radius:14px;padding:12px 14px;margin:10px 0;display:grid;gap:2px}.rf b{font:700 22px Unbounded,sans-serif;letter-spacing:2px;color:var(--deep)}
+.bzt{display:block;font:700 18px Unbounded,sans-serif;margin-bottom:6px}#bz-err{margin-top:10px;font-size:14px;font-weight:700;color:#c0392b}
 .mh{border-radius:26px;padding:20px;margin-bottom:14px;color:#fff;background:var(--deep) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' fill='none' stroke='%23fff' stroke-opacity='.13'%3E%3Crect x='12' y='12' width='36' height='36'/%3E%3Crect x='12' y='12' width='36' height='36' transform='rotate(45 30 30)'/%3E%3C/svg%3E")}
 .mr{display:flex;gap:14px;align-items:center}
 .av{flex:none;width:64px;height:64px;border-radius:50%;display:grid;place-items:center;font:700 26px Unbounded,sans-serif;background:var(--gold);color:var(--ink);box-shadow:0 0 0 4px #ffffff33}
@@ -107,6 +109,21 @@ dialog::backdrop{background:#0b2e3399}
   </div>
 </div>
 <div id="v-hist" hidden></div>
+<div id="v-biz" hidden>
+  <div class="mh"><b class="bzt">Уборка для офисов и компаний</b><small>Оставьте заявку, и мы пришлём коммерческое предложение.</small></div>
+  <div class="card"><div class="f">
+    <input id="bz-co" placeholder="Название компании" autocomplete="organization">
+    <input id="bz-nm" placeholder="Контактное лицо" autocomplete="name">
+    <input id="bz-ph" placeholder="Телефон, +998" inputmode="tel" autocomplete="tel">
+    <input id="bz-m2" type="number" inputmode="numeric" placeholder="Площадь, м²">
+    <select id="bz-fr"><option value="Разово">Разово</option><option value="1 раз в неделю">1 раз в неделю</option><option value="2–3 раза в неделю">2–3 раза в неделю</option><option value="Каждый день">Каждый день</option></select>
+    <select id="bz-ds" aria-label="Район"></select>
+    <input id="bz-ad" placeholder="Адрес офиса">
+    <textarea id="bz-cm" rows="2" placeholder="Пожелания: график, ночная уборка, нужны ли акты"></textarea>
+  </div>
+  <label class="ag"><input type="checkbox" id="bz-ag"><span><span>Согласен на обработку персональных данных</span> <a href="privacy.html" target="_blank">политика</a></span></label>
+  <button class="btn" id="bz-go" type="button" style="margin-top:14px">Запросить предложение</button><p id="bz-err" role="alert"></p></div>
+</div>
 <div id="v-me" hidden>
   <div class="mh">
     <div class="mr"><div class="av" id="avt">👤</div><div><b id="mn">Гость</b><small id="ms"></small></div></div>
@@ -114,7 +131,7 @@ dialog::backdrop{background:#0b2e3399}
   </div>
   <div id="auth" class="card" hidden>
     <div id="in" class="f"><b>Войдите, чтобы данные и заказы были на любом телефоне</b><input id="em" type="email" placeholder="Эл. почта" autocomplete="email"><input id="pw" type="password" placeholder="Пароль, от 6 символов" autocomplete="current-password"><div class="acts"><button class="btn" id="li" type="button">Войти</button><button class="btn alt" id="su" type="button">Регистрация</button></div></div>
-    <div id="out" hidden><p>Вы вошли как <b id="who"></b></p><button class="btn alt" id="lo" type="button">Выйти</button></div>
+    <div id="out" hidden><p>Вы вошли как <b id="who"></b></p><div id="rf" class="rf"><small>Ваш код друга</small><b id="rfc"></b><small id="rfn"></small></div><div class="acts"><button class="btn alt" id="lo" type="button">Выйти</button></div><button class="lnk" id="del" type="button">Удалить аккаунт</button></div>
     <p id="am"></p>
   </div>
   <div class="card" id="pfc">
@@ -130,9 +147,9 @@ dialog::backdrop{background:#0b2e3399}
 </div>
 </main>
 
-<div class="bar" id="bar"><div><small>Стоимость</small><b><span id="tot">0</span> сум</b></div><div class="nav"><button class="btn alt" id="bk" type="button">Назад</button><button class="btn" id="nx" type="button">Далее</button></div></div>
+<div class="bar" id="bar"><div><small>Стоимость</small><b><span id="tot">0</span> сум</b><small id="bn"></small></div><div class="nav"><button class="btn alt" id="bk" type="button">Назад</button><button class="btn" id="nx" type="button">Далее</button></div></div>
 
-<nav class="tabs"><button data-v="order" class="on"><span>🧼</span>Заказ</button><button data-v="hist"><span>🕘</span>Заказы</button><button data-v="me"><span>👤</span>Профиль</button></nav>
+<nav class="tabs"><button data-v="order" class="on"><span>🧼</span>Заказ</button><button data-v="hist"><span>🕘</span>Заказы</button><button data-v="biz"><span>🏢</span>Офисам</button><button data-v="me"><span>👤</span>Профиль</button></nav>
 
 <dialog id="ok">
   <h2 style="margin-top:0"><span>Заказ</span> <span id="oid"></span></h2>
@@ -210,6 +227,23 @@ const L=[
 ['Заказов пока нет','Hozircha buyurtmalar yoʻq','No orders yet'],
 ['Оформите первый, и в следующий раз его можно будет повторить одним нажатием.','Birinchisini rasmiylashtiring, keyingi safar uni bir bosishda takrorlaysiz.','Place your first one and next time you can repeat it with one tap.'],
 ['Повторить','Takrorlash','Repeat'],
+['Офисам','Ofislarga','For offices'],['Уборка для офисов и компаний','Ofis va kompaniyalar uchun tozalash','Cleaning for offices and companies'],
+['Оставьте заявку, и мы пришлём коммерческое предложение.','Ariza qoldiring, biz tijoriy taklif yuboramiz.','Leave a request and we will send you a commercial offer.'],
+['Название компании','Kompaniya nomi','Company name'],['Контактное лицо','Aloqa uchun shaxs','Contact person'],['Площадь, м²','Maydon, m²','Area, m²'],
+['1 раз в неделю','Haftada 1 marta','Once a week'],['2–3 раза в неделю','Haftada 2–3 marta','2–3 times a week'],['Каждый день','Har kuni','Every day'],
+['Адрес офиса','Ofis manzili','Office address'],['Пожелания: график, ночная уборка, нужны ли акты','Istaklar: jadval, tungi tozalash, dalolatnomalar kerakmi','Notes: schedule, night cleaning, need for completion acts'],
+['Запросить предложение','Taklif soʻrash','Request an offer'],
+['Заполните компанию, контакт, телефон, адрес и дайте согласие.','Kompaniya, aloqa shaxsi, telefon, manzilni toʻldiring va rozilik bering.','Fill in the company, contact, phone and address, and give your consent.'],
+['Заявка отправлена. Мы подготовим предложение и свяжемся с вами.','Ariza yuborildi. Taklifni tayyorlab, siz bilan bogʻlanamiz.','Request sent. We will prepare an offer and contact you.'],
+['Не удалось отправить. Позвоните нам или напишите в Telegram.','Yuborib boʻlmadi. Bizga qoʻngʻiroq qiling yoki Telegramga yozing.','Couldn’t send. Please call us or message us on Telegram.'],
+['Удалить аккаунт','Hisobni oʻchirish','Delete account'],['Удалить аккаунт и все ваши данные? Это нельзя отменить.','Hisob va barcha maʼlumotlaringiz oʻchirilsinmi? Buni qaytarib boʻlmaydi.','Delete your account and all your data? This cannot be undone.'],
+['Не удалось удалить аккаунт, попробуйте позже','Hisobni oʻchirib boʻlmadi, keyinroq urinib koʻring','Couldn’t delete the account, please try later'],['Аккаунт удалён','Hisob oʻchirildi','Account deleted'],
+['Ваш код друга','Doʻstlar uchun kodingiz','Your referral code'],
+['Друг получит скидку {1}%, а вы {2} сум бонусом после его первой уборки','Doʻstingiz {1}% chegirma oladi, siz esa uning birinchi tozalashidan keyin {2} soʻm bonus olasiz','Your friend gets {1}% off, and you get {2} UZS bonus after their first cleaning'],
+['Ваши бонусы: {1} сум','Bonuslaringiz: {1} soʻm','Your bonus: {1} UZS'],['Бонусы: −{1} сум','Bonus: −{1} soʻm','Bonus: −{1} UZS'],
+['Код друга принят: скидка {1}%','Doʻst kodi qabul qilindi: {1}% chegirma','Friend code accepted: {1}% off'],
+['Код друга работает на первый заказ после входа в аккаунт','Doʻst kodi hisobga kirgandan keyingi birinchi buyurtmaga amal qiladi','A friend code works on the first order after signing in'],
+['Закажи уборку в Toza со скидкой {1}% по моему коду {2}','Toza’dan tozalashga buyurtma bering: mening kodim {2} bilan {1}% chegirma','Order a cleaning from Toza with {1}% off using my code {2}'],
 ['Принят','Qabul qilindi','Received'],['Выезжаем','Yoʻldamiz','On the way'],['Выполнен','Bajarildi','Done'],['Отменён','Bekor qilindi','Cancelled']
 ];
 const DT={uz:{},en:{}};L.forEach(r=>{DT.uz[r[0]]=r[1];DT.en[r[0]]=r[2]});
@@ -223,6 +257,7 @@ $('#ext').innerHTML=EXTRA.map((o,i)=>opt('ext',i,`<b>${o[0]}</b><small>+${fmt(o[
 CFG.levels=CFG.levels||[[0,'Новичок',0],[3,'Постоянный клиент',0.05],[7,'VIP',0.1]];
 CFG.repeat=CFG.repeat||[['Разово',0],['Каждую неделю',0.1],['Раз в 2 недели',0.07]];
 CFG.pay=CFG.pay||['Наличными','Картой','Переводом'];
+CFG.ref=CFG.ref||{friend:0.1,bonus:30000};
 const ST={new:'Принят',way:'Выезжаем',done:'Выполнен',cancel:'Отменён'};
 $('#rep').innerHTML=CFG.repeat.map((o,i)=>opt('rep',i,`<b>${o[0]}</b><small>${o[1]?'<span>скидка</span> '+Math.round(o[1]*100)+'%':'<span>без подписки</span>'}</small>`,0,!i)).join('');
 $('#pay').innerHTML=CFG.pay.map((o,i)=>opt('pay',i,`<b>${o}</b>`,0,!i)).join('');
@@ -234,21 +269,28 @@ $('#tm').innerHTML=TIMES.map((t,i)=>opt('tm',t,`<b>${t}</b>`,0,i==1)).join('');
 $('#ds').innerHTML='<option value="">Район</option>'+DIST.map(d=>`<option value="${d}">${d}</option>`).join('');
 $('#call').href='tel:'+CFG.phone;$('#tgc').href='https://t.me/'+CFG.tg;
 
-let LV=0,CNT=0,disc=0;
+let LV=0,CNT=0,disc=0,REF='',REFD=0,BAL=0;
 function calc(){
   const o=OBJ[val('obj')],t=TYPES[val('typ')],a=+$('#area').value;
   const base=Math.max(CFG.min,Math.round(a*t[3]*o[2]/1000)*1000);
   const ex=$$('[name=ext]:checked').reduce((s,e)=>s+EXTRA[e.value][1],0);
-  const off=Math.round(base*(Math.max(disc,CFG.levels[LV][2])+CFG.repeat[val('rep')||0][1])/1000)*1000;
-  return{o,t,a,off,total:base+ex-off}
+  const off=Math.round(base*(Math.max(disc,REFD,CFG.levels[LV][2])+CFG.repeat[val('rep')||0][1])/1000)*1000;
+  const bon=Math.min(BAL,Math.round(base*0.5/1000)*1000);
+  return{o,t,a,off,bon,total:base+ex-off-bon}
 }
-function upd(){const c=calc();$('#av').textContent=c.a;$('#tot').textContent=fmt(c.total)}
+function upd(){const c=calc();$('#av').textContent=c.a;$('#tot').textContent=fmt(c.total);$('#bn').textContent=c.bon?tr('Бонусы: −{1} сум',fmt(c.bon)):''}
 document.addEventListener('input',upd);upd();
 
-$('#pa').onclick=()=>{
-  disc=CFG.promo[$('#pc').value.trim().toUpperCase()]||0;
-  $('#pm').textContent=disc?tr('Скидка {1}% применена',Math.round(disc*100)):'Такого промокода нет';
-  $('#pm').style.color=disc?'#0a5f63':'#c0392b';upd()
+$('#pa').onclick=async()=>{
+  const k=$('#pc').value.trim().toUpperCase();let ok=0,msg;
+  disc=CFG.promo[k]||0;REFD=0;REF='';
+  if(disc){ok=1;msg=tr('Скидка {1}% применена',Math.round(disc*100))}
+  else if(/^[A-Z0-9]{6}$/.test(k)&&sb){
+    if(!user||CNT||k==MYC())msg='Код друга работает на первый заказ после входа в аккаунт';
+    else if((await sb.rpc('check_ref',{c:k})).data){REF=k;REFD=CFG.ref.friend;ok=1;msg=tr('Код друга принят: скидка {1}%',Math.round(REFD*100))}
+    else msg='Такого промокода нет'
+  }else msg='Такого промокода нет';
+  $('#pm').textContent=msg;$('#pm').style.color=ok?'#0a5f63':'#c0392b';upd()
 };
 
 /* шаги */
@@ -259,13 +301,13 @@ function show(n){
   $('#bk').hidden=!n;$('#nx').textContent=n==3?'Заказать':'Далее';
   head();scrollTo(0,0)
 }
-function head(){$('#stp').textContent=view=='order'?tr('Шаг {1} из 4',s+1):{hist:tr('Мои заказы'),me:tr('Профиль')}[view]}
+function head(){$('#stp').textContent=view=='order'?tr('Шаг {1} из 4',s+1):{hist:tr('Мои заказы'),biz:tr('Офисам'),me:tr('Профиль')}[view]}
 $('#nx').onclick=()=>s<3?show(s+1):submit();
 $('#bk').onclick=()=>show(s-1);
 
 /* вкладки */
 function tab(v){
-  view=v;['order','hist','me'].forEach(k=>$('#v-'+k).hidden=k!=v);
+  view=v;['order','hist','biz','me'].forEach(k=>$('#v-'+k).hidden=k!=v);
   $$('.tabs button').forEach(b=>b.classList.toggle('on',b.dataset.v==v));
   $('#bar').hidden=$('#prog').hidden=v!='order';
   if(v=='hist')hist();if(v=='me')me();head();scrollTo(0,0)
@@ -284,19 +326,20 @@ async function submit(){
   $('#err').textContent='';
   const P2=Object.assign(load('toza',{}),{nm:g('nm'),ph:g('ph'),ds:g('ds'),ad:g('ad')});store('toza',P2);
   const c=calc(),id='№'+Math.floor(1000+Math.random()*9000);
+  if(c.bon>0){const r=await sb.rpc('use_bonus',{amt:c.bon});if(r.data)BAL-=c.bon;else{BAL=0;c.total+=c.bon;c.bon=0}}
   const ex=$$('[name=ext]:checked').map(e=>EXTRA[e.value][0]).join(', ')||'нет';
   text=[`Заказ ${id}`,`${c.o[1]}: ${c.t[1]} уборка, ${c.a} м²`,`Дополнительно: ${ex}`,
     `Когда: ${ds(D[val('day')])} в ${val('tm')}${+val('rep')?`, повтор: ${CFG.repeat[val('rep')][0].toLowerCase()}`:''}`,`Куда: ${g('ds')} р-н, ${g('ad')}`,`Оплата: ${CFG.pay[val('pay')||0].toLowerCase()}`,GEO&&`Карта: ${GEO}`,
     `Клиент: ${g('nm')}, ${g('ph')}`,LANG!='ru'&&`Язык клиента: ${LANG.toUpperCase()}`,P2.pets&&'Питомцы дома: есть',P2.door&&`Как войти: ${P2.door}`,g('cm')&&`Комментарий: ${g('cm')}`,
-    `Итого: ${fmt(c.total)} сум${c.off?` (скидка ${fmt(c.off)} сум)`:''}`].filter(Boolean).join('\n');
+    c.bon&&`Бонусы: −${fmt(c.bon)} сум`,REF&&`Код друга: ${REF}`,`Итого: ${fmt(c.total)} сум${c.off?` (скидка ${fmt(c.off)} сум)`:''}`].filter(Boolean).join('\n');
   const a=load('toza_orders',[]),sel={obj:val('obj'),typ:val('typ'),area:$('#area').value,ext:$$('[name=ext]:checked').map(e=>e.value)};
   a.unshift({id,at:new Date().toLocaleDateString('ru-RU'),t:text,total:c.total,sel});
   store('toza_orders',a.slice(0,30));
   if(user)sb.auth.updateUser({data:P2});
   $('#nx').disabled=true;
   let ok=false;
-  if(sb){const r=await sb.from('orders').insert({code:id,details:text,total:c.total,sel});ok=!r.error;r.error&&console.warn(r.error.message)}
-  $('#nx').disabled=false;
+  if(sb){const r=await sb.from('orders').insert(Object.assign({code:id,details:text,total:c.total,sel},REF?{ref:REF}:{}));ok=!r.error;r.error&&console.warn(r.error.message)}
+  $('#nx').disabled=false;if(ok){REF='';REFD=0;$('#pm').textContent=''}
   $('#oid').textContent=id;
   $('#dtx').textContent=ok?'Заказ принят. Мы свяжемся с вами, чтобы подтвердить время.':'Не удалось отправить заказ. Нажмите «Отправить в Telegram», и мы его получим.';
   $('#tg').hidden=ok;$('#tg').href=`https://t.me/${CFG.tg}?text=${encodeURIComponent(text)}`;
@@ -370,7 +413,11 @@ $('#pfc').addEventListener('change',savP);
 const pl=n=>n%10==1&&n%100!=11?'заказ':n%10>1&&n%10<5&&(n%100<10||n%100>20)?'заказа':'заказов';
 async function me(){
   const a=await orders(),L=CFG.levels,P=load('toza',{});
-  CNT=a.length;LV=0;L.forEach((l,i)=>CNT>=l[0]&&(LV=i));upd();
+  CNT=a.length;LV=0;L.forEach((l,i)=>CNT>=l[0]&&(LV=i));
+  BAL=0;
+  if(user){const b=await sb.from('bonuses').select('amount');BAL=(b.data||[]).reduce((s,x)=>s+x.amount,0)}
+  upd();$('#rf').hidden=!user;
+  if(user){$('#rfc').textContent=MYC();$('#rfn').textContent=tr('Друг получит скидку {1}%, а вы {2} сум бонусом после его первой уборки',Math.round(CFG.ref.friend*100),fmt(CFG.ref.bonus))+(BAL?' · '+tr('Ваши бонусы: {1} сум',fmt(BAL)):'')}
   const nx=L[LV+1],nm=P.nm||'';
   $('#mn').textContent=nm||'Гость';
   $('#avt').textContent=nm?nm[0].toUpperCase():'👤';
@@ -380,11 +427,35 @@ async function me(){
   $('#lvx').textContent=nx?tr('До уровня «{1}» осталось заказов: {2}',tr(nx[1]),nx[0]-CNT)+(nx[2]?`, ${tr('скидка')} ${Math.round(nx[2]*100)}%`:''):'Высший уровень. Спасибо, что вы с нами!'
 }
 $('#shr').onclick=async()=>{
-  const k=Object.keys(CFG.promo)[0],t=tr('Закажи уборку в Toza со скидкой {1}%, промокод {2}',Math.round(CFG.promo[k]*100),k);
+  const k=Object.keys(CFG.promo)[0],t=user?tr('Закажи уборку в Toza со скидкой {1}% по моему коду {2}',Math.round(CFG.ref.friend*100),MYC()):tr('Закажи уборку в Toza со скидкой {1}%, промокод {2}',Math.round(CFG.promo[k]*100),k),u=location.origin+location.pathname+(user?'?ref='+MYC():'');
   try{
-    if(navigator.share)await navigator.share({text:t,url:location.href});
-    else{await navigator.clipboard.writeText(t+' '+location.href);$('#shr').innerHTML='<span>✅</span>Скопировано'}
+    if(navigator.share)await navigator.share({text:t,url:u});
+    else{await navigator.clipboard.writeText(t+' '+u);$('#shr').innerHTML='<span>✅</span>Скопировано'}
   }catch(e){}
+};
+
+/* офисы, удаление аккаунта, код друга */
+const MYC=()=>user.id.replace(/-/g,'').slice(0,6).toUpperCase();
+const rp=new URLSearchParams(location.search).get('ref');if(rp)$('#pc').value=rp.toUpperCase().slice(0,6);
+$('#bz-ds').innerHTML=$('#ds').innerHTML;
+$('#bz-ph').addEventListener('focus',e=>e.target.value||(e.target.value='+998 '));
+$('#bz-go').onclick=async()=>{
+  const v=k=>$('#bz-'+k).value.trim(),er=$('#bz-err');
+  if(!v('co')||!v('nm')||v('ph').replace(/\D/g,'').length<9||!v('ad')||!$('#bz-ag').checked){er.style.color='#c0392b';er.textContent='Заполните компанию, контакт, телефон, адрес и дайте согласие.';return}
+  const id='К'+Math.floor(1000+Math.random()*9000);
+  const txt=[`🏢 Запрос КП ${id}`,`Офис: регулярная уборка, ${v('m2')||'?'} м²`,`Компания: ${v('co')}`,`Когда: ${v('fr')}`,`Куда: ${v('ds')||'не указан'} р-н, ${v('ad')}`,'Оплата: безналичный расчёт',`Клиент: ${v('nm')}, ${v('ph')}`,LANG!='ru'&&`Язык клиента: ${LANG.toUpperCase()}`,v('cm')&&`Комментарий: ${v('cm')}`].filter(Boolean).join('\n');
+  $('#bz-go').disabled=true;
+  const r=sb?await sb.from('orders').insert({code:id,details:txt,total:0,sel:{lead:1}}):{error:1};
+  $('#bz-go').disabled=false;
+  er.style.color=r.error?'#c0392b':'#0a5f63';
+  er.textContent=r.error?'Не удалось отправить. Позвоните нам или напишите в Telegram.':'Заявка отправлена. Мы подготовим предложение и свяжемся с вами.';
+  if(!r.error)['co','nm','m2','ad','cm'].forEach(k=>$('#bz-'+k).value='')
+};
+$('#del').onclick=async()=>{
+  if(!confirm(tr('Удалить аккаунт и все ваши данные? Это нельзя отменить.')))return;
+  const r=await sb.rpc('delete_my_account');
+  if(r.error){$('#am').textContent=tr('Не удалось удалить аккаунт, попробуйте позже');return}
+  await sb.auth.signOut({scope:'local'});store('toza');store('toza_orders');fillP();me();$('#am').textContent=tr('Аккаунт удалён')
 };
 
 /* геопозиция */

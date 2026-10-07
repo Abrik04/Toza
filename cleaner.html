@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Toza · мои заказы</title><meta name="robots" content="noindex"><meta name="theme-color" content="#0a5f63">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;700&family=Unbounded:wght@700&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#0b2e33;--tq:#0e8c8c;--deep:#0a5f63;--gold:#f4b63f;--tile:#e3f3f1;--ln:#d5e3e1;--bg:#f2f7f6}
+*{box-sizing:border-box;margin:0}body{font:500 16px/1.5 Manrope,system-ui,sans-serif;background:var(--bg);color:var(--ink);padding-bottom:30px}
+.logo{font:700 22px Unbounded,sans-serif}.logo i{color:var(--gold);font-style:normal}
+header{display:flex;gap:10px;align-items:center;justify-content:space-between;padding:calc(12px + env(safe-area-inset-top,0px)) 16px 12px;background:var(--deep);color:#fff}
+header button{border:0;border-radius:99px;padding:6px 14px;background:#ffffff29;color:#fff;font:700 13px Manrope}
+main,#lg{max-width:520px;margin:auto;padding:16px}
+#lg{display:grid;gap:12px;margin-top:10vh}#lg input{padding:14px;border:2px solid var(--ln);border-radius:14px;font:inherit}
+.go{border:0;border-radius:99px;padding:14px;background:var(--gold);color:var(--ink);font:700 16px Manrope}
+h2{font:700 16px Unbounded,sans-serif;margin:18px 0 10px}h2 small{font:500 13px Manrope;opacity:.6}
+.c{background:#fff;border:2px solid var(--ln);border-radius:20px;padding:14px 16px;margin-bottom:12px}.c p{margin:6px 0}.n{background:var(--tile);border-radius:10px;padding:6px 10px;font-size:14px}
+.h{display:flex;gap:10px;align-items:center}.t{font:700 26px Unbounded,sans-serif}.pill{margin-left:auto;padding:3px 10px;border-radius:99px;font-size:12px;font-weight:700}
+.new{background:#f4b63f33;color:#9a6a00}.way{background:#0e8c8c24;color:var(--tq)}
+a{color:var(--tq);font-weight:700}.b{display:flex;gap:8px;margin-top:10px}.b button{flex:1;border:2px solid var(--ln);background:#fff;border-radius:99px;padding:12px;font:700 15px Manrope}.b .ok{background:var(--tq);border-color:var(--tq);color:#fff}
+.mut{opacity:.65}
+</style></head><body>
+<div id="lg"><div class="logo">Toza<i>.</i></div><input id="em" type="email" placeholder="Почта"><input id="pw" type="password" placeholder="Пароль"><button class="go" id="li" type="button">Войти</button><p id="m" class="mut"></p></div>
+<div id="app" hidden><header><div class="logo">Toza<i>.</i></div><small id="who"></small><button id="out" type="button">Выйти</button></header><main><div id="ls"></div></main></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="config.js"></script>
+<script>
+const $=s=>document.querySelector(s);
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fm=n=>Math.round(n||0).toLocaleString('ru-RU');
+const U=new URL(/^https?:/i.test(CFG.sb.url.trim())?CFG.sb.url.trim():'https://'+CFG.sb.url.trim()).origin;
+const sb=supabase.createClient(U,CFG.sb.key.trim());
+const day=d=>new Date(d.getFullYear(),d.getMonth(),d.getDate()).getTime();
+function parse(o){
+  const L=(o.details||'').split('\n'),g=p=>{const l=L.find(x=>x.startsWith(p));return l?l.slice(p.length).trim():''};
+  const w=g('Куда:').match(/^(.*?) р-н,\s*(.*)$/),cl=g('Клиент:').match(/^(.*),\s*(\+?[\d\s()-]{7,})$/),k=g('Когда:').match(/(\d+)\.(\d+) в (\d+):(\d+)/);
+  let at=k?new Date(new Date().getFullYear(),k[2]-1,k[1],k[3],k[4]):new Date(o.created_at);
+  if(k&&at<Date.now()-180*864e5)at.setFullYear(at.getFullYear()+1);
+  return{at,time:k?k[3]+':'+k[4]:'',district:w?w[1]:'',addr:w?w[2]:g('Куда:'),name:cl?cl[1]:g('Клиент:'),phone:cl?cl[2].replace(/\D/g,''):'',job:L[1]||'',
+    extra:g('Дополнительно:'),pay:g('Оплата:'),map:g('Карта:'),notes:L.filter(x=>/^(Питомцы|Как войти|Комментарий)/.test(x))}
+}
+const card=o=>{const p=o.p;return`<div class="c" data-id="${o.id}"><div class="h"><span class="t">${esc(p.time)||'—'}</span><b>${esc(p.district)}</b><span class="pill ${o.status}">${o.status=='way'?'Выезжаем':'Новый'}</span></div>
+<p>📍 ${esc(p.addr)} ${/^https:\/\/maps\.google\.com\//.test(p.map)?`<a href="${esc(p.map)}" target="_blank" rel="noopener">карта</a>`:''}</p>
+<p>👤 ${esc(p.name)} ${p.phone?`<a href="tel:+${p.phone}">позвонить</a>`:''}</p>
+<p>🧼 ${esc(p.job)}${p.extra&&p.extra!='нет'?'<br>+ '+esc(p.extra):''}</p>${p.notes.map(n=>`<p class="n">${esc(n)}</p>`).join('')}
+<p>💳 ${esc(p.pay)} · <b>${fm(o.total)} сум</b></p>
+<div class="b"><button data-s="way" type="button">Выезжаю</button><button data-s="done" class="ok" type="button">Выполнено</button></div></div>`};
+function draw(rows){
+  const g={};rows.forEach(o=>{(g[day(o.p.at)]=g[day(o.p.at)]||[]).push(o)});
+  const t=day(new Date()),tm=t+864e5;
+  $('#ls').innerHTML=Object.keys(g).sort((a,b)=>a-b).map(k=>{
+    const lab=+k==t?'Сегодня':+k==tm?'Завтра':new Date(+k).toLocaleDateString('ru-RU',{weekday:'short',day:'numeric',month:'long'});
+    return`<h2>${lab} <small>${g[k].length}</small></h2>`+g[k].sort((a,b)=>a.p.at-b.p.at).map(card).join('')
+  }).join('')||'<p class="mut">Назначенных заказов пока нет</p>'
+}
+async function load(){
+  const c=await sb.from('cleaners').select('name');
+  if(!c.data||!c.data.length){$('#m').textContent='Нет доступа: эта почта не добавлена в список клинеров.';return}
+  $('#lg').hidden=true;$('#app').hidden=false;$('#who').textContent=c.data[0].name;
+  const r=await sb.from('orders').select('id,code,details,total,status,created_at').in('status',['new','way']).order('created_at').limit(200);
+  draw((r.data||[]).map(o=>({...o,p:parse(o)})))
+}
+$('#ls').onclick=async e=>{
+  const s=e.target.dataset.s,c=e.target.closest('[data-id]');if(!s||!c)return;
+  if(s=='done'&&!confirm('Заказ выполнен?'))return;
+  e.target.disabled=true;
+  const r=await sb.from('orders').update({status:s}).eq('id',c.dataset.id);
+  r.error?alert('Не удалось сохранить, проверьте интернет'):load()
+};
+$('#li').onclick=async()=>{const r=await sb.auth.signInWithPassword({email:$('#em').value.trim(),password:$('#pw').value});r.error?$('#m').textContent='Неверная почта или пароль':load()};
+$('#out').onclick=async()=>{await sb.auth.signOut();location.reload()};
+sb.auth.getSession().then(({data})=>data.session&&load());
+setInterval(()=>{$('#app').hidden||load()},60000);
+</script></body></html>

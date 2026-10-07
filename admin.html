@@ -60,6 +60,7 @@ details summary{cursor:pointer;color:var(--mut);font-size:13px}pre{white-space:p
     <button class="ctl" id="rf" title="Обновить">⟳</button><button class="ctl" id="csv" title="Скачать все заказы">⬇ CSV</button><button class="ctl" id="th" title="Тема">🌓</button><button class="ctl" id="out">Выйти</button></div>
     <div id="v"></div></main>
 </div>
+<datalist id="cn"></datalist>
 <div id="tt" class="toast" hidden></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="config.js"></script>
@@ -118,7 +119,7 @@ const card=o=>{const p=o.p;return`<div class="card oc" data-id="${o.id}"><div cl
 <div class="om">📍 ${esc(p.district)}, ${esc(p.addr)} ${/^https:\/\/maps\.google\.com\//.test(p.map)?`<a href="${esc(p.map)}" target="_blank" rel="noopener">на карте</a>`:''}</div>
 <div class="om">🧼 ${esc(p.obj)} · ${esc(p.type)} · ${esc(p.when)} · ${esc(p.pay)}</div>
 <details><summary>Весь заказ</summary><pre>${esc(o.details)}</pre></details>
-<div class="row">${Object.keys(ST).map(k=>`<button class="s ${o.status==k?'on':''}" data-s="${k}">${ST[k][0]}</button>`).join('')}<input placeholder="Кто выезжает" value="${esc(o.assignee)}" data-a></div></div>`};
+<div class="row">${Object.keys(ST).map(k=>`<button class="s ${o.status==k?'on':''}" data-s="${k}">${ST[k][0]}</button>`).join('')}<input placeholder="Кто выезжает" list="cn" value="${esc(o.assignee)}" data-a></div></div>`};
 function ord(){
   const q=$('#q').value.trim().toLowerCase(),base=all.filter(o=>!q||[o.code,o.p.name,o.p.phone,o.p.addr,o.p.district,o.assignee].join(' ').toLowerCase().includes(q));
   const a=base.filter(o=>flt=='all'||o.status==flt),ch=[['all','Все',base.length],...Object.keys(ST).map(k=>[k,ST[k][0],base.filter(o=>o.status==k).length])];
@@ -142,6 +143,7 @@ async function load(){
   const a=await sb.from('staff').select('email');
   if(!a.data||!a.data.length){$('#m').textContent='Нет доступа: эта почта не добавлена в таблицу staff.';return}
   $('#lg').hidden=true;$('#app').hidden=false;
+  const cn=await sb.from('cleaners').select('name');$('#cn').innerHTML=(cn.data||[]).map(x=>`<option value="${esc(x.name)}">`).join('');
   const s=await sb.auth.getSession();$('#me').textContent=s.data.session?s.data.session.user.email:'';
   const r=await sb.from('orders').select('id,code,details,total,status,assignee,created_at').order('created_at',{ascending:false}).limit(1000);
   all=(r.data||[]).map(o=>({...o,t:+new Date(o.created_at),p:parse(o)}));
