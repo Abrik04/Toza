@@ -1,34 +1,75 @@
 <!DOCTYPE html>
 <html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Toza · мои заказы</title><meta name="robots" content="noindex"><meta name="theme-color" content="#0a5f63">
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;700&family=Unbounded:wght@700&display=swap" rel="stylesheet">
+<meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Toza клинер"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;700&family=Unbounded:wght@600;700&display=swap" rel="stylesheet">
 <style>
-:root{--ink:#0b2e33;--tq:#0e8c8c;--deep:#0a5f63;--gold:#f4b63f;--tile:#e3f3f1;--ln:#d5e3e1;--bg:#f2f7f6}
-*{box-sizing:border-box;margin:0}body{font:500 16px/1.5 Manrope,system-ui,sans-serif;background:var(--bg);color:var(--ink);padding-bottom:30px}
+:root{--ink:#0b2e33;--tq:#0e8c8c;--deep:#0a5f63;--gold:#f4b63f;--tile:#e3f3f1;--ln:#d9e6e4;--bg:#f2f7f6;--grn:#2e9e6b;--red:#c0392b}
+*{box-sizing:border-box;margin:0;-webkit-tap-highlight-color:transparent}[hidden]{display:none!important}
+body{font:500 16px/1.5 Manrope,system-ui,sans-serif;background:var(--bg);color:var(--ink);padding-bottom:calc(40px + env(safe-area-inset-bottom,0px))}
 .logo{font:700 22px Unbounded,sans-serif}.logo i{color:var(--gold);font-style:normal}
-header{display:flex;gap:10px;align-items:center;justify-content:space-between;padding:calc(12px + env(safe-area-inset-top,0px)) 16px 12px;background:var(--deep);color:#fff}
-header button{border:0;border-radius:99px;padding:6px 14px;background:#ffffff29;color:#fff;font:700 13px Manrope}
-main,#lg{max-width:520px;margin:auto;padding:16px}
-#lg{display:grid;gap:12px;margin-top:10vh}#lg input{padding:14px;border:2px solid var(--ln);border-radius:14px;font:inherit}
-.go{border:0;border-radius:99px;padding:14px;background:var(--gold);color:var(--ink);font:700 16px Manrope}
-h2{font:700 16px Unbounded,sans-serif;margin:18px 0 10px}h2 small{font:500 13px Manrope;opacity:.6}
-.c{background:#fff;border:2px solid var(--ln);border-radius:20px;padding:14px 16px;margin-bottom:12px}.c p{margin:6px 0}.n{background:var(--tile);border-radius:10px;padding:6px 10px;font-size:14px}
-.h{display:flex;gap:10px;align-items:center}.t{font:700 26px Unbounded,sans-serif}.pill{margin-left:auto;padding:3px 10px;border-radius:99px;font-size:12px;font-weight:700}
-.new{background:#f4b63f33;color:#9a6a00}.way{background:#0e8c8c24;color:var(--tq)}
-a{color:var(--tq);font-weight:700}.b{display:flex;gap:8px;margin-top:10px}.b button{flex:1;border:2px solid var(--ln);background:#fff;border-radius:99px;padding:12px;font:700 15px Manrope}.b .ok{background:var(--tq);border-color:var(--tq);color:#fff}
-.mut{opacity:.65}
+a{color:inherit;text-decoration:none}small{font-size:12px}
+#lg{max-width:400px;margin:0 auto;padding:12vh 20px 20px;display:grid;gap:12px}
+#lg input{padding:15px;border:2px solid var(--ln);border-radius:16px;font:inherit;background:#fff}
+#lg .logo{font-size:34px;margin-bottom:6px}#m{color:var(--red);font-weight:700;font-size:14px;min-height:20px}
+.big{border:0;border-radius:99px;padding:15px;background:var(--gold);color:var(--ink);font:700 16px Manrope;cursor:pointer}
+header{position:sticky;top:0;z-index:5;color:#fff;background:var(--deep) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' fill='none' stroke='%23fff' stroke-opacity='.1'%3E%3Crect x='12' y='12' width='36' height='36'/%3E%3Crect x='12' y='12' width='36' height='36' transform='rotate(45 30 30)'/%3E%3C/svg%3E");padding:calc(10px + env(safe-area-inset-top,0px)) 16px 12px;border-radius:0 0 24px 24px}
+.top{display:flex;align-items:center;gap:10px}.who{flex:1;font-weight:700;opacity:.9;text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.top button{border:0;border-radius:99px;padding:7px 14px;background:#ffffff29;color:#fff;font:700 13px Manrope;cursor:pointer}
+.sum{display:grid;grid-template-columns:1fr 1fr 1.4fr;gap:8px;margin:14px 0 12px}.sum div{background:#ffffff1f;border-radius:14px;padding:8px 10px}.sum b{display:block;font:700 18px Unbounded,sans-serif}.sum small{opacity:.85;line-height:1.2;display:block}
+.seg{display:flex;background:#00000026;border-radius:99px;padding:3px}.seg button{flex:1;border:0;background:none;color:#fff;border-radius:99px;padding:8px 4px;font:700 13px Manrope;cursor:pointer}.seg .on{background:#fff;color:var(--deep)}.seg i{font-style:normal;opacity:.7;margin-left:3px}
+.lg{display:flex;gap:4px}.lg button{border:0;border-radius:99px;padding:5px 10px;font:700 12px Manrope;cursor:pointer}header .lg button{background:#ffffff29;color:#fff}#lg .lg{justify-self:end}#lg .lg button{background:var(--tile);color:var(--ink)}.lg .on{background:var(--gold)!important;color:var(--ink)!important}
+.off{margin:12px 16px 0;padding:10px 14px;border-radius:14px;background:#f4b63f33;font-size:14px;font-weight:700}
+main{max-width:560px;margin:0 auto;padding:14px 16px}
+.c{background:#fff;border:1px solid var(--ln);border-left:6px solid var(--gold);border-radius:20px;padding:14px 16px;margin-bottom:14px;box-shadow:0 8px 24px #0b2e330d}
+.c.way{border-left-color:var(--tq)}.c.done{border-left-color:var(--grn);opacity:.78}
+.c p{margin:8px 0}.h{display:flex;align-items:center;gap:12px}.t{font:700 30px Unbounded,sans-serif;line-height:1}.hd{flex:1;display:grid}.hd small{opacity:.6}
+.pill,.rl{padding:4px 11px;border-radius:99px;font-size:12px;font-weight:700;white-space:nowrap}.pill.new,.rl{background:#f4b63f38;color:#8a5f00}.pill.way{background:#0e8c8c24;color:var(--tq)}.pill.done{background:#2e9e6b24;color:var(--grn)}.rl.late{background:#c0392b22;color:var(--red)}
+.ad{font-weight:700;font-size:17px}
+.ac{display:flex;gap:8px}.bt{flex:1;text-align:center;border:2px solid var(--ln);border-radius:14px;padding:11px 8px;font-weight:700;font-size:14px;background:var(--bg)}
+.n{background:#f4b63f2e;border-radius:12px;padding:8px 12px;font-size:14px;font-weight:700}
+.pay{font-size:14px}.pay.cash{background:#2e9e6b1c;border-radius:12px;padding:9px 12px;color:#1f7a50;font-weight:700}.pay b{font-size:16px}
+.go{width:100%;border:0;border-radius:16px;padding:16px;margin-top:6px;font:700 17px Manrope;color:#fff;background:var(--tq);cursor:pointer}.go.way{background:var(--grn)}.go:active{transform:scale(.98)}
+.em{background:#fff;border:1px dashed var(--ln);border-radius:20px;padding:28px 18px;text-align:center;opacity:.8}
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:#fff;padding:11px 20px;border-radius:99px;font-weight:700;z-index:50;max-width:90vw}
 </style></head><body>
-<div id="lg"><div class="logo">Toza<i>.</i></div><input id="em" type="email" placeholder="Почта"><input id="pw" type="password" placeholder="Пароль"><button class="go" id="li" type="button">Войти</button><p id="m" class="mut"></p></div>
-<div id="app" hidden><header><div class="logo">Toza<i>.</i></div><small id="who"></small><button id="out" type="button">Выйти</button></header><main><div id="ls"></div></main></div>
+<div id="lg"><div class="lg"><button data-l="ru" type="button">RU</button><button data-l="uz" type="button">UZ</button></div><div class="logo">Toza<i>.</i></div><p>Вход для клинеров</p><input id="em" type="email" placeholder="Почта" autocomplete="email"><input id="pw" type="password" placeholder="Пароль" autocomplete="current-password"><button class="big" id="li" type="button">Войти</button><p id="m" role="alert"></p></div>
+<div id="app" hidden>
+  <header><div class="top"><div class="logo">Toza<i>.</i></div><div class="who" id="who"></div><div class="lg"><button data-l="ru" type="button">RU</button><button data-l="uz" type="button">UZ</button></div><button id="rf" type="button" aria-label="Обновить">⟳</button><button id="out" type="button">Выйти</button></div>
+    <div class="sum" id="sum"></div>
+    <nav class="seg"><button data-t="today" class="on">Сегодня<i id="c1"></i></button><button data-t="soon">Скоро<i id="c2"></i></button><button data-t="done">Готово<i id="c3"></i></button></nav></header>
+  <div id="off" class="off" hidden>Нет связи. Показан последний сохранённый список.</div>
+  <main id="ls"></main>
+</div>
+<div id="tt" class="toast" hidden></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="config.js"></script>
 <script>
-const $=s=>document.querySelector(s);
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const fm=n=>Math.round(n||0).toLocaleString('ru-RU');
 const U=new URL(/^https?:/i.test(CFG.sb.url.trim())?CFG.sb.url.trim():'https://'+CFG.sb.url.trim()).origin;
 const sb=supabase.createClient(U,CFG.sb.key.trim());
 const day=d=>new Date(d.getFullYear(),d.getMonth(),d.getDate()).getTime();
+let rows=[],tab='today';
+let LANG=(()=>{try{const s=localStorage.getItem('cl_lang');if(s)return s}catch(e){}return /^uz/i.test(navigator.language)?'uz':'ru'})();
+const M={'Вход для клинеров':'Tozalovchilar uchun kirish','Почта':'E-pochta','Пароль':'Parol','Войти':'Kirish','Выйти':'Chiqish','Сегодня':'Bugun','Скоро':'Tez orada','Готово':'Tayyor',
+'Нет связи. Показан последний сохранённый список.':'Aloqa yoʻq. Oxirgi saqlangan roʻyxat koʻrsatilmoqda.','Нет связи. Проверьте интернет.':'Aloqa yoʻq. Internetni tekshiring.',
+'Нет доступа: эта почта не добавлена в список клинеров.':'Ruxsat yoʻq: bu e-pochta tozalovchilar roʻyxatiga qoʻshilmagan.','Неверная почта или пароль':'E-pochta yoki parol notoʻgʻri',
+'Обновляем…':'Yangilanmoqda…','Новых заказов: {1}':'Yangi buyurtmalar: {1}','Не удалось сохранить. Проверьте интернет.':'Saqlab boʻlmadi. Internetni tekshiring.',
+'Отметили: вы выезжаете':'Belgilandi: yoʻldasiz','Заказ выполнен ✓':'Buyurtma bajarildi ✓','Заказ выполнен?':'Buyurtma bajarildimi?',
+'осталось сегодня':'bugun qoldi','выполнено':'bajarildi','наличных собрано, сум':'yigʻilgan naqd, soʻm','через {1}':'{1} dan keyin','опаздываем на {1}':'{1} kechikdik','ч':'soat','мин':'daq',
+'Новый':'Yangi','В пути':'Yoʻlda','Выполнен':'Bajarildi','🧭 Маршрут':'🧭 Yoʻnalish','Позвонить':'Qoʻngʻiroq','💵 Получить наличными: ':'💵 Naqd olish: ','Выезжаю':'Yoʻlga chiqdim','Выполнено ✓':'Bajarildi ✓','сум':'soʻm',
+'На сегодня заказов нет. Проверьте вкладку «Скоро».':'Bugunga buyurtmalar yoʻq. «Tez orada» boʻlimini tekshiring.','Ближайших заказов пока нет.':'Yaqin orada buyurtmalar yoʻq.','Выполненных заказов пока нет.':'Bajarilgan buyurtmalar hozircha yoʻq.',
+'Квартира':'Kvartira','Дом':'Uy','Офис':'Ofis','Поддерживающая уборка':'Muntazam tozalash','Генеральная уборка':'Chuqur tozalash','После ремонта уборка':'Taʼmirdan keyingi tozalash','регулярная уборка':'muntazam tozalash',
+'Окна (до 5 шт)':'Derazalar (5 tagacha)','Духовка':'Duxovka','Холодильник':'Muzlatgich','Балкон':'Balkon','Чистка дивана':'Divan tozalash','нет':'yoʻq',
+'наличными':'naqd','картой':'karta bilan','переводом':'oʻtkazma','безналичный расчёт':'naqdsiz hisob-kitob','Питомцы дома':'Uyda hayvonlar','есть':'bor','Как войти':'Qanday kirish','Комментарий':'Izoh'};
+const t=(s,a)=>(LANG=='uz'?M[s]||s:s).replace('{1}',a);
+const tj=s=>{if(LANG=='ru')return s;const i=s.indexOf(': '),r=s.slice(i+2).split(', ');return t(s.slice(0,i))+': '+t(r[0])+r.slice(1).map(x=>', '+x.replace('м²','m²')).join('')};
+const tn=n=>{if(LANG=='ru')return n;const i=n.indexOf(': '),l=n.slice(0,i);return t(l)+': '+(l=='Питомцы дома'?t(n.slice(i+2)):n.slice(i+2))};
+const WD=['yak','du','se','chor','pay','jum','shan'],MO=['yan','fev','mar','apr','may','iyun','iyul','avg','sen','okt','noy','dek'];
+const fd=d=>LANG=='uz'?`${WD[d.getDay()]}, ${d.getDate()} ${MO[d.getMonth()]}`:d.toLocaleDateString('ru-RU',{weekday:'short',day:'numeric',month:'short'});
 function parse(o){
   const L=(o.details||'').split('\n'),g=p=>{const l=L.find(x=>x.startsWith(p));return l?l.slice(p.length).trim():''};
   const w=g('Куда:').match(/^(.*?) р-н,\s*(.*)$/),cl=g('Клиент:').match(/^(.*),\s*(\+?[\d\s()-]{7,})$/),k=g('Когда:').match(/(\d+)\.(\d+) в (\d+):(\d+)/);
@@ -37,36 +78,81 @@ function parse(o){
   return{at,time:k?k[3]+':'+k[4]:'',district:w?w[1]:'',addr:w?w[2]:g('Куда:'),name:cl?cl[1]:g('Клиент:'),phone:cl?cl[2].replace(/\D/g,''):'',job:L[1]||'',
     extra:g('Дополнительно:'),pay:g('Оплата:'),map:g('Карта:'),notes:L.filter(x=>/^(Питомцы|Как войти|Комментарий)/.test(x))}
 }
-const card=o=>{const p=o.p;return`<div class="c" data-id="${o.id}"><div class="h"><span class="t">${esc(p.time)||'—'}</span><b>${esc(p.district)}</b><span class="pill ${o.status}">${o.status=='way'?'Выезжаем':'Новый'}</span></div>
-<p>📍 ${esc(p.addr)} ${/^https:\/\/maps\.google\.com\//.test(p.map)?`<a href="${esc(p.map)}" target="_blank" rel="noopener">карта</a>`:''}</p>
-<p>👤 ${esc(p.name)} ${p.phone?`<a href="tel:+${p.phone}">позвонить</a>`:''}</p>
-<p>🧼 ${esc(p.job)}${p.extra&&p.extra!='нет'?'<br>+ '+esc(p.extra):''}</p>${p.notes.map(n=>`<p class="n">${esc(n)}</p>`).join('')}
-<p>💳 ${esc(p.pay)} · <b>${fm(o.total)} сум</b></p>
-<div class="b"><button data-s="way" type="button">Выезжаю</button><button data-s="done" class="ok" type="button">Выполнено</button></div></div>`};
-function draw(rows){
-  const g={};rows.forEach(o=>{(g[day(o.p.at)]=g[day(o.p.at)]||[]).push(o)});
-  const t=day(new Date()),tm=t+864e5;
-  $('#ls').innerHTML=Object.keys(g).sort((a,b)=>a-b).map(k=>{
-    const lab=+k==t?'Сегодня':+k==tm?'Завтра':new Date(+k).toLocaleDateString('ru-RU',{weekday:'short',day:'numeric',month:'long'});
-    return`<h2>${lab} <small>${g[k].length}</small></h2>`+g[k].sort((a,b)=>a.p.at-b.p.at).map(card).join('')
-  }).join('')||'<p class="mut">Назначенных заказов пока нет</p>'
+const cash=p=>/налич/i.test(p.pay);
+const route=p=>/^https:\/\/maps\.google\.com\//.test(p.map)?p.map:'https://yandex.com/maps/?text='+encodeURIComponent('Ташкент, '+p.district+' район, '+p.addr);
+const dur=m=>(m>=60?Math.floor(m/60)+' '+t('ч')+' ':'')+(m%60)+' '+t('мин');
+const rel=o=>{
+  if(o.status!='new'||day(o.p.at)!=day(new Date()))return'';
+  const m=Math.round((o.p.at-Date.now())/6e4);
+  return m>=0?`<span class="rl">${t('через {1}',dur(m))}</span>`:`<span class="rl late">${t('опаздываем на {1}',dur(-m))}</span>`
+};
+const card=o=>{const p=o.p,d=o.status=='done';return`<article class="c ${o.status}" data-id="${o.id}">
+<div class="h"><span class="t">${esc(p.time)||'—'}</span><div class="hd"><b>${esc(p.district)||'—'}</b><small>${fd(p.at)}</small></div>${rel(o)||`<span class="pill ${o.status}">${t({new:'Новый',way:'В пути',done:'Выполнен'}[o.status])}</span>`}</div>
+<p class="ad">📍 ${esc(p.addr)}</p>
+<div class="ac"><a class="bt" href="${esc(route(p))}" target="_blank" rel="noopener">${t('🧭 Маршрут')}</a>${p.phone?`<a class="bt" href="tel:+${p.phone}">📞 ${esc(p.name)||t('Позвонить')}</a>`:''}</div>
+<p>🧼 ${esc(tj(p.job))}${p.extra&&p.extra!='нет'?'<br>➕ '+esc(p.extra.split(', ').map(x=>t(x)).join(', ')):''}</p>${p.notes.map(n=>`<p class="n">⚠️ ${esc(tn(n))}</p>`).join('')}
+<p class="pay ${cash(p)&&!d?'cash':''}">${cash(p)&&!d?t('💵 Получить наличными: '):'💳 '+esc(t(p.pay))+' · '}<b>${fm(o.total)} ${t('сум')}</b></p>
+${d?'':`<button class="go ${o.status}" data-s="${o.status=='new'?'way':'done'}" type="button">${t(o.status=='new'?'Выезжаю':'Выполнено ✓')}</button>`}</article>`};
+function draw(){
+  const td=day(new Date()),act=rows.filter(o=>o.status=='new'||o.status=='way'),by=(a,b)=>a.p.at-b.p.at;
+  const L={today:act.filter(o=>day(o.p.at)<=td).sort(by),soon:act.filter(o=>day(o.p.at)>td).sort(by),done:rows.filter(o=>o.status=='done').sort((a,b)=>b.p.at-a.p.at).slice(0,30)};
+  const dt=rows.filter(o=>o.status=='done'&&day(o.p.at)==td),sm=a=>a.filter(o=>cash(o.p)).reduce((s,o)=>s+(o.total||0),0);
+  $('#c1').textContent=L.today.length;$('#c2').textContent=L.soon.length;$('#c3').textContent=L.done.length;
+  $('#sum').innerHTML=`<div><b>${L.today.length}</b><small>${t('осталось сегодня')}</small></div><div><b>${dt.length}</b><small>${t('выполнено')}</small></div><div><b>${fm(sm(dt))}</b><small>${t('наличных собрано, сум')}</small></div>`;
+  $$('.seg button').forEach(b=>b.classList.toggle('on',b.dataset.t==tab));
+  $('#ls').innerHTML=L[tab].map(card).join('')||`<div class="em">${t({today:'На сегодня заказов нет. Проверьте вкладку «Скоро».',soon:'Ближайших заказов пока нет.',done:'Выполненных заказов пока нет.'}[tab])}</div>`
+}
+function toast(t){const e=$('#tt');e.textContent=t;e.hidden=false;clearTimeout(toast.i);toast.i=setTimeout(()=>e.hidden=true,3000)}
+function show(name,raw){
+  const prev=new Set(rows.map(o=>o.id));
+  rows=raw.filter(o=>o.status!='cancel').map(o=>({...o,p:parse(o)}));
+  $('#lg').hidden=true;$('#app').hidden=false;$('#m').textContent='';$('#who').textContent=name;
+  const fresh=rows.filter(o=>!prev.has(o.id)&&o.status=='new').length;
+  if(prev.size&&fresh){toast(t('Новых заказов: {1}',fresh));navigator.vibrate&&navigator.vibrate(200)}
+  draw()
+}
+function offline(){
+  let k=null;try{k=JSON.parse(localStorage.getItem('cl'))}catch(e){}
+  if(k){show(k.name,k.rows);$('#off').hidden=false}else $('#m').textContent=t('Нет связи. Проверьте интернет.')
 }
 async function load(){
   const c=await sb.from('cleaners').select('name');
-  if(!c.data||!c.data.length){$('#m').textContent='Нет доступа: эта почта не добавлена в список клинеров.';return}
-  $('#lg').hidden=true;$('#app').hidden=false;$('#who').textContent=c.data[0].name;
-  const r=await sb.from('orders').select('id,code,details,total,status,created_at').in('status',['new','way']).order('created_at').limit(200);
-  draw((r.data||[]).map(o=>({...o,p:parse(o)})))
+  if(c.error)return offline();
+  if(!c.data||!c.data.length){$('#m').textContent=t('Нет доступа: эта почта не добавлена в список клинеров.');return}
+  const r=await sb.from('orders').select('id,code,details,total,status,created_at').order('created_at',{ascending:false}).limit(300);
+  if(r.error)return offline();
+  try{localStorage.setItem('cl',JSON.stringify({name:c.data[0].name,rows:r.data||[]}))}catch(e){}
+  $('#off').hidden=true;show(c.data[0].name,r.data||[])
 }
 $('#ls').onclick=async e=>{
-  const s=e.target.dataset.s,c=e.target.closest('[data-id]');if(!s||!c)return;
-  if(s=='done'&&!confirm('Заказ выполнен?'))return;
-  e.target.disabled=true;
-  const r=await sb.from('orders').update({status:s}).eq('id',c.dataset.id);
-  r.error?alert('Не удалось сохранить, проверьте интернет'):load()
+  const b=e.target.closest('[data-s]'),c=e.target.closest('[data-id]');if(!b||!c)return;
+  const o=rows.find(x=>x.id==c.dataset.id),s=b.dataset.s;
+  if(s=='done'&&!confirm(t('Заказ выполнен?')))return;
+  const old=o.status;o.status=s;draw();
+  const r=await sb.from('orders').update({status:s}).eq('id',o.id);
+  if(r.error){o.status=old;draw();toast(t('Не удалось сохранить. Проверьте интернет.'))}else toast(t(s=='way'?'Отметили: вы выезжаете':'Заказ выполнен ✓'))
 };
-$('#li').onclick=async()=>{const r=await sb.auth.signInWithPassword({email:$('#em').value.trim(),password:$('#pw').value});r.error?$('#m').textContent='Неверная почта или пароль':load()};
-$('#out').onclick=async()=>{await sb.auth.signOut();location.reload()};
+$$('.seg button').forEach(b=>b.onclick=()=>{tab=b.dataset.t;draw();scrollTo(0,0)});
+$('#rf').onclick=()=>{load();toast(t('Обновляем…'))};
+$('#li').onclick=async()=>{
+  $('#m').textContent='';const r=await sb.auth.signInWithPassword({email:$('#em').value.trim(),password:$('#pw').value});
+  if(r.error)$('#m').textContent=t('Неверная почта или пароль');else load()
+};
+$('#out').onclick=async()=>{await sb.auth.signOut();try{localStorage.removeItem('cl')}catch(e){}location.reload()};
+function tx(){
+  ['#lg','header','#off'].forEach(s=>{
+    const w=document.createTreeWalker($(s),NodeFilter.SHOW_TEXT);let n;
+    while(n=w.nextNode()){if(n._o==null)n._o=n.nodeValue;const x=n._o.trim();if(!x)continue;const v=n._o.replace(x,()=>t(x));if(n.nodeValue!==v)n.nodeValue=v}
+    $(s).querySelectorAll('[placeholder]').forEach(e=>{e._p=e._p||e.placeholder;e.placeholder=t(e._p)})
+  })
+}
+function setLang(l){
+  LANG=l;try{localStorage.setItem('cl_lang',l)}catch(e){}document.documentElement.lang=l;
+  $$('.lg button').forEach(b=>b.classList.toggle('on',b.dataset.l==l));tx();draw()
+}
+$$('.lg button').forEach(b=>b.onclick=()=>setLang(b.dataset.l));
+setLang(LANG);
 sb.auth.getSession().then(({data})=>data.session&&load());
 setInterval(()=>{$('#app').hidden||load()},60000);
+setInterval(()=>{$('#app').hidden||draw()},30000);
 </script></body></html>
