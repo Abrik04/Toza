@@ -54,6 +54,11 @@ input:focus-visible+.opt{outline:3px solid var(--gold)}
 .lg{display:flex;gap:4px}.lg button{border:0;border-radius:99px;padding:5px 9px;font:700 12px Manrope,sans-serif;background:#ffffff26;color:#fff;cursor:pointer}.lg .on{background:var(--gold);color:var(--ink)}
 #stp{white-space:nowrap;font-size:13px}
 .rf{background:var(--tile);border-radius:14px;padding:12px 14px;margin:10px 0;display:grid;gap:2px}.rf b{font:700 22px Unbounded,sans-serif;letter-spacing:2px;color:var(--deep)}
+.rst{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}.rst div{background:#fff;border-radius:12px;padding:8px 4px;text-align:center}.rst b{display:block;font:700 16px Unbounded,sans-serif;letter-spacing:0;color:var(--ink)}.rst small{line-height:1.2;display:block}
+#set{width:min(100%,560px);max-width:100%;margin:auto auto 0;border-radius:26px 26px 0 0;max-height:92vh;overflow:auto;padding:20px 18px calc(24px + env(safe-area-inset-bottom,0px))}
+.sh{display:flex;justify-content:space-between;align-items:center}.sh h2{margin:0}.x{border:0;background:var(--tile);border-radius:50%;width:36px;height:36px;font-size:16px;cursor:pointer}
+#insb{margin-top:6px}.dz{margin-top:16px;padding-top:14px;border-top:1px solid var(--ln);display:grid;gap:6px}.dz a{color:var(--deep);font-weight:700;padding:8px 0}
+.toast{position:fixed;left:50%;bottom:calc(84px + var(--sb));transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 18px;border-radius:99px;font-weight:700;z-index:50;max-width:90vw;text-align:center}
 .bzt{display:block;font:700 18px Unbounded,sans-serif;margin-bottom:6px}#bz-err{margin-top:10px;font-size:14px;font-weight:700;color:#c0392b}
 .mh{border-radius:26px;padding:20px;margin-bottom:14px;color:#fff;background:var(--deep) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' fill='none' stroke='%23fff' stroke-opacity='.13'%3E%3Crect x='12' y='12' width='36' height='36'/%3E%3Crect x='12' y='12' width='36' height='36' transform='rotate(45 30 30)'/%3E%3C/svg%3E")}
 .mr{display:flex;gap:14px;align-items:center}
@@ -131,7 +136,10 @@ dialog::backdrop{background:#0b2e3399}
   </div>
   <div id="auth" class="card" hidden>
     <div id="in" class="f"><b>Войдите, чтобы данные и заказы были на любом телефоне</b><input id="em" type="email" placeholder="Эл. почта" autocomplete="email"><input id="pw" type="password" placeholder="Пароль, от 6 символов" autocomplete="current-password"><div class="acts"><button class="btn" id="li" type="button">Войти</button><button class="btn alt" id="su" type="button">Регистрация</button></div></div>
-    <div id="out" hidden><p>Вы вошли как <b id="who"></b></p><div id="rf" class="rf"><small>Ваш код друга</small><b id="rfc"></b><small id="rfn"></small></div><div class="acts"><button class="btn alt" id="lo" type="button">Выйти</button></div><button class="lnk" id="del" type="button">Удалить аккаунт</button></div>
+    <div id="out" hidden><p>Вы вошли как <b id="who"></b></p><div id="rf" class="rf"><small>Ваш код друга</small><b id="rfc"></b><small id="rfn"></small>
+      <div class="acts" style="margin-top:10px"><button class="btn alt" id="rcp" type="button">Скопировать код</button><button class="btn" id="rsh" type="button">Поделиться</button></div>
+      <div class="rst"><div><b id="r1">0</b><small>Приглашено</small></div><div><b id="r2">0</b><small>Ждут выполнения</small></div><div><b id="r3">0</b><small>Заработано, сум</small></div></div></div>
+    <div class="acts"><button class="btn alt" id="lo" type="button">Выйти</button></div></div>
     <p id="am"></p>
   </div>
   <div class="card" id="pfc">
@@ -141,9 +149,8 @@ dialog::backdrop{background:#0b2e3399}
     <div class="lab">Чаще всего убираем</div><div class="opts sm" id="p-obj"></div>
     <small id="svd"></small><small>Подставим это в каждый заказ автоматически.</small>
   </div>
-  <div class="tiles"><a class="tile" id="call"><span>📞</span>Позвонить</a><a class="tile" id="tgc" target="_blank" rel="noopener"><span>💬</span>Написать</a><button class="tile" id="shr" type="button"><span>🎁</span>Подарить скидку</button></div>
-  <div id="insb" class="card"><h3>Приложение на экране</h3><p id="ins"></p><button class="btn alt" id="inst" type="button" hidden>Установить</button></div>
-  <button class="lnk" id="clr" type="button">Стереть данные на этом телефоне</button>
+  <div class="tiles"><a class="tile" id="call"><span>📞</span>Позвонить</a><a class="tile" id="tgc" target="_blank" rel="noopener"><span>💬</span>Написать</a><button class="tile" id="opset" type="button"><span>⚙️</span>Настройки</button></div>
+  
 </div>
 </main>
 
@@ -151,6 +158,17 @@ dialog::backdrop{background:#0b2e3399}
 
 <nav class="tabs"><button data-v="order" class="on"><span>🧼</span>Заказ</button><button data-v="hist"><span>🕘</span>Заказы</button><button data-v="biz"><span>🏢</span>Офисам</button><button data-v="me"><span>👤</span>Профиль</button></nav>
 
+<dialog id="set">
+  <div class="sh"><h2>Настройки</h2><button class="x" id="sx" type="button" aria-label="Закрыть">✕</button></div>
+  <div class="lab">Оплата по умолчанию</div><div class="opts sm" id="s-pay"></div>
+  <div class="lab">Удобное время</div><div class="opts sm" id="s-tm"></div>
+  <div class="lab">Обычная площадь</div><div class="area"><output><span id="s-av">60</span> м²</output><input type="range" id="s-ar" min="20" max="300" step="5" value="60" aria-label="Площадь, м²"></div>
+  <small class="mut">Мы подставим это в новый заказ, останется только выбрать день.</small>
+  <div id="insb"><div class="lab">Приложение на экране</div><p id="ins"></p><button class="btn alt" id="inst" type="button" hidden>Установить</button></div>
+  <div class="dz"><button class="btn alt" id="s-exp" type="button">Скачать мои данные</button><a href="privacy.html" target="_blank">Политика конфиденциальности</a>
+    <button class="btn alt" id="clr" type="button">Стереть данные на этом устройстве</button><button class="lnk" id="del" type="button" hidden>Удалить аккаунт</button></div>
+</dialog>
+<div id="tt" class="toast" hidden></div>
 <dialog id="ok">
   <h2 style="margin-top:0"><span>Заказ</span> <span id="oid"></span></h2>
   <p id="dtx"></p>
@@ -222,7 +240,12 @@ const L=[
 ['Сохранено ✓','Saqlandi ✓','Saved ✓'],['Подарить скидку','Chegirma sovgʻa qilish','Gift a discount'],['Скопировано','Nusxalandi','Copied'],
 ['Закажи уборку в Toza со скидкой {1}%, промокод {2}','Toza’dan tozalash buyurtma qiling: {1}% chegirma, promokod {2}','Order a cleaning from Toza with {1}% off, promo code {2}'],
 ['Приложение на экране','Ilova ekranda','App on your screen'],['Установить','Oʻrnatish','Install'],
-['Стереть данные на этом телефоне','Bu telefondagi maʼlumotlarni oʻchirish','Erase data on this phone'],
+['Стереть данные на этом устройстве','Bu qurilmadagi maʼlumotlarni oʻchirish','Erase data on this device'],
+['Настройки','Sozlamalar','Settings'],['Оплата по умолчанию','Standart toʻlov usuli','Default payment'],['Удобное время','Qulay vaqt','Preferred time'],['Обычная площадь','Odatdagi maydon','Usual area'],
+['Мы подставим это в новый заказ, останется только выбрать день.','Buni yangi buyurtmaga qoʻyamiz, faqat kunni tanlash qoladi.','We’ll fill this into new orders, you only need to pick the day.'],
+['Скачать мои данные','Maʼlumotlarimni yuklab olish','Download my data'],['Политика конфиденциальности','Maxfiylik siyosati','Privacy policy'],
+['Скопировать код','Kodni nusxalash','Copy code'],['Поделиться','Ulashish','Share'],['Приглашено','Taklif qilingan','Invited'],['Ждут выполнения','Bajarilishi kutilmoqda','Awaiting completion'],['Заработано, сум','Ishlab topilgan, soʻm','Earned, UZS'],
+['Вам начислен бонус: {1} сум','Sizga bonus hisoblandi: {1} soʻm','Bonus added: {1} UZS'],
 ['Стереть сохранённые данные и историю заказов?','Saqlangan maʼlumotlar va buyurtmalar tarixi oʻchirilsinmi?','Erase saved data and order history?'],['Стёрто','Oʻchirildi','Erased'],
 ['Заказов пока нет','Hozircha buyurtmalar yoʻq','No orders yet'],
 ['Оформите первый, и в следующий раз его можно будет повторить одним нажатием.','Birinchisini rasmiylashtiring, keyingi safar uni bir bosishda takrorlaysiz.','Place your first one and next time you can repeat it with one tap.'],
@@ -269,7 +292,7 @@ $('#tm').innerHTML=TIMES.map((t,i)=>opt('tm',t,`<b>${t}</b>`,0,i==1)).join('');
 $('#ds').innerHTML='<option value="">Район</option>'+DIST.map(d=>`<option value="${d}">${d}</option>`).join('');
 $('#call').href='tel:'+CFG.phone;$('#tgc').href='https://t.me/'+CFG.tg;
 
-let LV=0,CNT=0,disc=0,REF='',REFD=0,BAL=0;
+let LV=0,CNT=0,disc=0,REF='',REFD=0,BAL=0,rTry='';
 function calc(){
   const o=OBJ[val('obj')],t=TYPES[val('typ')],a=+$('#area').value;
   const base=Math.max(CFG.min,Math.round(a*t[3]*o[2]/1000)*1000);
@@ -281,7 +304,7 @@ function calc(){
 function upd(){const c=calc();$('#av').textContent=c.a;$('#tot').textContent=fmt(c.total);$('#bn').textContent=c.bon?tr('Бонусы: −{1} сум',fmt(c.bon)):''}
 document.addEventListener('input',upd);upd();
 
-$('#pa').onclick=async()=>{
+async function applyCode(){
   const k=$('#pc').value.trim().toUpperCase();let ok=0,msg;
   disc=CFG.promo[k]||0;REFD=0;REF='';
   if(disc){ok=1;msg=tr('Скидка {1}% применена',Math.round(disc*100))}
@@ -291,7 +314,8 @@ $('#pa').onclick=async()=>{
     else msg='Такого промокода нет'
   }else msg='Такого промокода нет';
   $('#pm').textContent=msg;$('#pm').style.color=ok?'#0a5f63':'#c0392b';upd()
-};
+}
+$('#pa').onclick=applyCode;
 
 /* шаги */
 let s=0,view='order';const S=$$('.step');
@@ -372,7 +396,7 @@ $('#v-hist').onclick=e=>{
 $('#clr').onclick=()=>{
   if(!confirm(tr('Стереть сохранённые данные и историю заказов?')))return;
   store('toza');store('toza_orders');['nm','ph','ds','ad'].forEach(k=>$('#'+k).value='');
-  fillP();me();$('#clr').textContent='Стёрто'
+  store('toza_set');store('toza_ref');fillP();fillSet();applySet();me();$('#clr').textContent='Стёрто';setTimeout(()=>$('#clr').textContent='Стереть данные на этом устройстве',2000)
 };
 let dp;
 addEventListener('beforeinstallprompt',e=>{e.preventDefault();dp=e;$('#inst').hidden=false;$('#ins').textContent='Установите Toza на экран: открывается без браузера, как обычное приложение.'});
@@ -414,7 +438,14 @@ async function me(){
   BAL=0;
   if(user){const b=await sb.from('bonuses').select('amount');BAL=(b.data||[]).reduce((s,x)=>s+x.amount,0)}
   upd();$('#rf').hidden=!user;
-  if(user){$('#rfc').textContent=MYC();$('#rfn').textContent=tr('Друг получит скидку {1}%, а вы {2} сум бонусом после его первой уборки',Math.round(CFG.ref.friend*100),fmt(CFG.ref.bonus))+(BAL?' · '+tr('Ваши бонусы: {1} сум',fmt(BAL)):'')}
+  if(user){
+    $('#rfc').textContent=MYC();$('#rfn').textContent=tr('Друг получит скидку {1}%, а вы {2} сум бонусом после его первой уборки',Math.round(CFG.ref.friend*100),fmt(CFG.ref.bonus))+(BAL?' · '+tr('Ваши бонусы: {1} сум',fmt(BAL)):'');
+    const sv=load('toza_bal',null);if(sv&&sv.u==user.id&&BAL>sv.v)toast(tr('Вам начислен бонус: {1} сум',fmt(BAL-sv.v)));
+    store('toza_bal',{u:user.id,v:BAL});
+    const st=(await sb.rpc('my_ref_stats')).data||{};$('#r1').textContent=st.invited||0;$('#r2').textContent=st.pending||0;$('#r3').textContent=fmt(st.earned||0);
+    if(CNT)store('toza_ref');
+    const sr=load('toza_ref','');if(sr&&!CNT&&!REF&&sr!=MYC()&&rTry!=sr){rTry=sr;$('#pc').value=sr;applyCode()}
+  }
   const nx=L[LV+1],nm=P.nm||'';
   $('#mn').textContent=nm||'Гость';
   $('#avt').textContent=nm?nm[0].toUpperCase():'👤';
@@ -423,17 +454,36 @@ async function me(){
   $('#lvb').style.width=(nx?Math.min(100,(CNT-L[LV][0])/(nx[0]-L[LV][0])*100):100)+'%';
   $('#lvx').textContent=nx?tr('До уровня «{1}» осталось заказов: {2}',tr(nx[1]),nx[0]-CNT)+(nx[2]?`, ${tr('скидка')} ${Math.round(nx[2]*100)}%`:''):'Высший уровень. Спасибо, что вы с нами!'
 }
-$('#shr').onclick=async()=>{
-  const k=Object.keys(CFG.promo)[0],t=user?tr('Закажи уборку в Toza со скидкой {1}% по моему коду {2}',Math.round(CFG.ref.friend*100),MYC()):tr('Закажи уборку в Toza со скидкой {1}%, промокод {2}',Math.round(CFG.promo[k]*100),k),u=location.origin+location.pathname+(user?'?ref='+MYC():'');
-  try{
-    if(navigator.share)await navigator.share({text:t,url:u});
-    else{await navigator.clipboard.writeText(t+' '+u);$('#shr').innerHTML='<span>✅</span>Скопировано'}
-  }catch(e){}
+/* реферальная программа */
+const rlink=()=>location.origin+location.pathname+'?ref='+MYC();
+const rtext=()=>tr('Закажи уборку в Toza со скидкой {1}% по моему коду {2}',Math.round(CFG.ref.friend*100),MYC());
+const flash=s=>{const b=$(s),o=b.textContent;b.textContent=tr('Скопировано');setTimeout(()=>b.textContent=o,1500)};
+$('#rsh').onclick=async()=>{try{if(navigator.share)await navigator.share({text:rtext(),url:rlink()});else{await navigator.clipboard.writeText(rtext()+' '+rlink());flash('#rsh')}}catch(e){}};
+$('#rcp').onclick=async()=>{try{await navigator.clipboard.writeText(MYC());flash('#rcp')}catch(e){}};
+function toast(t){const e=$('#tt');e.textContent=t;e.hidden=false;clearTimeout(toast.i);toast.i=setTimeout(()=>e.hidden=true,3500)}
+
+/* настройки */
+const SD=()=>Object.assign({pay:0,tm:'11:00',ar:60},load('toza_set',{}));
+$('#s-pay').innerHTML=CFG.pay.map((o,i)=>opt('spay',i,`<b>${o}</b>`)).join('');
+$('#s-tm').innerHTML=TIMES.map(x=>opt('stm',x,`<b>${x}</b>`)).join('');
+function fillSet(){const S=SD();$$('[name=spay]').forEach(x=>x.checked=x.value==S.pay);$$('[name=stm]').forEach(x=>x.checked=x.value==S.tm);$('#s-ar').value=S.ar;$('#s-av').textContent=S.ar}
+function applySet(){const S=SD();$$('[name=pay]').forEach(x=>x.checked=x.value==S.pay);$$('[name=tm]').forEach(x=>x.checked=x.value==S.tm);$('#area').value=S.ar;upd()}
+$('#set').addEventListener('input',e=>{
+  const S=SD();
+  if(e.target.id=='s-ar')S.ar=+e.target.value;if(e.target.name=='spay')S.pay=+e.target.value;if(e.target.name=='stm')S.tm=e.target.value;
+  store('toza_set',S);fillSet();applySet()
+});
+$('#opset').onclick=()=>{fillSet();$('#set').showModal()};
+$('#sx').onclick=()=>$('#set').close();
+$('#set').addEventListener('click',e=>{if(e.target==e.currentTarget)e.currentTarget.close()});
+$('#s-exp').onclick=async()=>{
+  const d={email:user?user.email:null,profile:load('toza',{}),bonus:BAL,orders:await orders()};
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(d,null,2)],{type:'application/json'}));a.download='toza-my-data.json';a.click()
 };
 
 /* офисы, удаление аккаунта, код друга */
 const MYC=()=>user.id.replace(/-/g,'').slice(0,6).toUpperCase();
-const rp=new URLSearchParams(location.search).get('ref');if(rp)$('#pc').value=rp.toUpperCase().slice(0,6);
+const rp=new URLSearchParams(location.search).get('ref');if(rp){$('#pc').value=rp.toUpperCase().slice(0,6);store('toza_ref',rp.toUpperCase().slice(0,6))}
 $('#bz-ds').innerHTML=$('#ds').innerHTML;
 $('#bz-ph').addEventListener('focus',e=>e.target.value||(e.target.value='+998 '));
 $('#bz-go').onclick=async()=>{
@@ -464,7 +514,7 @@ $('#geo').onclick=()=>navigator.geolocation?navigator.geolocation.getCurrentPosi
 /* вход и регистрация (Supabase) */
 let sb=null,user=null;
 function authUI(){
-  $('#in').hidden=!!user;$('#out').hidden=!user;
+  $('#in').hidden=!!user;$('#out').hidden=!user;$('#del').hidden=!user;
   if(user){
     $('#who').textContent=user.email;
     const m=user.user_metadata||{},prev=load('toza_uid',''),sw=prev&&prev!==user.id;
@@ -502,7 +552,7 @@ if(CFG.sb.url&&window.supabase){
   $('#auth').hidden=false;
   $('#li').onclick=()=>auth(0);$('#su').onclick=()=>auth(1);$('#lo').onclick=()=>sb.auth.signOut();
   sb&&sb.auth.onAuthStateChange((ev,se)=>{
-    if(ev=='SIGNED_OUT'){store('toza');store('toza_uid');REF='';REFD=0;['nm','ph','ds','ad','pc'].forEach(k=>$('#'+k).value='');fillP()}
+    if(ev=='SIGNED_OUT'){store('toza');store('toza_uid');store('toza_bal');REF='';REFD=0;['nm','ph','ds','ad','pc'].forEach(k=>$('#'+k).value='');fillP()}
     user=se?se.user:null;authUI()
   })
 }
@@ -528,7 +578,7 @@ function setLang(l,init){
 }
 $$('.lg button').forEach(b=>b.onclick=()=>setLang(b.dataset.l));
 
-fillP();me();
+fillP();fillSet();applySet();me();
 show(0);
 setLang(LANG,1);
 </script>
