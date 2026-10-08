@@ -467,10 +467,12 @@ function authUI(){
   $('#in').hidden=!!user;$('#out').hidden=!user;
   if(user){
     $('#who').textContent=user.email;
-    const m=user.user_metadata||{},P=load('toza',{});
-    [...Object.keys(PF),'pets','obj'].forEach(k=>!P[k]&&m[k]&&(P[k]=m[k]));
+    const m=user.user_metadata||{},prev=load('toza_uid',''),sw=prev&&prev!==user.id;
+    let P=sw?{}:load('toza',{});
+    store('toza_uid',user.id);
+    [...Object.keys(PF),'pets','obj'].forEach(k=>m[k]!=null&&m[k]!==''&&(P[k]=m[k]));
     store('toza',P);$('#pfc').contains(document.activeElement)||fillP();
-    ['nm','ph','ds','ad'].forEach(k=>!$('#'+k).value&&($('#'+k).value=P[k]||''))
+    ['nm','ph','ds','ad'].forEach(k=>(sw||!$('#'+k).value)&&($('#'+k).value=P[k]||''))
   }
   me();if(view=='hist')hist()
 }
@@ -499,7 +501,10 @@ if(CFG.sb.url&&window.supabase){
   try{sb=supabase.createClient(SBU,(CFG.sb.key||'').trim())}catch(e){console.warn(e)}
   $('#auth').hidden=false;
   $('#li').onclick=()=>auth(0);$('#su').onclick=()=>auth(1);$('#lo').onclick=()=>sb.auth.signOut();
-  sb&&sb.auth.onAuthStateChange((_,se)=>{user=se?se.user:null;authUI()})
+  sb&&sb.auth.onAuthStateChange((ev,se)=>{
+    if(ev=='SIGNED_OUT'){store('toza');store('toza_uid');REF='';REFD=0;['nm','ph','ds','ad','pc'].forEach(k=>$('#'+k).value='');fillP()}
+    user=se?se.user:null;authUI()
+  })
 }
 
 /* язык */
