@@ -334,7 +334,7 @@ async function submit(){
     c.bon&&`Бонусы: −${fmt(c.bon)} сум`,REF&&`Код друга: ${REF}`,`Итого: ${fmt(c.total)} сум${c.off?` (скидка ${fmt(c.off)} сум)`:''}`].filter(Boolean).join('\n');
   const a=load('toza_orders',[]),sel={obj:val('obj'),typ:val('typ'),area:$('#area').value,ext:$$('[name=ext]:checked').map(e=>e.value)};
   a.unshift({id,at:new Date().toLocaleDateString('ru-RU'),t:text,total:c.total,sel});
-  store('toza_orders',a.slice(0,30));
+  if(!user)store('toza_orders',a.slice(0,30));
   if(user)sb.auth.updateUser({data:P2});
   $('#nx').disabled=true;
   let ok=false;
@@ -351,12 +351,9 @@ $('#cl').onclick=()=>{$('#ok').close();show(0);tab('hist')};
 /* история */
 let ORD=[];
 async function orders(){
-  let a=load('toza_orders',[]);
-  if(user){
-    const r=await sb.from('orders').select('code,details,total,sel,created_at,status').order('created_at',{ascending:false}).limit(30);
-    if(r.data)a=r.data.map(o=>({id:o.code,at:new Date(o.created_at).toLocaleDateString('ru-RU'),t:o.details,total:o.total,sel:o.sel,status:o.status}))
-  }
-  return a
+  if(!user)return load('toza_orders',[]);
+  const r=await sb.from('orders').select('code,details,total,sel,created_at,status').eq('user_id',user.id).order('created_at',{ascending:false}).limit(30);
+  return (r.data||[]).map(o=>({id:o.code,at:new Date(o.created_at).toLocaleDateString('ru-RU'),t:o.details,total:o.total,sel:o.sel,status:o.status}))
 }
 async function hist(){
   const a=ORD=await orders();
