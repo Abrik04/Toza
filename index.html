@@ -54,6 +54,8 @@ input:focus-visible+.opt{outline:3px solid var(--gold)}
 .lg{display:flex;gap:4px}.lg button{border:0;border-radius:99px;padding:5px 9px;font:700 12px Manrope,sans-serif;background:#ffffff26;color:#fff;cursor:pointer}.lg .on{background:var(--gold);color:var(--ink)}
 #stp{white-space:nowrap;font-size:13px}
 .rf{background:var(--tile);border-radius:14px;padding:12px 14px;margin:10px 0;display:grid;gap:2px}.rf b{font:700 22px Unbounded,sans-serif;letter-spacing:2px;color:var(--deep)}
+.sl{display:flex;justify-content:space-between;gap:10px;padding:7px 0;border-bottom:1px dashed var(--ln)}.sl.g{color:#1f7a50;font-weight:700}.sl.tt{border:0;font-size:18px;padding-top:10px}#sumc small{display:block;margin:2px 0 4px}
+.bar s{font:500 13px Manrope,sans-serif;opacity:.55;margin-right:4px}.bar .dg{color:#1f7a50;font-weight:700;opacity:1}
 .rst{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}.rst div{background:#fff;border-radius:12px;padding:8px 4px;text-align:center}.rst b{display:block;font:700 16px Unbounded,sans-serif;letter-spacing:0;color:var(--ink)}.rst small{line-height:1.2;display:block}
 #set{width:min(100%,560px);max-width:100%;margin:auto auto 0;border-radius:26px 26px 0 0;max-height:92vh;overflow:auto;padding:20px 18px calc(24px + env(safe-area-inset-bottom,0px))}
 .sh{display:flex;justify-content:space-between;align-items:center}.sh h2{margin:0}.x{border:0;background:var(--tile);border-radius:50%;width:36px;height:36px;font-size:16px;cursor:pointer}
@@ -109,6 +111,7 @@ dialog::backdrop{background:#0b2e3399}
     <div class="promo"><input id="pc" placeholder="Промокод"><button class="btn" id="pa" type="button">Применить</button><span id="pm"></span></div>
     <div class="lab">Оплата</div><div class="opts sm" id="pay"></div>
     <div class="promo"><button class="btn alt" id="geo" type="button">📍 Отметить, где я</button><small id="gm"></small></div>
+    <h2>Ваш заказ</h2><div id="sumc" class="card"></div>
     <label class="ag"><input type="checkbox" id="agr"><span><span>Согласен на обработку персональных данных</span> <a href="privacy.html" target="_blank">политика</a></span></label>
     <div id="err" role="alert"></div>
   </div>
@@ -154,7 +157,7 @@ dialog::backdrop{background:#0b2e3399}
 </div>
 </main>
 
-<div class="bar" id="bar"><div><small>Стоимость</small><b><span id="tot">0</span> сум</b><small id="bn"></small></div><div class="nav"><button class="btn alt" id="bk" type="button">Назад</button><button class="btn" id="nx" type="button">Далее</button></div></div>
+<div class="bar" id="bar"><div><small>Стоимость</small><b><s id="old"></s> <span id="tot">0</span> сум</b><small id="bd" class="dg"></small><small id="bn"></small></div><div class="nav"><button class="btn alt" id="bk" type="button">Назад</button><button class="btn" id="nx" type="button">Далее</button></div></div>
 
 <nav class="tabs"><button data-v="order" class="on"><span>🧼</span>Заказ</button><button data-v="hist"><span>🕘</span>Заказы</button><button data-v="biz"><span>🏢</span>Офисам</button><button data-v="me"><span>👤</span>Профиль</button></nav>
 
@@ -171,8 +174,8 @@ dialog::backdrop{background:#0b2e3399}
 <div id="tt" class="toast" hidden></div>
 <dialog id="ok">
   <h2 style="margin-top:0"><span>Заказ</span> <span id="oid"></span></h2>
-  <p id="dtx"></p>
-  <div class="acts"><a class="btn" id="tg" target="_blank" rel="noopener" hidden>Отправить в Telegram</a><a class="btn alt" id="dcall">Позвонить</a><a class="btn alt" id="dsup" target="_blank" rel="noopener">Написать</a><button class="btn" id="cl" type="button">Готово</button></div>
+  <p id="dtx"></p><p id="dsm" style="font-weight:700"></p>
+  <div class="acts"><a class="btn" id="tg" target="_blank" rel="noopener" hidden>Отправить в Telegram</a><a class="btn" id="paynow" target="_blank" rel="noopener" hidden>Оплатить онлайн</a><a class="btn alt" id="dcall">Позвонить</a><a class="btn alt" id="dsup" target="_blank" rel="noopener">Написать</a><button class="btn" id="cl" type="button">Готово</button></div>
 </dialog>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -267,6 +270,11 @@ const L=[
 ['Код друга принят: скидка {1}%','Doʻst kodi qabul qilindi: {1}% chegirma','Friend code accepted: {1}% off'],
 ['Код друга работает на первый заказ после входа в аккаунт','Doʻst kodi hisobga kirgandan keyingi birinchi buyurtmaga amal qiladi','A friend code works on the first order after signing in'],
 ['Закажи уборку в Toza со скидкой {1}% по моему коду {2}','Toza’dan tozalashga buyurtma bering: mening kodim {2} bilan {1}% chegirma','Order a cleaning from Toza with {1}% off using my code {2}'],
+['Терминалом','Terminal orqali','By terminal'],['Оплатить онлайн','Onlayn toʻlash','Pay online'],
+['Заказ принят. Оплатите онлайн по кнопке ниже.','Buyurtma qabul qilindi. Pastdagi tugma orqali onlayn toʻlang.','Order received. Please pay online using the button below.'],
+['Уборка','Tozalash','Cleaning'],['Допуслуги','Qoʻshimcha xizmatlar','Add-ons'],['Итого','Jami','Total'],['Бонусы','Bonuslar','Bonus'],
+['Скидка {1}% на уборку','Tozalashga {1}% chegirma','{1}% off cleaning'],['промокод','promokod','promo code'],['код друга','doʻst kodi','friend code'],
+['уровень «{1}»','daraja «{1}»','level “{1}”'],['подписка','obuna','subscription'],['Ваш заказ','Buyurtmangiz','Your order'],
 ['Принят','Qabul qilindi','Received'],['Выезжаем','Yoʻldamiz','On the way'],['Выполнен','Bajarildi','Done'],['Отменён','Bekor qilindi','Cancelled']
 ];
 const DT={uz:{},en:{}};L.forEach(r=>{DT.uz[r[0]]=r[1];DT.en[r[0]]=r[2]});
@@ -279,7 +287,8 @@ $('#typ').innerHTML=TYPES.map((o,i)=>opt('typ',i,`<span>${o[0]}</span><b>${o[1]}
 $('#ext').innerHTML=EXTRA.map((o,i)=>opt('ext',i,`<b>${o[0]}</b><small>+${fmt(o[1])} <span>сум</span></small>`,'checkbox')).join('');
 CFG.levels=CFG.levels||[[0,'Новичок',0],[3,'Постоянный клиент',0.05],[7,'VIP',0.1]];
 CFG.repeat=CFG.repeat||[['Разово',0],['Каждую неделю',0.1],['Раз в 2 недели',0.07]];
-CFG.pay=CFG.pay||['Наличными','Картой','Переводом'];
+CFG.online=CFG.online||{};
+CFG.pay=['Наличными','Терминалом'].concat(CFG.online.payme?['Payme']:[],CFG.online.click&&CFG.online.click.service?['Click']:[]);
 CFG.ref=CFG.ref||{friend:0.1,bonus:30000};
 const ST={new:'Принят',way:'Выезжаем',done:'Выполнен',cancel:'Отменён'};
 $('#rep').innerHTML=CFG.repeat.map((o,i)=>opt('rep',i,`<b>${o[0]}</b><small>${o[1]?'<span>скидка</span> '+Math.round(o[1]*100)+'%':'<span>без подписки</span>'}</small>`,0,!i)).join('');
@@ -297,11 +306,22 @@ function calc(){
   const o=OBJ[val('obj')],t=TYPES[val('typ')],a=+$('#area').value;
   const base=Math.max(CFG.min,Math.round(a*t[3]*o[2]/1000)*1000);
   const ex=$$('[name=ext]:checked').reduce((s,e)=>s+EXTRA[e.value][1],0);
-  const off=Math.round(base*(Math.max(disc,REFD,CFG.levels[LV][2])+CFG.repeat[val('rep')||0][1])/1000)*1000;
-  const bon=Math.min(BAL,Math.round(base*0.5/1000)*1000);
-  return{o,t,a,off,bon,total:base+ex-off-bon}
+  const lv=CFG.levels[LV][2],rp=CFG.repeat[val('rep')||0][1],mx=Math.max(disc,REFD,lv),p=mx+rp;
+  const off=Math.round(base*p/1000)*1000,bon=Math.min(BAL,Math.round(base*0.5/1000)*1000),parts=[];
+  if(mx)parts.push((mx==disc?tr('промокод'):mx==REFD?tr('код друга'):tr('уровень «{1}»',tr(CFG.levels[LV][1])))+' '+Math.round(mx*100)+'%');
+  if(rp)parts.push(tr('подписка')+' '+Math.round(rp*100)+'%');
+  return{o,t,a,base,ex,gross:base+ex,off,bon,pct:Math.round(p*100),parts,total:base+ex-off-bon}
 }
-function upd(){const c=calc();$('#av').textContent=c.a;$('#tot').textContent=fmt(c.total);$('#bn').textContent=c.bon?tr('Бонусы: −{1} сум',fmt(c.bon)):''}
+function upd(){
+  const c=calc(),u=' '+tr('сум'),r=(l,v,k)=>`<div class="sl ${k||''}"><span>${l}</span><b>${v}</b></div>`;
+  $('#av').textContent=c.a;$('#tot').textContent=fmt(c.total);
+  $('#old').textContent=c.off||c.bon?fmt(c.gross):'';
+  $('#bd').textContent=c.off?`−${c.pct}% · −${fmt(c.off)}${u}`:'';
+  $('#bn').textContent=c.bon?tr('Бонусы: −{1} сум',fmt(c.bon)):'';
+  $('#sumc').innerHTML=r(tr('Уборка'),fmt(c.base)+u)+(c.ex?r(tr('Допуслуги'),'+'+fmt(c.ex)+u):'')
+    +(c.off?r(tr('Скидка {1}% на уборку',c.pct),'−'+fmt(c.off)+u,'g')+`<small class="mut">${c.parts.join(' + ')}</small>`:'')
+    +(c.bon?r(tr('Бонусы'),'−'+fmt(c.bon)+u,'g'):'')+r(tr('Итого'),fmt(c.total)+u,'tt')
+}
 document.addEventListener('input',upd);upd();
 
 async function applyCode(){
@@ -349,24 +369,24 @@ async function submit(){
   if(!$('#agr').checked)return $('#err').textContent='Нужно согласие на обработку данных.';
   $('#err').textContent='';
   const P2=Object.assign(load('toza',{}),{nm:g('nm'),ph:g('ph'),ds:g('ds'),ad:g('ad')});store('toza',P2);
-  const c=calc(),id='№'+Math.floor(1000+Math.random()*9000);
+  const c=calc(),id='№'+Math.floor(1000+Math.random()*9000),pm=CFG.pay[val('pay')||0],oid=/^(Payme|Click)$/.test(pm)&&window.crypto&&crypto.randomUUID?crypto.randomUUID():null;
   if(c.bon>0){const r=await sb.rpc('use_bonus',{amt:c.bon});if(r.data)BAL-=c.bon;else{BAL=0;c.total+=c.bon;c.bon=0}}
   const ex=$$('[name=ext]:checked').map(e=>EXTRA[e.value][0]).join(', ')||'нет';
   text=[`Заказ ${id}`,`${c.o[1]}: ${c.t[1]} уборка, ${c.a} м²`,`Дополнительно: ${ex}`,
-    `Когда: ${ds(D[val('day')])} в ${val('tm')}${+val('rep')?`, повтор: ${CFG.repeat[val('rep')][0].toLowerCase()}`:''}`,`Куда: ${g('ds')} р-н, ${g('ad')}`,`Оплата: ${CFG.pay[val('pay')||0].toLowerCase()}`,GEO&&`Карта: ${GEO}`,
+    `Когда: ${ds(D[val('day')])} в ${val('tm')}${+val('rep')?`, повтор: ${CFG.repeat[val('rep')][0].toLowerCase()}`:''}`,`Куда: ${g('ds')} р-н, ${g('ad')}`,`Оплата: ${CFG.pay[val('pay')||0].toLowerCase()}`,/^(Payme|Click)$/.test(CFG.pay[val('pay')||0])&&'Статус оплаты: ожидает оплаты',GEO&&`Карта: ${GEO}`,
     `Клиент: ${g('nm')}, ${g('ph')}`,LANG!='ru'&&`Язык клиента: ${LANG.toUpperCase()}`,P2.pets&&'Питомцы дома: есть',P2.door&&`Как войти: ${P2.door}`,g('cm')&&`Комментарий: ${g('cm')}`,
-    c.bon&&`Бонусы: −${fmt(c.bon)} сум`,REF&&`Код друга: ${REF}`,`Итого: ${fmt(c.total)} сум${c.off?` (скидка ${fmt(c.off)} сум)`:''}`].filter(Boolean).join('\n');
+    disc&&`Промокод: ${$('#pc').value.trim().toUpperCase()}`,c.bon&&`Бонусы: −${fmt(c.bon)} сум`,REF&&`Код друга: ${REF}`,`Итого: ${fmt(c.total)} сум${c.off?` (скидка ${c.pct}%, −${fmt(c.off)} сум)`:''}`].filter(Boolean).join('\n');
   const a=load('toza_orders',[]),sel={obj:val('obj'),typ:val('typ'),area:$('#area').value,ext:$$('[name=ext]:checked').map(e=>e.value)};
   a.unshift({id,at:new Date().toLocaleDateString('ru-RU'),t:text,total:c.total,sel});
   if(!user)store('toza_orders',a.slice(0,30));
   if(user)sb.auth.updateUser({data:P2});
   $('#nx').disabled=true;
   let ok=false;
-  if(sb){const r=await sb.from('orders').insert(Object.assign({code:id,details:text,total:c.total,sel},REF?{ref:REF}:{}));ok=!r.error;r.error&&console.warn(r.error.message)}
+  if(sb){const r=await sb.from('orders').insert(Object.assign({code:id,details:text,total:c.total,sel},oid?{id:oid}:{},REF?{ref:REF}:{}));ok=!r.error;r.error&&console.warn(r.error.message)}
   $('#nx').disabled=false;if(ok){REF='';REFD=0;$('#pm').textContent=''}
   $('#oid').textContent=id;
-  $('#dtx').textContent=ok?'Заказ принят. Мы свяжемся с вами, чтобы подтвердить время.':'Не удалось отправить заказ. Нажмите «Отправить в Telegram», и мы его получим.';
-  $('#tg').hidden=ok;$('#tg').href=`https://t.me/${CFG.tg}?text=${encodeURIComponent(text)}`;
+  $('#dtx').textContent=ok?(oid?'Заказ принят. Оплатите онлайн по кнопке ниже.':'Заказ принят. Мы свяжемся с вами, чтобы подтвердить время.'):'Не удалось отправить заказ. Нажмите «Отправить в Telegram», и мы его получим.';
+  $('#tg').hidden=ok;$('#paynow').hidden=!(ok&&oid);if(ok&&oid)$('#paynow').href=payLink(pm,oid,c.total);$('#dsm').textContent=tr('Итого')+': '+fmt(c.total)+' '+tr('сум')+(c.off?` (−${c.pct}%)`:'');$('#tg').href=`https://t.me/${CFG.tg}?text=${encodeURIComponent(text)}`;
   $('#dcall').href='tel:'+CFG.phone;$('#dsup').href='https://t.me/'+CFG.tg;
   $('#ok').showModal();me()
 }
@@ -454,6 +474,12 @@ async function me(){
   $('#lvb').style.width=(nx?Math.min(100,(CNT-L[LV][0])/(nx[0]-L[LV][0])*100):100)+'%';
   $('#lvx').textContent=nx?tr('До уровня «{1}» осталось заказов: {2}',tr(nx[1]),nx[0]-CNT)+(nx[2]?`, ${tr('скидка')} ${Math.round(nx[2]*100)}%`:''):'Высший уровень. Спасибо, что вы с нами!'
 }
+/* онлайн-оплата: ссылки Payme и Click (нужны договор и серверная часть, см. README) */
+function payLink(m,oid,total){
+  const back=location.origin+location.pathname;
+  if(m=='Payme')return 'https://checkout.paycom.uz/'+btoa(`m=${CFG.online.payme};ac.order_id=${oid};a=${total*100};l=${LANG};c=${back}`);
+  return `https://my.click.uz/services/pay?service_id=${CFG.online.click.service}&merchant_id=${CFG.online.click.merchant}&amount=${total}&transaction_param=${oid}&return_url=${encodeURIComponent(back)}`
+}
 /* реферальная программа */
 const rlink=()=>location.origin+location.pathname+'?ref='+MYC();
 const rtext=()=>tr('Закажи уборку в Toza со скидкой {1}% по моему коду {2}',Math.round(CFG.ref.friend*100),MYC());
@@ -463,7 +489,7 @@ $('#rcp').onclick=async()=>{try{await navigator.clipboard.writeText(MYC());flash
 function toast(t){const e=$('#tt');e.textContent=t;e.hidden=false;clearTimeout(toast.i);toast.i=setTimeout(()=>e.hidden=true,3500)}
 
 /* настройки */
-const SD=()=>Object.assign({pay:0,tm:'11:00',ar:60},load('toza_set',{}));
+const SD=()=>{const S=Object.assign({pay:0,tm:'11:00',ar:60},load('toza_set',{}));if(S.pay>=CFG.pay.length)S.pay=0;return S};
 $('#s-pay').innerHTML=CFG.pay.map((o,i)=>opt('spay',i,`<b>${o}</b>`)).join('');
 $('#s-tm').innerHTML=TIMES.map(x=>opt('stm',x,`<b>${x}</b>`)).join('');
 function fillSet(){const S=SD();$$('[name=spay]').forEach(x=>x.checked=x.value==S.pay);$$('[name=stm]').forEach(x=>x.checked=x.value==S.tm);$('#s-ar').value=S.ar;$('#s-av').textContent=S.ar}

@@ -60,7 +60,7 @@ const M={'Вход для клинеров':'Tozalovchilar uchun kirish','Поч
 'Обновляем…':'Yangilanmoqda…','Новых заказов: {1}':'Yangi buyurtmalar: {1}','Не удалось сохранить. Проверьте интернет.':'Saqlab boʻlmadi. Internetni tekshiring.',
 'Отметили: вы выезжаете':'Belgilandi: yoʻldasiz','Заказ выполнен ✓':'Buyurtma bajarildi ✓','Заказ выполнен?':'Buyurtma bajarildimi?',
 'осталось сегодня':'bugun qoldi','выполнено':'bajarildi','наличных собрано, сум':'yigʻilgan naqd, soʻm','через {1}':'{1} dan keyin','опаздываем на {1}':'{1} kechikdik','ч':'soat','мин':'daq',
-'Новый':'Yangi','В пути':'Yoʻlda','Выполнен':'Bajarildi','🧭 Маршрут':'🧭 Yoʻnalish','Позвонить':'Qoʻngʻiroq','💵 Получить наличными: ':'💵 Naqd olish: ','Выезжаю':'Yoʻlga chiqdim','Выполнено ✓':'Bajarildi ✓','сум':'soʻm',
+'Новый':'Yangi','В пути':'Yoʻlda','Выполнен':'Bajarildi','🧭 Маршрут':'🧭 Yoʻnalish','Позвонить':'Qoʻngʻiroq','💵 Получить наличными: ':'💵 Naqd olish: ','💳 Взять терминал: ':'💳 Terminal olib boring: ','терминалом':'terminal orqali','Выезжаю':'Yoʻlga chiqdim','Выполнено ✓':'Bajarildi ✓','сум':'soʻm',
 'На сегодня заказов нет. Проверьте вкладку «Скоро».':'Bugunga buyurtmalar yoʻq. «Tez orada» boʻlimini tekshiring.','Ближайших заказов пока нет.':'Yaqin orada buyurtmalar yoʻq.','Выполненных заказов пока нет.':'Bajarilgan buyurtmalar hozircha yoʻq.',
 'Квартира':'Kvartira','Дом':'Uy','Офис':'Ofis','Поддерживающая уборка':'Muntazam tozalash','Генеральная уборка':'Chuqur tozalash','После ремонта уборка':'Taʼmirdan keyingi tozalash','регулярная уборка':'muntazam tozalash',
 'Окна (до 5 шт)':'Derazalar (5 tagacha)','Духовка':'Duxovka','Холодильник':'Muzlatgich','Балкон':'Balkon','Чистка дивана':'Divan tozalash','нет':'yoʻq',
@@ -78,7 +78,7 @@ function parse(o){
   return{at,time:k?k[3]+':'+k[4]:'',district:w?w[1]:'',addr:w?w[2]:g('Куда:'),name:cl?cl[1]:g('Клиент:'),phone:cl?cl[2].replace(/\D/g,''):'',job:L[1]||'',
     extra:g('Дополнительно:'),pay:g('Оплата:'),map:g('Карта:'),notes:L.filter(x=>/^(Питомцы|Как войти|Комментарий)/.test(x))}
 }
-const cash=p=>/налич/i.test(p.pay);
+const cash=p=>/налич/i.test(p.pay),term=p=>/термин/i.test(p.pay);
 const route=p=>/^https:\/\/maps\.google\.com\//.test(p.map)?p.map:'https://yandex.com/maps/?text='+encodeURIComponent('Ташкент, '+p.district+' район, '+p.addr);
 const dur=m=>(m>=60?Math.floor(m/60)+' '+t('ч')+' ':'')+(m%60)+' '+t('мин');
 const rel=o=>{
@@ -91,7 +91,7 @@ const card=o=>{const p=o.p,d=o.status=='done';return`<article class="c ${o.statu
 <p class="ad">📍 ${esc(p.addr)}</p>
 <div class="ac"><a class="bt" href="${esc(route(p))}" target="_blank" rel="noopener">${t('🧭 Маршрут')}</a>${p.phone?`<a class="bt" href="tel:+${p.phone}">📞 ${esc(p.name)||t('Позвонить')}</a>`:''}</div>
 <p>🧼 ${esc(tj(p.job))}${p.extra&&p.extra!='нет'?'<br>➕ '+esc(p.extra.split(', ').map(x=>t(x)).join(', ')):''}</p>${p.notes.map(n=>`<p class="n">⚠️ ${esc(tn(n))}</p>`).join('')}
-<p class="pay ${cash(p)&&!d?'cash':''}">${cash(p)&&!d?t('💵 Получить наличными: '):'💳 '+esc(t(p.pay))+' · '}<b>${fm(o.total)} ${t('сум')}</b></p>
+<p class="pay ${(cash(p)||term(p))&&!d?'cash':''}">${cash(p)&&!d?t('💵 Получить наличными: '):term(p)&&!d?t('💳 Взять терминал: '):'💳 '+esc(t(p.pay))+' · '}<b>${fm(o.total)} ${t('сум')}</b></p>
 ${d?'':`<button class="go ${o.status}" data-s="${o.status=='new'?'way':'done'}" type="button">${t(o.status=='new'?'Выезжаю':'Выполнено ✓')}</button>`}</article>`};
 function draw(){
   const td=day(new Date()),act=rows.filter(o=>o.status=='new'||o.status=='way'),by=(a,b)=>a.p.at-b.p.at;
