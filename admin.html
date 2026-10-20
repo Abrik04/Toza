@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Toza · админ-панель</title><link rel="icon" href="favicon.ico" sizes="any"><link rel="icon" type="image/png" href="icon-192.png" sizes="192x192"><meta name="robots" content="noindex">
+<title>Tozavoy · админ-панель</title><link rel="icon" href="favicon.ico" sizes="any"><link rel="icon" type="image/png" href="icon-192.png" sizes="192x192"><meta name="robots" content="noindex">
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;700&family=Unbounded:wght@600;700&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#f2f7f6;--card:#fff;--ink:#0b2e33;--mut:#5d7478;--ln:#d9e6e4;--tq:#0e8c8c;--deep:#0a5f63;--gold:#f4b63f;--tile:#e3f3f1;--red:#c0392b;--grn:#2e9e6b;--sh:0 1px 2px #0b2e3310,0 10px 28px #0b2e330c}
@@ -49,9 +49,9 @@ details summary{cursor:pointer;color:var(--mut);font-size:13px}pre{white-space:p
 .toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:99px;font-weight:700;z-index:50}
 @media(max-width:780px){.app{grid-template-columns:1fr}.sb{position:fixed;inset:auto 0 0 0;height:auto;flex-direction:row;z-index:20;padding:6px 8px calc(6px + env(safe-area-inset-bottom));border-radius:20px 20px 0 0}.sb .logo,.me,.sp{display:none}.nv{flex:1;flex-direction:column;gap:0;font-size:11px;padding:6px;align-items:center}main{padding-bottom:100px}.rw{grid-template-columns:1fr auto}.rw span{display:none}}
 </style></head><body>
-<div id="lg" class="lgn"><div class="card"><div class="logo">Toza<i>.</i></div><input id="em" type="email" placeholder="Почта"><input id="pw" type="password" placeholder="Пароль"><button class="go" id="li" type="button">Войти</button><p id="m" class="mut"></p></div></div>
+<div id="lg" class="lgn"><div class="card"><div class="logo">Tozavoy<i>.</i></div><input id="em" type="email" placeholder="Почта"><input id="pw" type="password" placeholder="Пароль"><button class="go" id="li" type="button">Войти</button><p id="m" class="mut"></p></div></div>
 <div class="app" id="app" hidden>
-  <nav class="sb"><div class="logo">Toza<i>.</i></div>
+  <nav class="sb"><div class="logo">Tozavoy<i>.</i></div>
     <button class="nv on" data-p="dash">📊 <span>Дашборд</span></button><button class="nv" data-p="ord">📋 <span>Заказы</span></button><button class="nv" data-p="cli">👥 <span>Клиенты</span></button>
     <div class="sp"></div><div class="me" id="me"></div></nav>
   <main><div class="top"><h1 id="ttl"></h1>
