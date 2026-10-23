@@ -134,14 +134,14 @@ dialog::backdrop{background:#0b2e3399}
     <details><summary>Что нужно подготовить к приезду бригады?</summary><p>Обеспечьте доступ в помещение, воду и электричество. Уберите ценные и хрупкие вещи, предупредите о питомцах и особенностях покрытий.</p></details>
     <details><summary>Нужно ли покупать моющие средства и инвентарь?</summary><p>Нет. Средства и инвентарь привозит бригада.</p></details>
     <details><summary>Как можно оплатить уборку?</summary><p>Способ оплаты выбирается при оформлении заказа: наличными или картой через терминал. Для организаций возможен безналичный расчёт по договору.</p></details>
-    <details><summary>Можно ли перенести или отменить заказ?</summary><p>Да. Сообщите нам заранее по телефону или в Telegram. Условия указаны в договоре-оферте.</p></details>
+    <details><summary>Можно ли перенести или отменить заказ?</summary><p>Да. Сообщите нам заранее по телефону или в Telegram. Условия: <a href="oferta.html" target="_blank">договор-оферта</a>.</p></details>
     <details><summary>Работаете ли вы с офисами и компаниями?</summary><p>Да. Во вкладке «Офисам» оставьте заявку: мы подготовим коммерческое предложение с расчётом по вашей площади и графику.</p></details>
     <details><summary>Как получить скидку?</summary><p>Скидки действуют при регулярной уборке, для постоянных клиентов и по промокоду. Код друга даёт скидку на первый заказ, а пригласивший получает бонус.</p></details>
     <details><summary>Что делать, если результат не устроил?</summary><p>Напишите нам сразу после уборки и приложите фото. Мы разберём ситуацию и согласуем исправление недочётов.</p></details>
   </div></section>
   <section class="sec"><h2>Контакты</h2><div class="ct" id="h-ct"></div></section>
   <section class="cta"><h2>Готовы заказать уборку?</h2><button class="btn" data-go="order" type="button">Рассчитать стоимость</button></section>
-  <footer class="hf">© Tozavoy · <a href="privacy.html">Политика конфиденциальности</a></footer>
+  <footer class="hf">© Tozavoy · <a href="privacy.html">Политика конфиденциальности</a> · <a href="oferta.html">Публичная оферта</a></footer>
 </div>
 <div id="v-order" hidden>
   <div class="step"><h2>Что убираем?</h2><div class="opts" id="obj"></div><h2>Какая уборка нужна?</h2><div class="opts" id="typ"></div></div>
@@ -153,7 +153,7 @@ dialog::backdrop{background:#0b2e3399}
     <div class="lab">Оплата</div><div class="opts sm" id="pay"></div>
     <div class="promo"><button class="btn alt" id="geo" type="button">📍 Отметить, где я</button><small id="gm"></small></div>
     <h2>Ваш заказ</h2><div id="sumc" class="card"></div>
-    <label class="ag"><input type="checkbox" id="agr"><span><span>Согласен на обработку персональных данных</span> <a href="privacy.html" target="_blank">политика</a></span></label>
+    <label class="ag"><input type="checkbox" id="agr"><span><span>Принимаю оферту и согласен на обработку персональных данных</span> <a href="oferta.html" target="_blank">оферта</a>, <a href="privacy.html" target="_blank">политика</a></span></label>
     <div id="err" role="alert"></div>
   </div>
 </div>
@@ -209,7 +209,7 @@ dialog::backdrop{background:#0b2e3399}
   <div class="lab">Обычная площадь</div><div class="area"><output><span id="s-av">60</span> м²</output><input type="range" id="s-ar" min="20" max="300" step="5" value="60" aria-label="Площадь, м²"></div>
   <small class="mut">Мы подставим это в новый заказ, останется только выбрать день.</small>
   <div id="insb"><div class="lab">Приложение на экране</div><p id="ins"></p><button class="btn alt" id="inst" type="button" hidden>Установить</button></div>
-  <div class="dz"><button class="btn alt" id="s-exp" type="button">Скачать мои данные</button><a href="privacy.html" target="_blank">Политика конфиденциальности</a>
+  <div class="dz"><button class="btn alt" id="s-exp" type="button">Скачать мои данные</button><a href="privacy.html" target="_blank">Политика конфиденциальности</a><a href="oferta.html" target="_blank">Публичная оферта</a>
     <button class="btn alt" id="clr" type="button">Стереть данные на этом устройстве</button><button class="lnk" id="del" type="button" hidden>Удалить аккаунт</button></div>
 </dialog>
 <div id="tt" class="toast" hidden></div>
@@ -348,7 +348,11 @@ const L=[
 ['Регулярная уборка:','Muntazam tozalash:','Regular cleaning:'],['Пример: квартира 60 м², «{1}»:','Misol: 60 m² kvartira, «{1}»:','Example: 60 m² apartment, “{1}”:'],
 ['Телефон','Telefon','Phone'],['Адрес','Manzil','Address'],['Часы работы','Ish vaqti','Opening hours'],
 ['Регулярная уборка по договору, безналичный расчёт','Shartnoma boʻyicha muntazam tozalash, naqdsiz hisob-kitob','Regular cleaning under a contract, bank transfer'],
-['Принят','Qabul qilindi','Received'],['Выезжаем','Yoʻldamiz','On the way'],['Выполнен','Bajarildi','Done'],['Отменён','Bekor qilindi','Cancelled']
+['Принят','Qabul qilindi','Received'],['Выезжаем','Yoʻldamiz','On the way'],['Выполнен','Bajarildi','Done'],['Отменён','Bekor qilindi','Cancelled'],
+['Принимаю оферту и согласен на обработку персональных данных','Ofertani qabul qilaman va shaxsiy maʼlumotlarni qayta ishlashga roziman','I accept the offer and agree to personal data processing'],['оферта','oferta','offer'],
+['Нужно принять оферту и дать согласие на обработку данных.','Ofertani qabul qilish va maʼlumotlarni qayta ishlashga rozilik berish kerak.','Please accept the offer and consent to data processing.'],
+['Да. Сообщите нам заранее по телефону или в Telegram. Условия:','Ha. Oldindan telefon yoki Telegram orqali xabar bering. Shartlar:','Yes. Let us know in advance by phone or Telegram. The terms:'],['договор-оферта','oferta shartnomasi','offer agreement'],
+['Публичная оферта','Ommaviy oferta','Public offer']
 ];
 const DT={uz:{},en:{}};L.forEach(r=>{DT.uz[r[0]]=r[1];DT.en[r[0]]=r[2]});
 let LANG=load('toza_lang','');
@@ -439,7 +443,7 @@ async function submit(){
   if(!g('nm')||g('ph').replace(/\D/g,'').length<9||!g('ds')||!g('ad')){
     $('#err').textContent='Заполните имя, телефон, район и адрес — так мы сможем приехать.';return
   }
-  if(!$('#agr').checked)return $('#err').textContent='Нужно согласие на обработку данных.';
+  if(!$('#agr').checked)return $('#err').textContent='Нужно принять оферту и дать согласие на обработку данных.';
   $('#err').textContent='';
   const P2=Object.assign(load('toza',{}),{nm:g('nm'),ph:g('ph'),ds:g('ds'),ad:g('ad')});store('toza',P2);
   const c=calc(),id='№'+Math.floor(1000+Math.random()*9000),pm=CFG.pay[val('pay')||0],oid=/^(Payme|Click)$/.test(pm)&&window.crypto&&crypto.randomUUID?crypto.randomUUID():null;
