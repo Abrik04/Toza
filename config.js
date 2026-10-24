@@ -1,6 +1,6 @@
 /* Все настройки компании в одном месте. Файл index.html при обновлениях трогать не нужно. */
 /* ===== НАСТРОЙКИ: поменяйте под свою компанию ===== */
-const CFG={company:{name:'ИП «Toza»',address:'Ташкент',phone:'+998998040025',email:'abrorsaidxanov@gmail.com',date:'9 октября 2026',region:'Токио, Япония'},
+const CFG={company:{name:'ИП «Toza»',address:'Ташкент',phone:'+998998040025',email:'abrorsaidxanov@gmail.com',date:'9 октября 2026',region:'Ташкент, Узбекистан'},
   tg:'toza_cleaning',phone:'+998998040025',min:300000, /* минимальный заказ, сум */
   maxDisc:0.10, /* максимальная суммарная скидка (0.10 = 10%) */
   promo:{TOZA10:0.1},
