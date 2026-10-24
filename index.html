@@ -352,7 +352,8 @@ const L=[
 ['Принимаю оферту и согласен на обработку персональных данных','Ofertani qabul qilaman va shaxsiy maʼlumotlarni qayta ishlashga roziman','I accept the offer and agree to personal data processing'],['оферта','oferta','offer'],
 ['Нужно принять оферту и дать согласие на обработку данных.','Ofertani qabul qilish va maʼlumotlarni qayta ishlashga rozilik berish kerak.','Please accept the offer and consent to data processing.'],
 ['Да. Сообщите нам заранее по телефону или в Telegram. Условия:','Ha. Oldindan telefon yoki Telegram orqali xabar bering. Shartlar:','Yes. Let us know in advance by phone or Telegram. The terms:'],['договор-оферта','oferta shartnomasi','offer agreement'],
-['Публичная оферта','Ommaviy oferta','Public offer']
+['Публичная оферта','Ommaviy oferta','Public offer'],
+['максимум {1}% по всем скидкам','Barcha chegirmalar boʻyicha maksimum {1}%','Max {1}% across all discounts']
 ];
 const DT={uz:{},en:{}};L.forEach(r=>{DT.uz[r[0]]=r[1];DT.en[r[0]]=r[2]});
 let LANG=load('toza_lang','');
@@ -367,6 +368,7 @@ CFG.repeat=CFG.repeat||[['Разово',0],['Каждую неделю',0.1],['�
 CFG.online=CFG.online||{};
 CFG.pay=['Наличными','Терминалом'].concat(CFG.online.payme?['Payme']:[],CFG.online.click&&CFG.online.click.service?['Click']:[]);
 CFG.ref=CFG.ref||{friend:0.1,bonus:30000};
+CFG.maxDisc=CFG.maxDisc==null?0.1:CFG.maxDisc;
 const ST={new:'Принят',way:'Выезжаем',done:'Выполнен',cancel:'Отменён'};
 $('#rep').innerHTML=CFG.repeat.map((o,i)=>opt('rep',i,`<b>${o[0]}</b><small>${o[1]?'<span>скидка</span> '+Math.round(o[1]*100)+'%':'<span>без подписки</span>'}</small>`,0,!i)).join('');
 $('#pay').innerHTML=CFG.pay.map((o,i)=>opt('pay',i,`<b>${o}</b>`,0,!i)).join('');
@@ -383,10 +385,11 @@ function calc(){
   const o=OBJ[val('obj')],t=TYPES[val('typ')],a=+$('#area').value;
   const base=Math.max(CFG.min,Math.round(a*t[3]*o[2]/1000)*1000);
   const ex=$$('[name=ext]:checked').reduce((s,e)=>s+EXTRA[e.value][1],0);
-  const lv=CFG.levels[LV][2],rp=CFG.repeat[val('rep')||0][1],mx=Math.max(disc,REFD,lv),p=mx+rp;
+  const lv=CFG.levels[LV][2],rp=CFG.repeat[val('rep')||0][1],mx=Math.max(disc,REFD,lv),p0=mx+rp,p=Math.min(p0,CFG.maxDisc);
   const off=Math.round(base*p/1000)*1000,bon=Math.min(BAL,Math.round(base*0.5/1000)*1000),parts=[];
   if(mx)parts.push((mx==disc?tr('промокод'):mx==REFD?tr('код друга'):tr('уровень «{1}»',tr(CFG.levels[LV][1])))+' '+Math.round(mx*100)+'%');
   if(rp)parts.push(tr('подписка')+' '+Math.round(rp*100)+'%');
+  if(p0>p){parts.length=0;parts.push(tr('максимум {1}% по всем скидкам',Math.round(p*100)))}
   return{o,t,a,base,ex,gross:base+ex,off,bon,pct:Math.round(p*100),parts,total:base+ex-off-bon}
 }
 function upd(){
