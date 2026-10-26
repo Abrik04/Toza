@@ -32,13 +32,21 @@ main{max-width:560px;margin:0 auto;padding:14px 16px}
 .pay{font-size:14px}.pay.cash{background:#2e9e6b1c;border-radius:12px;padding:9px 12px;color:#1f7a50;font-weight:700}.pay b{font-size:16px}
 .go{width:100%;border:0;border-radius:16px;padding:16px;margin-top:6px;font:700 17px Manrope;color:#fff;background:var(--tq);cursor:pointer}.go.way{background:var(--grn)}.go:active{transform:scale(.98)}
 .em{background:#fff;border:1px dashed var(--ln);border-radius:20px;padding:28px 18px;text-align:center;opacity:.8}
+.wn{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:12px;font-weight:700;font-size:14px}.wn button{border:2px solid var(--ln);background:#fff;border-radius:99px;padding:6px 13px;font:700 14px Manrope;cursor:pointer}
+.wn .mn{display:flex;gap:4px;margin-left:auto}.wn .mn .on{background:var(--gold);border-color:var(--gold)}
+.wd{margin-bottom:14px}.wd h3{font:700 14px Unbounded,sans-serif;display:flex;align-items:center;gap:8px;margin-bottom:6px}.wd h3 small{background:var(--tile);border-radius:99px;padding:1px 9px;font:700 12px Manrope}.wd.td h3{color:var(--deep)}.wd.td h3:before{content:"●";color:var(--gold)}
+.wd .mut{opacity:.5;padding-left:4px}
+.wr{background:#fff;border:1px solid var(--ln);border-left:6px solid var(--gold);border-radius:14px;margin-bottom:8px}.wr.way{border-left-color:var(--tq)}.wr.done{border-left-color:var(--grn);opacity:.8}
+.wr summary{list-style:none;display:grid;grid-template-columns:52px 1fr auto;gap:2px 10px;align-items:center;padding:10px 12px;cursor:pointer}.wr summary::-webkit-details-marker{display:none}
+.wr summary b{font:700 16px Unbounded,sans-serif}.wr summary i{grid-column:2;font-style:normal;font-size:12px;opacity:.65}.wr summary em{grid-row:1/3;grid-column:3;font-style:normal}
+.wr .c{margin:0;border:0;border-top:1px solid var(--ln);border-radius:0 0 14px 14px;box-shadow:none}
 .toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:#fff;padding:11px 20px;border-radius:99px;font-weight:700;z-index:50;max-width:90vw}
 </style></head><body>
 <div id="lg"><div class="lg"><button data-l="ru" type="button">RU</button><button data-l="uz" type="button">UZ</button></div><div class="logo">Tozavoy<i>.</i></div><p>Вход для клинеров</p><input id="em" type="email" placeholder="Почта" autocomplete="email"><input id="pw" type="password" placeholder="Пароль" autocomplete="current-password"><button class="big" id="li" type="button">Войти</button><p id="m" role="alert"></p></div>
 <div id="app" hidden>
   <header><div class="top"><div class="logo">Tozavoy<i>.</i></div><div class="who" id="who"></div><div class="lg"><button data-l="ru" type="button">RU</button><button data-l="uz" type="button">UZ</button></div><button id="rf" type="button" aria-label="Обновить">⟳</button><button id="out" type="button">Выйти</button></div>
     <div class="sum" id="sum"></div>
-    <nav class="seg"><button data-t="today" class="on">Сегодня<i id="c1"></i></button><button data-t="soon">Скоро<i id="c2"></i></button><button data-t="done">Готово<i id="c3"></i></button></nav></header>
+    <nav class="seg"><button data-t="today" class="on">Сегодня<i id="c1"></i></button><button data-t="soon">Скоро<i id="c2"></i></button><button data-t="done">Готово<i id="c3"></i></button><button data-t="week">Неделя</button></nav></header>
   <div id="off" class="off" hidden>Нет связи. Показан последний сохранённый список.</div>
   <main id="ls"></main>
 </div>
@@ -51,8 +59,9 @@ const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;'
 const fm=n=>Math.round(n||0).toLocaleString('ru-RU');
 const U=new URL(/^https?:/i.test(CFG.sb.url.trim())?CFG.sb.url.trim():'https://'+CFG.sb.url.trim()).origin;
 const sb=supabase.createClient(U,CFG.sb.key.trim());
+const pad2=n=>String(n).padStart(2,'0');
 const day=d=>new Date(d.getFullYear(),d.getMonth(),d.getDate()).getTime();
-let rows=[],tab='today';
+let rows=[],tab='today',wk=0,mine=null,ME='';
 let LANG=(()=>{try{const s=localStorage.getItem('cl_lang');if(s)return s}catch(e){}return /^uz/i.test(navigator.language)?'uz':'ru'})();
 const M={'Вход для клинеров':'Tozalovchilar uchun kirish','Почта':'E-pochta','Пароль':'Parol','Войти':'Kirish','Выйти':'Chiqish','Сегодня':'Bugun','Скоро':'Tez orada','Готово':'Tayyor',
 'Нет связи. Показан последний сохранённый список.':'Aloqa yoʻq. Oxirgi saqlangan roʻyxat koʻrsatilmoqda.','Нет связи. Проверьте интернет.':'Aloqa yoʻq. Internetni tekshiring.',
@@ -62,7 +71,7 @@ const M={'Вход для клинеров':'Tozalovchilar uchun kirish','Поч
 'осталось сегодня':'bugun qoldi','выполнено':'bajarildi','наличных собрано, сум':'yigʻilgan naqd, soʻm','через {1}':'{1} dan keyin','опаздываем на {1}':'{1} kechikdik','ч':'soat','мин':'daq',
 'Новый':'Yangi','В пути':'Yoʻlda','Выполнен':'Bajarildi','🧭 Маршрут':'🧭 Yoʻnalish','Позвонить':'Qoʻngʻiroq','💵 Получить наличными: ':'💵 Naqd olish: ','💳 Взять терминал: ':'💳 Terminal olib boring: ','терминалом':'terminal orqali','Выезжаю':'Yoʻlga chiqdim','Выполнено ✓':'Bajarildi ✓','сум':'soʻm',
 'На сегодня заказов нет. Проверьте вкладку «Скоро».':'Bugunga buyurtmalar yoʻq. «Tez orada» boʻlimini tekshiring.','Ближайших заказов пока нет.':'Yaqin orada buyurtmalar yoʻq.','Выполненных заказов пока нет.':'Bajarilgan buyurtmalar hozircha yoʻq.',
-'Квартира':'Kvartira','Дом':'Uy','Офис':'Ofis','Поддерживающая уборка':'Muntazam tozalash','Генеральная уборка':'Chuqur tozalash','После ремонта уборка':'Taʼmirdan keyingi tozalash','регулярная уборка':'muntazam tozalash',
+'Неделя':'Hafta','Мои':'Meniki','Все':'Hammasi','На этой неделе заказов нет.':'Bu haftada buyurtmalar yoʻq.','абонемент':'abonement','Квартира':'Kvartira','Дом':'Uy','Офис':'Ofis','Поддерживающая уборка':'Muntazam tozalash','Генеральная уборка':'Chuqur tozalash','После ремонта уборка':'Taʼmirdan keyingi tozalash','регулярная уборка':'muntazam tozalash',
 'Окна (до 5 шт)':'Derazalar (5 tagacha)','Духовка':'Duxovka','Холодильник':'Muzlatgich','Балкон':'Balkon','Чистка дивана':'Divan tozalash','нет':'yoʻq',
 'наличными':'naqd','картой':'karta bilan','переводом':'oʻtkazma','безналичный расчёт':'naqdsiz hisob-kitob','Питомцы дома':'Uyda hayvonlar','есть':'bor','Как войти':'Qanday kirish','Комментарий':'Izoh'};
 const t=(s,a)=>(LANG=='uz'?M[s]||s:s).replace('{1}',a);
@@ -87,12 +96,22 @@ const rel=o=>{
   return m>=0?`<span class="rl">${t('через {1}',dur(m))}</span>`:`<span class="rl late">${t('опаздываем на {1}',dur(-m))}</span>`
 };
 const card=o=>{const p=o.p,d=o.status=='done';return`<article class="c ${o.status}" data-id="${o.id}">
-<div class="h"><span class="t">${esc(p.time)||'—'}</span><div class="hd"><b>${esc(p.district)||'—'}</b><small>${fd(p.at)}</small></div>${rel(o)||`<span class="pill ${o.status}">${t({new:'Новый',way:'В пути',done:'Выполнен'}[o.status])}</span>`}</div>
+<div class="h"><span class="t">${esc(p.time)||'—'}</span><div class="hd"><b>${esc(p.district)||'—'}</b><small>${fd(p.at)}${o.sel&&o.sel.plan?' · 🔁 '+t('абонемент'):''}</small></div>${rel(o)||`<span class="pill ${o.status}">${t({new:'Новый',way:'В пути',done:'Выполнен'}[o.status])}</span>`}</div>
 <p class="ad">📍 ${esc(p.addr)}</p>
 <div class="ac"><a class="bt" href="${esc(route(p))}" target="_blank" rel="noopener">${t('🧭 Маршрут')}</a>${p.phone?`<a class="bt" href="tel:+${p.phone}">📞 ${esc(p.name)||t('Позвонить')}</a>`:''}</div>
 <p>🧼 ${esc(tj(p.job))}${p.extra&&p.extra!='нет'?'<br>➕ '+esc(p.extra.split(', ').map(x=>t(x)).join(', ')):''}</p>${p.notes.map(n=>`<p class="n">⚠️ ${esc(tn(n))}</p>`).join('')}
 <p class="pay ${(cash(p)||term(p))&&!d?'cash':''}">${cash(p)&&!d?t('💵 Получить наличными: '):term(p)&&!d?t('💳 Взять терминал: '):'💳 '+esc(t(p.pay))+' · '}<b>${fm(o.total)} ${t('сум')}</b></p>
 ${d?'':`<button class="go ${o.status}" data-s="${o.status=='new'?'way':'done'}" type="button">${t(o.status=='new'?'Выезжаю':'Выполнено ✓')}</button>`}</article>`};
+function weekH(){
+  const b=new Date();b.setHours(0,0,0,0);b.setDate(b.getDate()-((b.getDay()+6)%7)+7*wk);
+  const days=[...Array(7)].map((_,i)=>{const d=new Date(b);d.setDate(b.getDate()+i);return d}),end=new Date(days[6]);end.setDate(end.getDate()+1);
+  const nm=s=>String(s||'').trim().toLowerCase(),has=rows.some(o=>nm(o.assignee)&&nm(o.assignee)==nm(ME)),mn=mine==null?has:mine;
+  const L=rows.filter(o=>o.p.at>=days[0]&&o.p.at<end&&(!mn||nm(o.assignee)==nm(ME))).sort((a,c)=>a.p.at-c.p.at);
+  let h=`<div class="wn"><button data-wk="-1" type="button">‹</button><button data-wk="0" type="button">${t('Сегодня')}</button><button data-wk="1" type="button">›</button><span>${fd(days[0])} — ${fd(days[6])}</span>${has?`<span class="mn"><button data-mine="1" class="${mn?'on':''}" type="button">${t('Мои')}</button><button data-mine="0" class="${mn?'':'on'}" type="button">${t('Все')}</button></span>`:''}</div>`;
+  h+=days.map(d=>{const D=L.filter(o=>day(o.p.at)==day(d));
+    return`<section class="wd${day(d)==day(new Date())?' td':''}"><h3>${fd(d)}<small>${D.length||''}</small></h3>${D.length?D.map(o=>`<details class="wr ${o.status}"><summary><b>${esc(o.p.time)||'—'}</b><span>${esc(o.p.district)||'—'}${o.sel&&o.sel.plan?' 🔁':''}</span><i>${esc(tj(o.p.job))}</i><em class="pill ${o.status}">${t({new:'Новый',way:'В пути',done:'Выполнен'}[o.status])}</em></summary>${card(o)}</details>`).join(''):'<p class="mut">—</p>'}</section>`}).join('');
+  return h+(L.length?'':`<div class="em">${t('На этой неделе заказов нет.')}</div>`)
+}
 function draw(){
   const td=day(new Date()),act=rows.filter(o=>o.status=='new'||o.status=='way'),by=(a,b)=>a.p.at-b.p.at;
   const L={today:act.filter(o=>day(o.p.at)<=td).sort(by),soon:act.filter(o=>day(o.p.at)>td).sort(by),done:rows.filter(o=>o.status=='done').sort((a,b)=>b.p.at-a.p.at).slice(0,30)};
@@ -100,14 +119,17 @@ function draw(){
   $('#c1').textContent=L.today.length;$('#c2').textContent=L.soon.length;$('#c3').textContent=L.done.length;
   $('#sum').innerHTML=`<div><b>${L.today.length}</b><small>${t('осталось сегодня')}</small></div><div><b>${dt.length}</b><small>${t('выполнено')}</small></div><div><b>${fm(sm(dt))}</b><small>${t('наличных собрано, сум')}</small></div>`;
   $$('.seg button').forEach(b=>b.classList.toggle('on',b.dataset.t==tab));
+  if(tab=='week'){$('#ls').innerHTML=weekH();return}
   $('#ls').innerHTML=L[tab].map(card).join('')||`<div class="em">${t({today:'На сегодня заказов нет. Проверьте вкладку «Скоро».',soon:'Ближайших заказов пока нет.',done:'Выполненных заказов пока нет.'}[tab])}</div>`
 }
 function toast(t){const e=$('#tt');e.textContent=t;e.hidden=false;clearTimeout(toast.i);toast.i=setTimeout(()=>e.hidden=true,3000)}
 function show(name,raw){
   const prev=new Set(rows.map(o=>o.id));
-  rows=raw.filter(o=>o.status!='cancel').map(o=>({...o,p:parse(o)}));
+  rows=raw.filter(o=>o.status!='cancel').map(o=>{const x={...o,p:parse(o)},s=o.sel||{};
+    if(s.date&&/^\d{4}-\d\d-\d\d/.test(s.date)){const m=String(s.tm||x.p.time||'00:00').split(':');x.p.at=new Date(+s.date.slice(0,4),+s.date.slice(5,7)-1,+s.date.slice(8,10),+m[0]||0,+m[1]||0);if(!x.p.time)x.p.time=pad2(m[0])+':'+pad2(m[1]||0)}
+    return x});ME=name;
   $('#lg').hidden=true;$('#app').hidden=false;$('#m').textContent='';$('#who').textContent=name;
-  const fresh=rows.filter(o=>!prev.has(o.id)&&o.status=='new').length;
+  const fresh=rows.filter(o=>!prev.has(o.id)&&o.status=='new'&&!(o.sel&&o.sel.sub)).length;
   if(prev.size&&fresh){toast(t('Новых заказов: {1}',fresh));navigator.vibrate&&navigator.vibrate(200)}
   draw()
 }
@@ -119,12 +141,15 @@ async function load(){
   const c=await sb.from('cleaners').select('name');
   if(c.error)return offline();
   if(!c.data||!c.data.length){$('#m').textContent=t('Нет доступа: эта почта не добавлена в список клинеров.');return}
-  const r=await sb.from('orders').select('id,code,details,total,status,created_at').order('created_at',{ascending:false}).limit(300);
+  let r=await sb.from('orders').select('id,code,details,total,status,assignee,sel,created_at').order('created_at',{ascending:false}).limit(400);
+  if(r.error)r=await sb.from('orders').select('id,code,details,total,status,created_at').order('created_at',{ascending:false}).limit(300);
   if(r.error)return offline();
   try{localStorage.setItem('cl',JSON.stringify({name:c.data[0].name,rows:r.data||[]}))}catch(e){}
   $('#off').hidden=true;show(c.data[0].name,r.data||[])
 }
 $('#ls').onclick=async e=>{
+  const nb=e.target.closest('[data-wk]');if(nb){wk=+nb.dataset.wk?wk+ +nb.dataset.wk:0;draw();return}
+  const mb=e.target.closest('[data-mine]');if(mb){mine=mb.dataset.mine=='1';draw();return}
   const b=e.target.closest('[data-s]'),c=e.target.closest('[data-id]');if(!b||!c)return;
   const o=rows.find(x=>x.id==c.dataset.id),s=b.dataset.s;
   if(s=='done'&&!confirm(t('Заказ выполнен?')))return;

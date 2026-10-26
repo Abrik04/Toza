@@ -39,6 +39,15 @@ p{margin-bottom:10px}
 .opts input{position:absolute;opacity:0;pointer-events:none}
 .opt{height:100%;display:flex;flex-direction:column;gap:2px;padding:13px;border:2px solid var(--ln);border-radius:18px;background:#fff;transition:border-color .15s,background .15s}
 .opt>span{font-size:26px}.opt small{font-size:13px;line-height:1.3;opacity:.7}
+.plans{grid-template-columns:repeat(auto-fit,minmax(210px,1fr))}
+.plan{gap:5px}.plan>b{font-size:16px}
+.plan .chip{align-self:flex-start;background:var(--gold);color:var(--ink);font:700 12px Manrope,sans-serif;border-radius:99px;padding:2px 9px}
+.plan .pp{font-size:13px;line-height:1.4;margin-top:2px}
+.plan .best{position:absolute;top:-9px;right:12px;background:var(--deep);color:#fff;font:700 11px Manrope,sans-serif;border-radius:99px;padding:2px 9px}
+.plans input:disabled+.opt{opacity:.45;cursor:not-allowed}
+.pinfo{margin-top:12px;background:var(--tile);border-radius:16px;padding:14px 16px;font-size:14px;line-height:1.5}
+.pinfo ul,.svc ul.pk{padding-left:18px;margin:6px 0}.svc ul.pk{font-size:14px}
+.pinfo a,#h-subnote a{color:var(--deep);font-weight:700}
 .opt .pr{color:var(--deep);opacity:1;font-weight:700;margin-top:4px}
 input:checked+.opt{border-color:var(--tq);background:var(--tile);box-shadow:0 0 0 3px #0e8c8c26}
 input:focus-visible+.opt{outline:3px solid var(--gold)}
@@ -126,6 +135,7 @@ dialog::backdrop{background:#0b2e3399}
   <section class="sec"><h2>Услуги</h2><div class="g3" id="h-svc"></div></section>
   <section class="sec"><h2>Что входит в уборку</h2><div class="g3" id="h-inc"></div></section>
   <section class="sec"><h2>Цены</h2><div id="h-pr"></div><button class="btn" data-go="order" type="button" style="margin-top:8px">Рассчитать стоимость</button></section>
+  <section class="sec" id="h-sub"><h2>Абонементы</h2><p>Регулярная уборка по фиксированному графику: скидка на каждую уборку, постоянная цена и закреплённая бригада.</p><div class="g3" id="h-plans"></div><p class="mut" id="h-subnote"></p></section>
   <section class="sec"><h2>Как мы работаем</h2><ol class="how"><li><b>Оставляете заказ</b>Выбираете услугу, площадь, дату и время в калькуляторе.</li><li><b>Подтверждаем время</b>Связываемся с вами и уточняем детали.</li><li><b>Приезжаем и убираем</b>Бригада приезжает в назначенное время.</li><li><b>Принимаете работу</b>Оплачиваете выбранным способом.</li></ol></section>
   <section class="sec"><h2>Районы</h2><p>Выезжаем во все районы Ташкента.</p><div class="dch" id="h-ds"></div></section>
   <section class="sec" id="h-phs" hidden><h2>Фото работ</h2><div class="gal" id="h-ph"></div></section>
@@ -136,7 +146,10 @@ dialog::backdrop{background:#0b2e3399}
     <details><summary>Как можно оплатить уборку?</summary><p>Способ оплаты выбирается при оформлении заказа: наличными или картой через терминал. Для организаций возможен безналичный расчёт по договору.</p></details>
     <details><summary>Можно ли перенести или отменить заказ?</summary><p>Да. Сообщите нам заранее по телефону или в Telegram. Условия: <a href="oferta.html" target="_blank">договор-оферта</a>.</p></details>
     <details><summary>Работаете ли вы с офисами и компаниями?</summary><p>Да. Во вкладке «Офисам» оставьте заявку: мы подготовим коммерческое предложение с расчётом по вашей площади и графику.</p></details>
-    <details><summary>Как получить скидку?</summary><p>Скидки действуют при регулярной уборке, для постоянных клиентов и по промокоду. Код друга даёт скидку на первый заказ, а пригласивший получает бонус.</p></details>
+    <details><summary>Как получить скидку?</summary><p>Скидки действуют по абонементу, для постоянных клиентов и по промокоду. Итоговая скидка видна в калькуляторе до оформления заказа. Код друга даёт скидку на первый заказ, а пригласивший получает бонус.</p></details>
+    <details><summary>Как работает абонемент?</summary><p>Вы выбираете поддерживающую уборку и частоту: раз в 2 недели или каждую неделю. Мы закрепляем день и время, бригада приезжает по графику. Скидка действует на каждую уборку, цена не меняется 3 месяца.</p></details>
+    <details><summary>Нужно ли платить за абонемент вперёд?</summary><p>Нет. Вы платите за каждую уборку после её завершения, как обычно: наличными или картой через терминал.</p></details>
+    <details><summary>Можно ли поставить абонемент на паузу или отменить?</summary><p>Да. Пауза до 14 дней без потери условий: сообщите за 48 часов. Отменить абонемент можно в любой момент, предупредив за 24 часа до ближайшей уборки. Штрафов нет.</p></details>
     <details><summary>Что делать, если результат не устроил?</summary><p>Напишите нам сразу после уборки и приложите фото. Мы разберём ситуацию и согласуем исправление недочётов.</p></details>
   </div></section>
   <section class="sec"><h2>Контакты</h2><div class="ct" id="h-ct"></div></section>
@@ -145,8 +158,8 @@ dialog::backdrop{background:#0b2e3399}
 </div>
 <div id="v-order" hidden>
   <div class="step"><h2>Что убираем?</h2><div class="opts" id="obj"></div><h2>Какая уборка нужна?</h2><div class="opts" id="typ"></div></div>
-  <div class="step"><h2>Какая площадь?</h2><div class="area"><output><span id="av">60</span> м²</output><input type="range" id="area" min="20" max="300" step="5" value="60" aria-label="Площадь, м²"></div><h2>Что добавить?</h2><div class="opts" id="ext"></div><h2>Как часто убираем?</h2><div class="opts" id="rep"></div></div>
-  <div class="step"><h2>Выберите день</h2><div class="opts sm" id="day"></div><h2>Выберите время</h2><div class="opts sm" id="tm"></div></div>
+  <div class="step"><h2>Какая площадь?</h2><div class="area"><output><span id="av">60</span> м²</output><input type="range" id="area" min="20" max="300" step="5" value="60" aria-label="Площадь, м²"></div><h2>Что добавить?</h2><div class="opts" id="ext"></div><h2>Разово или абонемент?</h2><div class="opts plans" id="rep"></div><div class="pinfo" id="pinfo" hidden></div></div>
+  <div class="step"><h2>Выберите день</h2><div class="opts sm" id="day"></div><h2>Выберите время</h2><div class="opts sm" id="tm"></div><p class="pinfo" id="recur" hidden></p></div>
   <div class="step"><h2>Куда приезжать?</h2>
     <div class="f"><input id="nm" placeholder="Ваше имя" autocomplete="name"><input id="ph" placeholder="Телефон, +998" inputmode="tel" autocomplete="tel"><select id="ds" aria-label="Район"></select><input id="ad" placeholder="Улица, дом, квартира или офис" autocomplete="street-address"><textarea id="cm" rows="2" placeholder="Комментарий: домофон, питомцы, что важно"></textarea></div>
     <div class="promo"><input id="pc" placeholder="Промокод"><button class="btn" id="pa" type="button">Применить</button><span id="pm"></span></div>
@@ -353,7 +366,43 @@ const L=[
 ['Нужно принять оферту и дать согласие на обработку данных.','Ofertani qabul qilish va maʼlumotlarni qayta ishlashga rozilik berish kerak.','Please accept the offer and consent to data processing.'],
 ['Да. Сообщите нам заранее по телефону или в Telegram. Условия:','Ha. Oldindan telefon yoki Telegram orqali xabar bering. Shartlar:','Yes. Let us know in advance by phone or Telegram. The terms:'],['договор-оферта','oferta shartnomasi','offer agreement'],
 ['Публичная оферта','Ommaviy oferta','Public offer'],
-['максимум {1}% по всем скидкам','Barcha chegirmalar boʻyicha maksimum {1}%','Max {1}% across all discounts']
+['максимум {1}% по всем скидкам','Barcha chegirmalar boʻyicha maksimum {1}%','Max {1}% across all discounts'],
+['Разово или абонемент?','Bir martalik yoki abonement?','One-time or subscription?'],
+['Разовая уборка','Bir martalik tozalash','One-time cleaning'],
+['Без обязательств','Majburiyatsiz','No commitment'],
+['{1} уборки в месяц','Oyiga {1} marta tozalash','{1} cleanings per month'],
+['{1} уборок в месяц','Oyiga {1} marta tozalash','{1} cleanings per month'],
+['Лучшая цена','Eng yaxshi narx','Best price'],
+['{1} сум за уборку','Tozalash uchun {1} soʻm','{1} UZS per cleaning'],
+['≈ {1} сум в месяц','≈ oyiga {1} soʻm','≈ {1} UZS per month'],
+['Фиксированный день и время','Belgilangan kun va vaqt','Fixed day and time'],
+['Закреплённая бригада','Biriktirilgan brigada','Dedicated team'],
+['Приоритет в выборе времени','Vaqt tanlashda ustuvorlik','Priority in choosing a time slot'],
+['Цена не меняется {1} мес.','Narx {1} oy oʻzgarmaydi','Price locked for {1} months'],
+['Перенос бесплатно за {1} ч','Bepul koʻchirish: {1} soat oldin','Free rescheduling up to {1} h before'],
+['Пауза до {1} дней без потери условий','Shartlarni yoʻqotmasdan {1} kungacha pauza','Pause up to {1} days, terms kept'],
+['Абонемент доступен для поддерживающей уборки. Если квартира давно не убиралась, сначала закажите генеральную, а затем перейдите на абонемент.','Abonement muntazam tozalash uchun mavjud. Kvartira uzoq vaqt tozalanmagan boʻlsa, avval chuqur tozalashni buyurtma qiling, keyin abonementga oʻting.','The subscription is available for regular cleaning. If the home has not been cleaned for a long time, order a deep cleaning first, then switch to a subscription.'],
+['Оплата после каждой уборки, предоплата не нужна.','Toʻlov har bir tozalashdan keyin, oldindan toʻlov kerak emas.','You pay after each cleaning, no prepayment.'],
+['Условия абонемента','Abonement shartlari','Subscription terms'],
+['Допуслуги и бонусы учитываются только в первой уборке.','Qoʻshimcha xizmatlar va bonuslar faqat birinchi tozalashda hisobga olinadi.','Add-ons and bonuses apply to the first cleaning only.'],
+['Следующие уборки','Keyingi tozalashlar','Next cleanings'],
+['В месяц, примерно','Oyiga, taxminan','Per month, approx.'],
+['Дальше приезжаем {1} в {2}.','Keyin {1} soat {2} da boramiz.','After that we come {1} at {2}.'],
+['Абонемент','Abonement','Subscription'],
+['абонемент','abonement','subscription'],
+['Абонементы','Abonementlar','Subscriptions'],
+['Регулярная уборка по фиксированному графику: скидка на каждую уборку, постоянная цена и закреплённая бригада.','Belgilangan jadval boʻyicha muntazam tozalash: har bir tozalashga chegirma, doimiy narx va biriktirilgan brigada.','Regular cleaning on a fixed schedule: a discount on every cleaning, a locked price and a dedicated team.'],
+['Квартира 60 м²:','Kvartira 60 m²:','Apartment 60 m²:'],
+['Оформить абонемент','Abonement rasmiylashtirish','Get a subscription'],
+['Управлять абонементом','Abonementni boshqarish','Manage subscription'],
+['Заявка на абонемент принята. Мы свяжемся с вами, подтвердим день и время и закрепим бригаду.','Abonement uchun ariza qabul qilindi. Biz siz bilan bogʻlanib, kun va vaqtni tasdiqlaymiz hamda brigadani biriktiramiz.','Subscription request received. We will contact you, confirm the day and time, and assign a team.'],
+['Как работает абонемент?','Abonement qanday ishlaydi?','How does the subscription work?'],
+['Вы выбираете поддерживающую уборку и частоту: раз в 2 недели или каждую неделю. Мы закрепляем день и время, бригада приезжает по графику. Скидка действует на каждую уборку, цена не меняется 3 месяца.','Siz muntazam tozalash va chastotani tanlaysiz: 2 haftada bir yoki har hafta. Biz kun va vaqtni belgilaymiz, brigada jadval boʻyicha keladi. Chegirma har bir tozalashga amal qiladi, narx 3 oy oʻzgarmaydi.','You choose regular cleaning and a frequency: every 2 weeks or every week. We fix the day and time and the team comes on schedule. The discount applies to every cleaning and the price is locked for 3 months.'],
+['Нужно ли платить за абонемент вперёд?','Abonement uchun oldindan toʻlash kerakmi?','Do I pay for the subscription in advance?'],
+['Нет. Вы платите за каждую уборку после её завершения, как обычно: наличными или картой через терминал.','Yoʻq. Har bir tozalash uchun u tugagach, odatdagidek toʻlaysiz: naqd yoki terminal orqali karta bilan.','No. You pay for each cleaning after it is finished, as usual: cash or card via terminal.'],
+['Можно ли поставить абонемент на паузу или отменить?','Abonementni pauzaga qoʻyish yoki bekor qilish mumkinmi?','Can I pause or cancel the subscription?'],
+['Да. Пауза до 14 дней без потери условий: сообщите за 48 часов. Отменить абонемент можно в любой момент, предупредив за 24 часа до ближайшей уборки. Штрафов нет.','Ha. Shartlarni yoʻqotmasdan 14 kungacha pauza: 48 soat oldin xabar bering. Abonementni istalgan vaqtda bekor qilish mumkin, eng yaqin tozalashdan 24 soat oldin ogohlantiring. Jarimalar yoʻq.','Yes. Pause up to 14 days without losing your terms: tell us 48 hours ahead. You can cancel any time with 24 hours notice before the next cleaning. No penalties.'],
+['Скидки действуют по абонементу, для постоянных клиентов и по промокоду. Итоговая скидка видна в калькуляторе до оформления заказа. Код друга даёт скидку на первый заказ, а пригласивший получает бонус.','Chegirmalar abonement, doimiy mijozlar va promokod boʻyicha amal qiladi. Yakuniy chegirma buyurtma rasmiylashtirilishidan oldin kalkulyatorda koʻrinadi. Doʻst kodi birinchi buyurtmaga chegirma beradi, taklif qilgan esa bonus oladi.','Discounts apply for subscriptions, regular clients and promo codes. The final discount is shown in the calculator before you order. A friend code gives a discount on the first order and the inviter gets a bonus.']
 ];
 const DT={uz:{},en:{}};L.forEach(r=>{DT.uz[r[0]]=r[1];DT.en[r[0]]=r[2]});
 let LANG=load('toza_lang','');
@@ -364,13 +413,26 @@ $('#obj').innerHTML=OBJ.map((o,i)=>opt('obj',i,`<span>${o[0]}</span><b>${o[1]}</
 $('#typ').innerHTML=TYPES.map((o,i)=>opt('typ',i,`<span>${o[0]}</span><b>${o[1]}</b><small>${o[2]}</small><small class="pr">${fmt(o[3])} <span>сум</span>/м²</small>`,0,!i)).join('');
 $('#ext').innerHTML=EXTRA.map((o,i)=>opt('ext',i,`<b>${o[0]}</b><small>+${fmt(o[1])} <span>сум</span></small>`,'checkbox')).join('');
 CFG.levels=CFG.levels||[[0,'Новичок',0],[3,'Постоянный клиент',0.05],[7,'VIP',0.1]];
-CFG.repeat=CFG.repeat||[['Разово',0],['Каждую неделю',0.1],['Раз в 2 недели',0.07]];
+/* Абонементы. name — название, n — уборок в месяц, d — скидка, step — 1 каждую неделю / 2 раз в 2 недели,
+   free — за сколько часов перенос бесплатный, team — закреплённая бригада, prio — приоритет в выборе времени. */
+CFG.plans=CFG.plans||[{name:'Разовая уборка',n:0,d:0},
+  {name:'Раз в 2 недели',n:2,d:0.07,step:2,free:12,team:0,prio:0},
+  {name:'Каждую неделю',n:4,d:0.10,step:1,free:6,team:1,prio:1}];
+const PLOCK=3,PAUSE=14,isoD=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+const WDF={ru:{1:['каждое воскресенье','каждый понедельник','каждый вторник','каждую среду','каждый четверг','каждую пятницу','каждую субботу'],
+ 2:['раз в 2 недели по воскресеньям','раз в 2 недели по понедельникам','раз в 2 недели по вторникам','раз в 2 недели по средам','раз в 2 недели по четвергам','раз в 2 недели по пятницам','раз в 2 недели по субботам']},
+ uz:{1:['har yakshanba','har dushanba','har seshanba','har chorshanba','har payshanba','har juma','har shanba'],
+ 2:['ikki haftada bir yakshanba kuni','ikki haftada bir dushanba kuni','ikki haftada bir seshanba kuni','ikki haftada bir chorshanba kuni','ikki haftada bir payshanba kuni','ikki haftada bir juma kuni','ikki haftada bir shanba kuni']},
+ en:{1:['every Sunday','every Monday','every Tuesday','every Wednesday','every Thursday','every Friday','every Saturday'],
+ 2:['every other Sunday','every other Monday','every other Tuesday','every other Wednesday','every other Thursday','every other Friday','every other Saturday']}};
+const planPerks=p=>[tr('Фиксированный день и время'),p.team&&tr('Закреплённая бригада'),p.prio&&tr('Приоритет в выборе времени'),tr('Цена не меняется {1} мес.',PLOCK),tr('Перенос бесплатно за {1} ч',p.free||24),tr('Пауза до {1} дней без потери условий',PAUSE)].filter(Boolean);
+const planN=p=>tr(p.n>=2&&p.n<=4?'{1} уборки в месяц':'{1} уборок в месяц',p.n);
 CFG.online=CFG.online||{};
 CFG.pay=['Наличными','Терминалом'].concat(CFG.online.payme?['Payme']:[],CFG.online.click&&CFG.online.click.service?['Click']:[]);
 CFG.ref=CFG.ref||{friend:0.1,bonus:30000};
 CFG.maxDisc=CFG.maxDisc==null?0.1:CFG.maxDisc;
 const ST={new:'Принят',way:'Выезжаем',done:'Выполнен',cancel:'Отменён'};
-$('#rep').innerHTML=CFG.repeat.map((o,i)=>opt('rep',i,`<b>${o[0]}</b><small>${o[1]?'<span>скидка</span> '+Math.round(o[1]*100)+'%':'<span>без подписки</span>'}</small>`,0,!i)).join('');
+
 $('#pay').innerHTML=CFG.pay.map((o,i)=>opt('pay',i,`<b>${o}</b>`,0,!i)).join('');
 const wd=['вс','пн','вт','ср','чт','пт','сб'];
 const D=[...Array(7)].map((_,i)=>{const d=new Date();d.setDate(d.getDate()+i);return d});
@@ -381,18 +443,22 @@ $('#ds').innerHTML='<option value="">Район</option>'+DIST.map(d=>`<option v
 $('#call').href='tel:'+CFG.phone;$('#tgc').href='https://t.me/'+CFG.tg;
 
 let LV=0,CNT=0,disc=0,REF='',REFD=0,BAL=0,rTry='';
-function calc(){
-  const o=OBJ[val('obj')],t=TYPES[val('typ')],a=+$('#area').value;
+function calc(pi){
+  const dflt=pi==null;pi=dflt?(+val('rep')||0):pi;if(dflt&&+val('typ')!=0)pi=0;
+  const pl=CFG.plans[pi]||CFG.plans[0],o=OBJ[val('obj')],t=TYPES[val('typ')],a=+$('#area').value;
   const base=Math.max(CFG.min,Math.round(a*t[3]*o[2]/1000)*1000);
   const ex=$$('[name=ext]:checked').reduce((s,e)=>s+EXTRA[e.value][1],0);
-  const lv=CFG.levels[LV][2],rp=CFG.repeat[val('rep')||0][1],mx=Math.max(disc,REFD,lv),p0=mx+rp,p=Math.min(p0,CFG.maxDisc);
+  const lv=CFG.levels[LV][2],rp=pl.d||0,mx=Math.max(disc,REFD,lv),p0=mx+rp,p=Math.min(p0,CFG.maxDisc);
   const off=Math.round(base*p/1000)*1000,bon=Math.min(BAL,Math.round(base*0.5/1000)*1000),parts=[];
   if(mx)parts.push((mx==disc?tr('промокод'):mx==REFD?tr('код друга'):tr('уровень «{1}»',tr(CFG.levels[LV][1])))+' '+Math.round(mx*100)+'%');
-  if(rp)parts.push(tr('подписка')+' '+Math.round(rp*100)+'%');
+  if(rp)parts.push(tr('абонемент')+' '+Math.round(rp*100)+'%');
   if(p0>p){parts.length=0;parts.push(tr('максимум {1}% по всем скидкам',Math.round(p*100)))}
-  return{o,t,a,base,ex,gross:base+ex,off,bon,pct:Math.round(p*100),parts,total:base+ex-off-bon}
+  return{o,t,a,base,ex,gross:base+ex,off,bon,pct:Math.round(p*100),parts,total:base+ex-off-bon,pi,pl,perVisit:base-off}
 }
 function upd(){
+  const ok=+val('typ')==0;
+  $$('[name=rep]').forEach(x=>{x.disabled=+x.value>0&&!ok});
+  if(!ok&&+val('rep')>0){const z=$('[name=rep][value="0"]');if(z)z.checked=true}
   const c=calc(),u=' '+tr('сум'),r=(l,v,k)=>`<div class="sl ${k||''}"><span>${l}</span><b>${v}</b></div>`;
   $('#av').textContent=c.a;$('#tot').textContent=fmt(c.total);
   $('#old').textContent=c.off||c.bon?fmt(c.gross):'';
@@ -401,6 +467,21 @@ function upd(){
   $('#sumc').innerHTML=r(tr('Уборка'),fmt(c.base)+u)+(c.ex?r(tr('Допуслуги'),'+'+fmt(c.ex)+u):'')
     +(c.off?r(tr('Скидка {1}% на уборку',c.pct),'−'+fmt(c.off)+u,'g')+`<small class="mut">${c.parts.join(' + ')}</small>`:'')
     +(c.bon?r(tr('Бонусы'),'−'+fmt(c.bon)+u,'g'):'')+r(tr('Итого'),fmt(c.total)+u,'tt')
+    +(c.pi?r(tr('Следующие уборки'),fmt(c.perVisit)+u)+r(tr('В месяц, примерно'),'≈ '+fmt(c.perVisit*c.pl.n)+u)+((c.ex||c.bon)?`<small class="mut">${tr('Допуслуги и бонусы учитываются только в первой уборке.')}</small>`:''):'');
+  CFG.plans.forEach((p,i)=>{const e=$('#pp'+i);if(!e)return;
+    if(!p.n||!ok){e.innerHTML='';return}
+    const v=calc(i).perVisit;e.innerHTML=tr('{1} сум за уборку',fmt(v))+'<br>'+tr('≈ {1} сум в месяц',fmt(v*p.n))});
+  const pi=c.pi,pl=c.pl,inf=$('#pinfo'),rc=$('#recur');
+  if(!ok){inf.hidden=false;inf.innerHTML=`<p>${H(tr('Абонемент доступен для поддерживающей уборки. Если квартира давно не убиралась, сначала закажите генеральную, а затем перейдите на абонемент.'))}</p>`}
+  else if(pi){inf.hidden=false;inf.innerHTML=`<b>${H(tr(pl.name))}</b><ul>${planPerks(pl).map(x=>`<li>${H(x)}</li>`).join('')}</ul><p>${H(tr('Оплата после каждой уборки, предоплата не нужна.'))} <a href="oferta.html#abonement" target="_blank">${H(tr('Условия абонемента'))}</a></p>`}
+  else inf.hidden=true;
+  if(pi&&D[val('day')]){rc.hidden=false;rc.textContent=tr('Дальше приезжаем {1} в {2}.',(WDF[LANG]||WDF.ru)[pl.step==2?2:1][D[val('day')].getDay()],val('tm')||'')}
+  else rc.hidden=true
+}
+function renderPlans(){
+  const cur=+(val('rep')||0),best=CFG.plans.reduce((b,p,i)=>p.d>(CFG.plans[b].d||0)?i:b,0);
+  $('#rep').innerHTML=CFG.plans.map((p,i)=>`<label><input type="radio" name="rep" value="${i}"${i==cur?' checked':''}><div class="opt plan">${p.n&&i==best?`<span class="best">${H(tr('Лучшая цена'))}</span>`:''}<b>${H(tr(p.name))}</b>${p.n?`<span class="chip">−${Math.round(Math.min(p.d,CFG.maxDisc)*100)}%</span><small>${H(planN(p))}</small>`:`<small>${H(tr('Без обязательств'))}</small>`}<span class="pp" id="pp${i}"></span></div></label>`).join('');
+  upd()
 }
 document.addEventListener('input',upd);upd();
 
@@ -452,11 +533,13 @@ async function submit(){
   const c=calc(),id='№'+Math.floor(1000+Math.random()*9000),pm=CFG.pay[val('pay')||0],oid=/^(Payme|Click)$/.test(pm)&&window.crypto&&crypto.randomUUID?crypto.randomUUID():null;
   if(c.bon>0){const r=await sb.rpc('use_bonus',{amt:c.bon});if(r.data)BAL-=c.bon;else{BAL=0;c.total+=c.bon;c.bon=0}}
   const ex=$$('[name=ext]:checked').map(e=>EXTRA[e.value][0]).join(', ')||'нет';
-  text=[`Заказ ${id}`,`${c.o[1]}: ${c.t[1]} уборка, ${c.a} м²`,`Дополнительно: ${ex}`,
-    `Когда: ${ds(D[val('day')])} в ${val('tm')}${+val('rep')?`, повтор: ${CFG.repeat[val('rep')][0].toLowerCase()}`:''}`,`Куда: ${g('ds')} р-н, ${g('ad')}`,`Оплата: ${CFG.pay[val('pay')||0].toLowerCase()}`,/^(Payme|Click)$/.test(CFG.pay[val('pay')||0])&&'Статус оплаты: ожидает оплаты',GEO&&`Карта: ${GEO}`,
+  text=[`Заказ ${id}`,`${c.o[1]}: ${c.t[1]} уборка, ${c.a} м²`,`Дополнительно: ${ex}${c.pi&&c.ex?' — только на первую уборку':''}`,
+    `Когда: ${ds(D[val('day')])} в ${val('tm')}${c.pi?`, абонемент: ${c.pl.name.toLowerCase()}`:''}`,
+    c.pi&&`Абонемент: «${c.pl.name}» · уборок в месяц: ${c.pl.n} · скидка ${Math.round(Math.min(c.pl.d,CFG.maxDisc)*100)}%`,
+    c.pi&&`Расписание: ${WDF.ru[c.pl.step==2?2:1][D[val('day')].getDay()]} в ${val('tm')} (первая уборка ${ds(D[val('day')])})`,`Куда: ${g('ds')} р-н, ${g('ad')}`,`Оплата: ${CFG.pay[val('pay')||0].toLowerCase()}`,/^(Payme|Click)$/.test(CFG.pay[val('pay')||0])&&'Статус оплаты: ожидает оплаты',GEO&&`Карта: ${GEO}`,
     `Клиент: ${g('nm')}, ${g('ph')}`,LANG!='ru'&&`Язык клиента: ${LANG.toUpperCase()}`,P2.pets&&'Питомцы дома: есть',P2.door&&`Как войти: ${P2.door}`,g('cm')&&`Комментарий: ${g('cm')}`,
-    disc&&`Промокод: ${$('#pc').value.trim().toUpperCase()}`,c.bon&&`Бонусы: −${fmt(c.bon)} сум`,REF&&`Код друга: ${REF}`,`Итого: ${fmt(c.total)} сум${c.off?` (скидка ${c.pct}%, −${fmt(c.off)} сум)`:''}`].filter(Boolean).join('\n');
-  const a=load('toza_orders',[]),sel={obj:val('obj'),typ:val('typ'),area:$('#area').value,ext:$$('[name=ext]:checked').map(e=>e.value)};
+    disc&&`Промокод: ${$('#pc').value.trim().toUpperCase()}`,c.bon&&`Бонусы: −${fmt(c.bon)} сум`,REF&&`Код друга: ${REF}`,c.pi&&`Следующие уборки: ${fmt(c.perVisit)} сум`,`Итого: ${fmt(c.total)} сум${c.off?` (скидка ${c.pct}%, −${fmt(c.off)} сум)`:''}`].filter(Boolean).join('\n');
+  const a=load('toza_orders',[]),sel={obj:val('obj'),typ:val('typ'),area:$('#area').value,ext:$$('[name=ext]:checked').map(e=>e.value),plan:c.pi,dow:D[val('day')].getDay(),tm:val('tm'),date:isoD(D[val('day')]),vp:c.perVisit,pn:c.pl.name,pm:c.pl.n,ps:c.pl.step==2?2:1};
   a.unshift({id,at:new Date().toLocaleDateString('ru-RU'),t:text,total:c.total,sel});
   if(!user)store('toza_orders',a.slice(0,30));
   if(user)sb.auth.updateUser({data:P2});
@@ -465,7 +548,7 @@ async function submit(){
   if(sb){const r=await sb.from('orders').insert(Object.assign({code:id,details:text,total:c.total,sel},oid?{id:oid}:{},REF?{ref:REF}:{}));ok=!r.error;r.error&&console.warn(r.error.message)}
   $('#nx').disabled=false;if(ok){REF='';REFD=0;$('#pm').textContent=''}
   $('#oid').textContent=id;
-  $('#dtx').textContent=ok?(oid?'Заказ принят. Оплатите онлайн по кнопке ниже.':'Заказ принят. Мы свяжемся с вами, чтобы подтвердить время.'):'Не удалось отправить заказ. Нажмите «Отправить в Telegram», и мы его получим.';
+  $('#dtx').textContent=ok?(oid?'Заказ принят. Оплатите онлайн по кнопке ниже.':c.pi?'Заявка на абонемент принята. Мы свяжемся с вами, подтвердим день и время и закрепим бригаду.':'Заказ принят. Мы свяжемся с вами, чтобы подтвердить время.'):'Не удалось отправить заказ. Нажмите «Отправить в Telegram», и мы его получим.';
   $('#tg').hidden=ok;$('#paynow').hidden=!(ok&&oid);if(ok&&oid)$('#paynow').href=payLink(pm,oid,c.total);$('#dsm').textContent=tr('Итого')+': '+fmt(c.total)+' '+tr('сум')+(c.off?` (−${c.pct}%)`:'');$('#tg').href=`https://t.me/${CFG.tg}?text=${encodeURIComponent(text)}`;
   $('#dcall').href='tel:'+CFG.phone;$('#dsup').href='https://t.me/'+CFG.tg;
   $('#ok').showModal();me()
@@ -481,7 +564,7 @@ async function orders(){
 }
 async function hist(){
   const a=ORD=await orders();
-  $('#v-hist').innerHTML=a.length?a.map((o,i)=>`<div class="card"><b>${o.id}</b> <small>${o.at}</small>${o.status?`<span class="st">${ST[o.status]||o.status}</span>`:''}<p>${o.t.split('\n').slice(1,4).join('<br>')}</p><div class="t">${fmt(o.total)} <span>сум</span></div><div class="acts"><button class="btn alt" data-r="${i}" type="button">Повторить</button></div></div>`).join('')
+  $('#v-hist').innerHTML=a.length?a.map((o,i)=>`<div class="card"><b>${o.id}</b> <small>${o.at}</small>${o.status?`<span class="st">${ST[o.status]||o.status}</span>`:''}${o.sel&&o.sel.plan?'<span class="st">Абонемент</span>':''}<p>${o.t.split('\n').slice(1,4).join('<br>')}</p><div class="t">${fmt(o.total)} <span>сум</span></div><div class="acts"><button class="btn alt" data-r="${i}" type="button">Повторить</button>${o.sel&&o.sel.plan?`<a class="btn alt" target="_blank" rel="noopener" href="https://t.me/${CFG.tg}?text=${encodeURIComponent('Абонемент '+o.id+': ')}">Управлять абонементом</a>`:''}</div></div>`).join('')
    :'<div class="empty"><b>Заказов пока нет</b><br>Оформите первый, и в следующий раз его можно будет повторить одним нажатием.</div>'
 }
 $('#v-hist').onclick=e=>{
@@ -633,8 +716,10 @@ function renderHome(){
   $('#h-pr').innerHTML=`<div class="tbl">${TYPES.map(t=>`<div class="r"><span>${H(t[1])}</span><b>${fmt(t[3])}${u}/м²</b></div>`).join('')}</div>
 <p class="mut">${T_('Цена за м² для квартиры.')} ${OBJ.filter(o=>o[2]!=1).map(o=>`${H(tr(o[1]))}: ${o[2]>1?'+':'−'}${Math.round(Math.abs(o[2]-1)*100)}%`).join(', ')}. ${T_('Минимальный заказ:')} ${fmt(CFG.min)}${u}.</p>
 <h3>${T_('Дополнительные услуги')}</h3><div class="tbl">${EXTRA.map(x=>`<div class="r"><span>${H(x[0])}</span><b>+${fmt(x[1])}${u}</b></div>`).join('')}</div>
-<p class="mut">${T_('Регулярная уборка:')} ${CFG.repeat.filter(r=>r[1]).map(r=>`${H(tr(r[0]).toLowerCase())} −${Math.round(r[1]*100)}%`).join(', ')}.</p>
 <p>${H(tr('Пример: квартира 60 м², «{1}»:',tr(TYPES[0][1])))} <b>${fmt(ex60)}${u}</b></p>`;
+  const pv=i=>{const b=Math.max(CFG.min,Math.round(60*TYPES[0][3]*OBJ[0][2]/1000)*1000);return b-Math.round(b*Math.min(CFG.plans[i].d,CFG.maxDisc)/1000)*1000};
+  $('#h-plans').innerHTML=CFG.plans.map((p,i)=>i?`<div class="svc"><span class="e">🔁</span><b>${H(tr(p.name))}</b><span>${H(planN(p))} · −${Math.round(Math.min(p.d,CFG.maxDisc)*100)}%</span><ul class="pk">${planPerks(p).map(x=>`<li>${H(x)}</li>`).join('')}</ul><div class="pz">${H(tr('Квартира 60 м²:'))} ${H(tr('{1} сум за уборку',fmt(pv(i))))}<br>${H(tr('≈ {1} сум в месяц',fmt(pv(i)*p.n)))}</div><button class="btn alt" data-plan="${i}" type="button" style="margin-top:10px">${H(tr('Оформить абонемент'))}</button></div>`:'').join('');
+  $('#h-subnote').innerHTML=H(tr('Оплата после каждой уборки, предоплата не нужна.'))+' <a href="oferta.html#abonement" target="_blank">'+H(tr('Условия абонемента'))+'</a>';
   $('#h-ds').innerHTML=DIST.map(d=>`<span>${H(d)}</span>`).join('');
   const ph=CFG.photos||[];$('#h-phs').hidden=!ph.length;
   $('#h-ph').innerHTML=ph.map(p=>`<img loading="lazy" src="${H(p.src||p)}" alt="${H(p.alt||'Результат уборки Tozavoy')}">`).join('');
@@ -650,7 +735,8 @@ function renderHome(){
   }catch(e){}
 }
 renderHome();
-document.addEventListener('click',e=>{const b=e.target.closest('[data-go]');if(b){e.preventDefault();tab(b.dataset.go)}});
+document.addEventListener('click',e=>{const b=e.target.closest('[data-go]');if(b){e.preventDefault();tab(b.dataset.go)}
+  const pb=e.target.closest('[data-plan]');if(pb){e.preventDefault();const z=$('[name=typ][value="0"]'),r=$(`[name=rep][value="${pb.dataset.plan}"]`);if(z)z.checked=true;if(r)r.checked=true;upd();tab('order');show(0)}});
 
 /* вход и регистрация (Supabase) */
 let sb=null,user=null;
@@ -715,7 +801,7 @@ new MutationObserver(()=>{qf||(qf=requestAnimationFrame(()=>{qf=0;tx()}))}).obse
 function setLang(l,init){
   LANG=l;store('toza_lang',l);document.documentElement.lang=l;
   $$('.lg button').forEach(b=>b.classList.toggle('on',b.dataset.l==l));
-  renderHome();tx();head();init||me();if(view=='hist')hist()
+  renderHome();renderPlans();tx();head();init||me();if(view=='hist')hist()
 }
 $$('.lg button').forEach(b=>b.onclick=()=>setLang(b.dataset.l));
 

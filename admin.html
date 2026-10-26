@@ -47,12 +47,25 @@ details summary{cursor:pointer;color:var(--mut);font-size:13px}pre{white-space:p
 .cl{display:flex;gap:14px;align-items:center;margin-bottom:10px;flex-wrap:wrap}.av{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;background:var(--gold);color:#0b2e33;font:700 18px Unbounded}
 .gr{display:grid;flex:1;min-width:130px}.r{display:grid;text-align:right}
 .toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:99px;font-weight:700;z-index:50}
+.tw{overflow-x:auto;border:1px solid var(--ln);border-radius:16px;background:var(--card)}
+.gt{border-collapse:collapse;width:100%;min-width:760px;font-size:13px}.gt th,.gt td{border:1px solid var(--ln);padding:5px;vertical-align:top}
+.gt th{background:var(--tile);font-weight:700;text-align:center}.gt th small{display:block;font-weight:500;color:var(--mut)}.gt th.td{background:var(--gold);color:#0b2e33}.gt th.td small{color:#0b2e33}
+.gt th[data-day]{cursor:pointer}.gt th.tm{width:58px;font-family:Unbounded;font-size:12px}.gt td{min-width:118px}
+.ev{display:grid;gap:1px;width:100%;text-align:left;border:0;border-left:5px solid var(--gold);background:var(--bg);border-radius:8px;padding:5px 7px;margin:0 0 4px;cursor:pointer;font-size:12px;line-height:1.3}
+.ev.s-way{border-left-color:var(--tq)}.ev.s-done{border-left-color:var(--grn);opacity:.75}.ev.s-cancel{border-left-color:var(--red);opacity:.55;text-decoration:line-through}.ev.sel{outline:2px solid var(--tq)}
+.ev small{color:var(--mut)}.ev .nb{color:var(--red);font-weight:700}
+.sc{align-items:center}.wl{margin:0 4px}.ck{font-size:13px;display:flex;gap:5px;align-items:center}
+.warn{background:#f4b63f33;border-radius:12px;padding:8px 12px;margin-bottom:12px;font-weight:700;font-size:13px;cursor:pointer}
+.dt{width:100%;min-width:820px;border-collapse:collapse;font-size:13px}.dt th,.dt td{padding:7px 8px;border-bottom:1px solid var(--ln);text-align:left;vertical-align:top}.dt th{background:var(--tile)}.dt tfoot td{font-weight:700;border:0}
+.ci{border:2px solid var(--ln);background:var(--bg);border-radius:10px;padding:4px 8px;font-size:13px;max-width:150px}
+.sd{margin-top:14px}.sf label{display:grid;gap:2px;font-size:12px;color:var(--mut)}.sf input{min-width:130px;border-radius:12px}
+.pill.s-act{background:#2e9e6b24;color:var(--grn)}.pill.s-pen{background:#f4b63f30;color:#b57a00}.pill.s-pau{background:#0e8c8c24;color:var(--tq)}
 @media(max-width:780px){.app{grid-template-columns:1fr}.sb{position:fixed;inset:auto 0 0 0;height:auto;flex-direction:row;z-index:20;padding:6px 8px calc(6px + env(safe-area-inset-bottom));border-radius:20px 20px 0 0}.sb .logo,.me,.sp{display:none}.nv{flex:1;flex-direction:column;gap:0;font-size:11px;padding:6px;align-items:center}main{padding-bottom:100px}.rw{grid-template-columns:1fr auto}.rw span{display:none}}
 </style></head><body>
 <div id="lg" class="lgn"><div class="card"><div class="logo">Tozavoy<i>.</i></div><input id="em" type="email" placeholder="Почта"><input id="pw" type="password" placeholder="Пароль"><button class="go" id="li" type="button">Войти</button><p id="m" class="mut"></p></div></div>
 <div class="app" id="app" hidden>
   <nav class="sb"><div class="logo">Tozavoy<i>.</i></div>
-    <button class="nv on" data-p="dash">📊 <span>Дашборд</span></button><button class="nv" data-p="ord">📋 <span>Заказы</span></button><button class="nv" data-p="cli">👥 <span>Клиенты</span></button>
+    <button class="nv on" data-p="dash">📊 <span>Дашборд</span></button><button class="nv" data-p="ord">📋 <span>Заказы</span></button><button class="nv" data-p="sch">📅 <span>График</span></button><button class="nv" data-p="sub">🔁 <span>Абонементы</span></button><button class="nv" data-p="cli">👥 <span>Клиенты</span></button>
     <div class="sp"></div><div class="me" id="me"></div></nav>
   <main><div class="top"><h1 id="ttl"></h1>
     <select id="days" class="ctl"><option value="7">7 дней</option><option value="30" selected>30 дней</option><option value="90">90 дней</option><option value="365">Год</option></select>
@@ -83,7 +96,7 @@ function parse(o){
   const L=(o.details||'').split('\n'),g=p=>{const l=L.find(x=>x.startsWith(p));return l?l.slice(p.length).trim():''};
   const a=(L[1]||'').split(': '),cl=g('Клиент:'),m=cl.match(/^(.*),\s*(\+?[\d\s()-]{7,})$/),w=g('Куда:').match(/^(.*?) р-н,\s*(.*)$/);
   return{obj:a[0]||'',type:(a[1]||'').split(',')[0].replace(/ уборка$/,''),name:m?m[1]:cl,phone:m?m[2].replace(/\D/g,''):'',
-    district:w?w[1]:'—',addr:w?w[2]:g('Куда:'),pay:g('Оплата:'),when:g('Когда:'),map:g('Карта:')}
+    district:w?w[1]:'—',addr:w?w[2]:g('Куда:'),pay:g('Оплата:'),when:g('Когда:'),map:g('Карта:'),sub:g('Абонемент:'),sched:g('Расписание:'),k:g('Когда:').match(/(\d+)\.(\d+) в (\d+):(\d+)/)}
 }
 const row=o=>`<div class="rw"><b>${esc(o.code)}</b><span>${esc(o.p.name)||'—'}</span><span class="mut">${esc(o.p.district)}</span><span class="mut">${fd(o.t)}</span><b>${fm(o.total)}</b>${pill(o.status)}</div>`;
 
@@ -104,39 +117,108 @@ function hb(a,key){
   return e.map(([k,v])=>`<div class="hb"><span title="${esc(k)}">${esc(k)}</span><div class="tk"><i style="width:${v.n/mx*100}%"></i></div><b>${v.n} · ${sh(v.s)}</b></div>`).join('')||'<p class="mut">Пока нет данных</p>'
 }
 function dash(){
-  const now=Date.now(),D=days*864e5,cur=all.filter(o=>o.t>=now-D),prv=all.filter(o=>o.t<now-D&&o.t>=now-2*D);
+  const now=Date.now(),D=days*864e5,cur=all.filter(o=>o.t>=now-D&&o.t<=now),prv=all.filter(o=>o.t<now-D&&o.t>=now-2*D);
   const sc=sum(cur),n=cur.length,nc=cur.filter(o=>o.status!='cancel').length,done=cur.filter(o=>o.status=='done').length;
   const k=(l,v,d)=>`<div class="card"><div class="kl">${l}</div><div class="kv">${v}</div>${d||''}</div>`;
   $('#v').innerHTML='<div class="kpis">'+k('Заказов',n,dl(n,prv.length))+k('Сумма заказов',fm(sc)+' <small>сум</small>',dl(sc,sum(prv)))+k('Средний чек',fm(nc?sc/nc:0)+' <small>сум</small>')
-   +k('Ждут подтверждения',all.filter(o=>o.status=='new').length,'<small class="mut">сейчас</small>')+k('Выполнено',(n?Math.round(done/n*100):0)+'%',`<small class="mut">${done} из ${n}</small>`)+'</div><div class="g2">'
+   +k('Ждут подтверждения',all.filter(o=>o.status=='new'&&!(o.visit&&o.t>now)).length,'<small class="mut">сейчас</small>')+k('Абонементы',subs.filter(s=>s.status=='active').length,`<small class="mut">ждут: ${subs.filter(s=>s.status=='pending').length}</small>`)+k('Выполнено',(n?Math.round(done/n*100):0)+'%',`<small class="mut">${done} из ${n}</small>`)+'</div><div class="g2">'
    +`<div class="card wide"><h2>Динамика<span class="seg"><button data-m="n" class="${metric=='n'?'on':''}">Заказы</button><button data-m="s" class="${metric=='s'?'on':''}">Сумма</button></span></h2>${bars(cur)}</div>`
    +`<div class="card"><h2>Статусы</h2>${pie(cur)}</div><div class="card"><h2>Районы</h2>${hb(cur,o=>o.p.district)}</div><div class="card"><h2>Услуги</h2>${hb(cur,o=>o.p.type)}</div>`
    +`<div class="card"><h2>Бригады</h2>${hb(cur,o=>o.assignee||'не назначено')}</div><div class="card"><h2>Оплата</h2>${hb(cur,o=>o.p.pay)}</div>`
-   +`<div class="card wide"><h2>Последние заказы</h2>${all.slice(0,6).map(row).join('')||'<p class="mut">Заказов пока нет</p>'}</div></div>`
+   +`<div class="card wide"><h2>Последние заказы</h2>${all.filter(o=>!(o.visit&&o.t>now)).slice(0,6).map(row).join('')||'<p class="mut">Заказов пока нет</p>'}</div></div>`
 }
 const card=o=>{const p=o.p;return`<div class="card oc" data-id="${o.id}"><div class="oh"><b>${esc(o.code)}</b>${pill(o.status)}<small class="mut">${fd(o.t)}</small><b class="sm">${fm(o.total)} сум</b></div>
 <div class="om">👤 ${esc(p.name)||'—'} ${p.phone?`<a href="tel:+${p.phone}">+${p.phone}</a>`:''}</div>
 <div class="om">📍 ${esc(p.district)}, ${esc(p.addr)} ${/^https:\/\/maps\.google\.com\//.test(p.map)?`<a href="${esc(p.map)}" target="_blank" rel="noopener">на карте</a>`:''}</div>
 <div class="om">🧼 ${esc(p.obj)} · ${esc(p.type)} · ${esc(p.when)} · ${esc(p.pay)}</div>
+${p.sub?`<div class="om">🔁 ${esc(p.sub)}${p.sched?' · '+esc(p.sched):''}</div>`:''}
 <details><summary>Весь заказ</summary><pre>${esc(o.details)}</pre></details>
 <div class="row">${Object.keys(ST).map(k=>`<button class="s ${o.status==k?'on':''}" data-s="${k}">${ST[k][0]}</button>`).join('')}<input placeholder="Кто выезжает" list="cn" value="${esc(o.assignee)}" data-a></div></div>`};
 function ord(){
-  const q=$('#q').value.trim().toLowerCase(),base=all.filter(o=>!q||[o.code,o.p.name,o.p.phone,o.p.addr,o.p.district,o.assignee].join(' ').toLowerCase().includes(q));
-  const a=base.filter(o=>flt=='all'||o.status==flt),ch=[['all','Все',base.length],...Object.keys(ST).map(k=>[k,ST[k][0],base.filter(o=>o.status==k).length])];
+  const q=$('#q').value.trim().toLowerCase(),nowT=Date.now(),base=all.filter(o=>(flt=='sub'||!(o.visit&&o.t>nowT))&&(!q||[o.code,o.p.name,o.p.phone,o.p.addr,o.p.district,o.assignee].join(' ').toLowerCase().includes(q)));
+  const a=base.filter(o=>flt=='all'||(flt=='sub'?(!!o.p.sub||o.visit||!!(o.sel&&o.sel.plan)):o.status==flt)),ch=[['all','Все',base.length],['sub','🔁 Абонементы',base.filter(o=>o.p.sub||o.visit||(o.sel&&o.sel.plan)).length],...Object.keys(ST).map(k=>[k,ST[k][0],base.filter(o=>o.status==k).length])];
   $('#v').innerHTML=`<div class="chips">${ch.map(c=>`<button class="chip ${flt==c[0]?'on':''}" data-f="${c[0]}">${c[1]} ${c[2]}</button>`).join('')}</div>`+(a.slice(0,100).map(card).join('')||'<p class="mut">Ничего не найдено</p>')
 }
 function cli(){
   const q=$('#q').value.trim().toLowerCase(),m={};
-  all.forEach(o=>{const k=o.p.phone.slice(-9)||o.p.name,c=m[k]=m[k]||{name:o.p.name,phone:o.p.phone,n:0,s:0,t:0};c.n++;if(o.status!='cancel')c.s+=o.total||0;c.t=Math.max(c.t,o.t)});
+  all.filter(o=>!(o.visit&&o.t>Date.now())).forEach(o=>{const k=o.p.phone.slice(-9)||o.p.name,c=m[k]=m[k]||{name:o.p.name,phone:o.p.phone,n:0,s:0,t:0};c.n++;if(o.status!='cancel')c.s+=o.total||0;c.t=Math.max(c.t,o.t)});
   const a=Object.values(m).filter(c=>!q||(c.name+c.phone).toLowerCase().includes(q)).sort((x,y)=>y.s-x.s);
   $('#v').innerHTML=`<p class="mut" style="margin-bottom:12px">Клиентов: ${a.length}. Постоянных (3+ заказа): ${a.filter(c=>c.n>=3).length}</p>`
    +(a.slice(0,100).map(c=>`<div class="card cl"><div class="av">${esc((c.name||'?')[0].toUpperCase())}</div><div class="gr"><b>${esc(c.name)||'—'}</b>${c.phone?`<a href="tel:+${c.phone}">+${c.phone}</a>`:''}</div>${c.n>=3?'<span class="pill s-done">Постоянный</span>':''}<div class="r"><b>${fm(c.s)} сум</b><small class="mut">${c.n} зак. · ${fd(c.t)}</small></div></div>`).join('')||'<p class="mut">Клиентов пока нет</p>')
 }
-const TT={dash:'Дашборд',ord:'Заказы',cli:'Клиенты'};
+
+const DOW=['Вс','Пн','Вт','Ср','Чт','Пт','Сб'],MON=['янв','фев','мар','апр','мая','июн','июл','авг','сен','окт','ноя','дек'],WDN=['воскресенье','понедельник','вторник','среду','четверг','пятницу','субботу'];
+const pad=n=>String(n).padStart(2,'0'),dk=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate()),d0=d=>new Date(d.getFullYear(),d.getMonth(),d.getDate());
+const tkey=o=>pad(o.at.getHours())+':'+pad(o.at.getMinutes()),shortT=t=>({'Поддерживающая':'П','Генеральная':'Г','После ремонта':'Р'}[t]||(t||'?')[0]);
+let cur=d0(new Date()),sv='wk',who='all',scn=0,ssel=null,subs=[],subErr=null;
+function when_(o){
+  const s=o.sel||{},p=o.p,cr=new Date(o.created_at);
+  if(s.date&&/^\d{4}-\d\d-\d\d/.test(s.date)){const m=String(s.tm||p.k&&p.k[3]+':'+p.k[4]||'00:00').split(':');return new Date(+s.date.slice(0,4),+s.date.slice(5,7)-1,+s.date.slice(8,10),+m[0]||0,+m[1]||0)}
+  if(p.k){let y=cr.getFullYear(),at=new Date(y,p.k[2]-1,p.k[1],p.k[3],p.k[4]);if(at<cr-30*864e5)at=new Date(y+1,p.k[2]-1,p.k[1],p.k[3],p.k[4]);return at}
+  return cr
+}
+const mon0=d=>{const x=d0(d);x.setDate(x.getDate()-((x.getDay()+6)%7));return x};
+const chipH=o=>`<button class="ev s-${o.status}${ssel==o.id?' sel':''}" data-ev="${o.id}"><b>${o.visit||(o.sel&&o.sel.plan)?'🔁 ':''}${esc(o.p.district)}</b><small>${esc(shortT(o.p.type))} · ${esc(o.p.name)}</small><small class="${o.assignee?'':'nb'}">${o.assignee?'👷 '+esc(o.assignee):'без бригады'}</small></button>`;
+function sch(){
+  const b=mon0(cur),days=[...Array(7)].map((_,i)=>{const d=new Date(b);d.setDate(b.getDate()+i);return d}),end=new Date(days[6]);end.setDate(end.getDate()+1);
+  const names=[...new Set(all.map(o=>o.assignee).filter(Boolean))].sort();
+  const okf=o=>(scn||o.status!='cancel')&&(who=='all'||(who=='-'?!o.assignee:o.assignee==who));
+  const inw=all.filter(o=>o.at>=days[0]&&o.at<end&&okf(o)),sumD=a=>a.filter(o=>o.status!='cancel').reduce((s,o)=>s+(o.total||0),0);
+  const nobr=inw.filter(o=>!o.assignee&&(o.status=='new'||o.status=='way')).length,today=dk(new Date());
+  const lab=sv=='wk'?`${days[0].getDate()} ${MON[days[0].getMonth()]} — ${days[6].getDate()} ${MON[days[6].getMonth()]} ${days[6].getFullYear()}`:`${DOW[cur.getDay()]}, ${cur.getDate()} ${MON[cur.getMonth()]} ${cur.getFullYear()}`;
+  let h=`<div class="chips sc"><button class="chip" data-w="-1">←</button><button class="chip" data-w="0">Сегодня</button><button class="chip" data-w="1">→</button><b class="wl">${lab}</b><span class="seg"><button data-sv="wk" class="${sv=='wk'?'on':''}">Неделя</button><button data-sv="day" class="${sv=='day'?'on':''}">День</button></span><select class="ctl" id="who"><option value="all">Все бригады</option><option value="-"${who=='-'?' selected':''}>Без бригады</option>${names.map(n=>`<option${who==n?' selected':''}>${esc(n)}</option>`).join('')}</select><label class="ck"><input type="checkbox" id="scn"${scn?' checked':''}> отменённые</label></div>`;
+  if(nobr)h+=`<p class="warn" data-nb>⚠ Без бригады: ${nobr}. Нажмите, чтобы показать только их.</p>`;
+  if(sv=='wk'){
+    const times=[...new Set(inw.map(tkey))].sort();
+    h+=`<div class="tw"><table class="gt"><tr><th></th>${days.map(d=>{const L=inw.filter(o=>dk(o.at)==dk(d));return`<th class="${dk(d)==today?'td':''}" data-day="${dk(d)}">${DOW[d.getDay()]} ${pad(d.getDate())}.${pad(d.getMonth()+1)}<small>${L.length?L.length+' зак. · '+sh(sumD(L)):'—'}</small></th>`}).join('')}</tr>`
+     +(times.length?times.map(tm=>`<tr><th class="tm">${tm}</th>${days.map(d=>`<td>${inw.filter(o=>dk(o.at)==dk(d)&&tkey(o)==tm).sort((x,y)=>x.at-y.at).map(chipH).join('')}</td>`).join('')}</tr>`).join(''):`<tr><td colspan="8" class="mut" style="text-align:center;padding:24px">На этой неделе заказов нет</td></tr>`)
+     +`</table></div>`;
+    const so=all.find(o=>o.id==ssel);if(so&&inw.includes(so))h+=`<div class="sd">${card(so)}</div>`
+  }else{
+    const L=inw.filter(o=>dk(o.at)==dk(cur)).sort((x,y)=>x.at-y.at),p=o=>o.p;
+    h+=`<div class="tw"><table class="dt"><thead><tr><th>Время</th><th>Клиент</th><th>Адрес</th><th>Уборка</th><th>Сумма</th><th>Бригада</th><th>Статус</th><th>Тип</th></tr></thead><tbody>`
+     +(L.length?L.map(o=>`<tr data-id="${o.id}"><td><b>${tkey(o)}</b></td><td>${esc(p(o).name)||'—'}${p(o).phone?`<br><a href="tel:+${p(o).phone}">+${p(o).phone}</a>`:''}</td><td>${esc(p(o).district)}, ${esc(p(o).addr)}</td><td>${esc(p(o).obj)} · ${esc(p(o).type)}</td><td>${fm(o.total)}</td><td><input class="ci" list="cn" value="${esc(o.assignee)}" data-a placeholder="бригада"></td><td><select class="ci" data-st>${Object.keys(ST).map(k=>`<option value="${k}"${o.status==k?' selected':''}>${ST[k][0]}</option>`).join('')}</select></td><td>${o.visit?'🔁 уборка №'+(o.sel.visit||''):(o.sel&&o.sel.plan?'🔁 абонемент (1-я)':'разовый')}</td></tr>`).join(''):`<tr><td colspan="8" class="mut" style="text-align:center;padding:24px">На этот день заказов нет</td></tr>`)
+     +`</tbody><tfoot><tr><td colspan="4">Всего за день: ${L.filter(o=>o.status!='cancel').length}</td><td>${fm(sumD(L))}</td><td colspan="3"></td></tr></tfoot></table></div>`
+  }
+  $('#v').innerHTML=h
+}
+function subCard(s){
+  const p=parse({details:s.details}),paused=s.pause_from&&(!s.pause_to||s.pause_to>=dk(new Date())),nd=new Date(s.next_date+'T00:00');
+  const nv=all.filter(o=>o.sel&&o.sel.sub==s.id&&o.status=='new'&&o.at>=d0(new Date())).sort((x,y)=>x.at-y.at).slice(0,3).map(o=>pad(o.at.getDate())+'.'+pad(o.at.getMonth()+1)).join(', ');
+  const st={pending:['s-pen','Ждёт подтверждения'],active:[paused?'s-pau':'s-act',paused?'На паузе':'Активен'],cancelled:['s-cancel','Отменён']}[s.status]||['',s.status];
+  const fs=new Date(s.start_date+'T00:00');
+  return`<div class="card oc" data-sid="${s.id}"><div class="oh"><b>${esc(p.name)||'—'}</b>${p.phone?`<a href="tel:+${p.phone}">+${p.phone}</a>`:''}<span class="pill ${st[0]}">${st[1]}</span><small class="mut">${esc(s.code)} · ${esc(s.plan_name)}</small><b class="sm">${fm(s.price)} сум · ≈ ${fm(s.price*(s.n||0))} в месяц</b></div>
+<div class="om">📍 ${esc(p.district)}, ${esc(p.addr)}</div>
+<div class="om">🗓 ${s.step==2?'раз в 2 недели':'каждую неделю'}, ${WDN[nd.getDay()]} в ${esc(s.tm)} · первая уборка ${pad(fs.getDate())}.${pad(fs.getMonth()+1)}</div>
+${nv?`<div class="om">➡ Ближайшие: ${nv}</div>`:''}${paused?`<div class="om">⏸ Пауза с ${esc(s.pause_from)}${s.pause_to?' по '+esc(s.pause_to):''}</div>`:''}
+${s.status=='cancelled'?'':`<div class="row sf"><label>Следующая уборка<input type="date" data-f="nd" value="${esc(s.next_date)}"></label><label>Время<input type="time" data-f="tm" value="${esc(s.tm)}"></label><label>Бригада<input list="cn" data-f="as" value="${esc(s.assignee||'')}"></label><button class="s on" data-act="${s.status=='pending'?'confirm':'save'}">${s.status=='pending'?'Подтвердить':'Сохранить'}</button></div>`}
+${s.status=='active'?`<div class="row sf">${paused?'<button class="s" data-act="resume">Снять паузу</button>':'<label>Пауза с<input type="date" data-f="pf"></label><label>по<input type="date" data-f="pt"></label><button class="s" data-act="pause">Поставить на паузу</button>'}<button class="s" data-act="cancel" style="color:var(--red)">Отменить абонемент</button></div>`:''}
+${s.status=='pending'?'<div class="row sf"><button class="s" data-act="cancel" style="color:var(--red)">Отклонить</button></div>':''}</div>`
+}
+function sub(){
+  if(subErr){$('#v').innerHTML=`<div class="card"><b>Таблица абонементов не найдена.</b><p class="mut" style="margin-top:6px">Выполните файл supabase_stage5.sql в Supabase (SQL Editor → New query → Run), затем нажмите ⟳.</p><small class="mut">${esc(subErr)}</small></div>`;return}
+  const g=k=>subs.filter(s=>s.status==k),sec=(t,a,open)=>a.length?`<h2 style="margin:18px 0 10px;font-size:15px">${t} · ${a.length}</h2>`+a.map(subCard).join(''):'';
+  $('#v').innerHTML=`<div class="chips"><button class="chip on" data-act="gen">⟳ Создать уборки на 4 недели вперёд</button><span class="mut" style="align-self:center">Активных: ${g('active').length} · ждут подтверждения: ${g('pending').length}</span></div>`
+   +(sec('Ждут подтверждения',g('pending'))+sec('Активные',g('active'))+sec('Отменённые',g('cancelled'))||'<p class="mut">Абонементов пока нет. Заявка появится здесь сама, когда клиент оформит заказ с абонементом.</p>')
+}
+async function subAct(c,act){
+  const s=subs.find(x=>x.id==(c&&c.dataset.sid)),f=k=>((c&&c.querySelector(`[data-f=${k}]`))||{}).value||'';let r;
+  if(act=='gen')r=await sb.rpc('abon_generate',{p_horizon:28});
+  else if(!s)return;
+  else if(act=='confirm'||act=='save'){if(!f('nd'))return toast('Укажите дату следующей уборки');r=await sb.rpc('abon_set',{p_id:s.id,p_next:f('nd'),p_tm:f('tm'),p_assignee:f('as')})}
+  else if(act=='pause'){if(!f('pf'))return toast('Укажите дату начала паузы');r=await sb.rpc('abon_pause',{p_id:s.id,p_from:f('pf'),p_to:f('pt')||null})}
+  else if(act=='resume')r=await sb.rpc('abon_resume',{p_id:s.id});
+  else if(act=='cancel'){if(!confirm('Отменить абонемент? Будущие уборки будут удалены.'))return;r=await sb.rpc('abon_cancel',{p_id:s.id})}
+  if(!r)return;
+  if(r.error)return toast('Ошибка: '+r.error.message);
+  toast(act=='gen'?'Создано уборок: '+(r.data||0):'Готово ✓');load()
+}
+const TT={dash:'Дашборд',ord:'Заказы',sch:'График уборок',sub:'Абонементы',cli:'Клиенты'};
 function render(){
   $$('.nv').forEach(b=>b.classList.toggle('on',b.dataset.p==pg));
-  $('#ttl').textContent=TT[pg];$('#days').hidden=pg!='dash';$('#q').hidden=pg=='dash';
-  ({dash,ord,cli})[pg]()
+  $('#ttl').textContent=TT[pg];$('#days').hidden=pg!='dash';$('#q').hidden=pg=='dash'||pg=='sch'||pg=='sub';
+  const pn=subs.filter(s=>s.status=='pending').length;$('[data-p=sub] span').textContent='Абонементы'+(pn?' · '+pn:'');
+  ({dash,ord,sch,sub,cli})[pg]()
 }
 function toast(t){const e=$('#tt');e.textContent=t;e.hidden=false;clearTimeout(toast.i);toast.i=setTimeout(()=>e.hidden=true,3500)}
 async function load(){
@@ -145,10 +227,11 @@ async function load(){
   $('#lg').hidden=true;$('#app').hidden=false;
   const cn=await sb.from('cleaners').select('name');$('#cn').innerHTML=(cn.data||[]).map(x=>`<option value="${esc(x.name)}">`).join('');
   const s=await sb.auth.getSession();$('#me').textContent=s.data.session?s.data.session.user.email:'';
-  const r=await sb.from('orders').select('id,code,details,total,status,assignee,created_at').order('created_at',{ascending:false}).limit(1000);
-  all=(r.data||[]).map(o=>({...o,t:+new Date(o.created_at),p:parse(o)}));
-  const mx=all.reduce((m,o)=>Math.max(m,o.t),0);
-  if(!first&&mx>seen)toast('Новых заказов: '+all.filter(o=>o.t>seen).length);
+  const r=await sb.from('orders').select('id,code,details,total,status,assignee,sel,created_at').order('created_at',{ascending:false}).limit(1500);
+  all=(r.data||[]).map(o=>{const x={...o,c:+new Date(o.created_at),p:parse(o)};x.visit=!!(o.sel&&o.sel.sub);x.at=when_(x);x.t=x.visit?+x.at:x.c;return x});
+  const sr=await sb.from('subscriptions').select('*').order('created_at',{ascending:false});subs=sr.data||[];subErr=sr.error?sr.error.message:null;
+  const mx=all.reduce((m,o)=>Math.max(m,o.c),0),nw=all.filter(o=>o.c>seen&&!o.visit).length;
+  if(!first&&mx>seen&&nw)toast('Новых заказов: '+nw);
   seen=mx;first=0;render()
 }
 $('#v').onclick=async e=>{
@@ -159,12 +242,22 @@ $('#v').onclick=async e=>{
     if(r.error){o.status=old;render();toast('Не удалось сохранить статус')}
   }
   if(t.dataset.f){flt=t.dataset.f;render()}
+  const bw=t.closest('[data-w]');if(bw){const n=+bw.dataset.w;cur=n?new Date(cur.getFullYear(),cur.getMonth(),cur.getDate()+n*(sv=='wk'?7:1)):d0(new Date());render()}
+  const bs=t.closest('[data-sv]');if(bs){sv=bs.dataset.sv;render()}
+  const bd=t.closest('[data-day]');if(bd){const p=bd.dataset.day.split('-');cur=new Date(+p[0],p[1]-1,+p[2]);sv='day';render()}
+  const be=t.closest('[data-ev]');if(be){ssel=ssel==be.dataset.ev?null:be.dataset.ev;render()}
+  if(t.closest('[data-nb]')){who='-';render()}
+  const ba=t.closest('[data-act]');if(ba){subAct(ba.closest('[data-sid]'),ba.dataset.act)}
   if(t.closest('[data-m]')){metric=t.closest('[data-m]').dataset.m;render()}
 };
 $('#v').onchange=async e=>{
-  const c=e.target.closest('[data-id]');if(!c||!('a' in e.target.dataset))return;
-  const o=all.find(x=>x.id==c.dataset.id);o.assignee=e.target.value.trim();
-  const r=await sb.from('orders').update({assignee:o.assignee}).eq('id',o.id);toast(r.error?'Не удалось сохранить':'Сохранено ✓')
+  const t=e.target;
+  if(t.id=='who'){who=t.value;render();return}
+  if(t.id=='scn'){scn=t.checked?1:0;render();return}
+  const c=t.closest('[data-id]');if(!c)return;
+  const o=all.find(x=>x.id==c.dataset.id);if(!o)return;
+  if('a' in t.dataset){o.assignee=t.value.trim();const r=await sb.from('orders').update({assignee:o.assignee}).eq('id',o.id);toast(r.error?'Не удалось сохранить':'Сохранено ✓');if(pg=='sch')render();return}
+  if('st' in t.dataset){const old=o.status;o.status=t.value;const r=await sb.from('orders').update({status:o.status}).eq('id',o.id);if(r.error){o.status=old;toast('Не удалось сохранить статус')}else toast('Сохранено ✓');render()}
 };
 $$('.nv').forEach(b=>b.onclick=()=>{pg=b.dataset.p;$('#q').value='';render()});
 $('#days').onchange=e=>{days=+e.target.value;render()};
