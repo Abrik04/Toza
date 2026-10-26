@@ -418,7 +418,7 @@ CFG.levels=CFG.levels||[[0,'Новичок',0],[3,'Постоянный клие
 CFG.plans=CFG.plans||[{name:'Разовая уборка',n:0,d:0},
   {name:'Раз в 2 недели',n:2,d:0.07,step:2,free:12,team:0,prio:0},
   {name:'Каждую неделю',n:4,d:0.10,step:1,free:6,team:1,prio:1}];
-const PLOCK=3,PAUSE=14,isoD=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+const PLOCK=3,PAUSE=14;
 const WDF={ru:{1:['каждое воскресенье','каждый понедельник','каждый вторник','каждую среду','каждый четверг','каждую пятницу','каждую субботу'],
  2:['раз в 2 недели по воскресеньям','раз в 2 недели по понедельникам','раз в 2 недели по вторникам','раз в 2 недели по средам','раз в 2 недели по четвергам','раз в 2 недели по пятницам','раз в 2 недели по субботам']},
  uz:{1:['har yakshanba','har dushanba','har seshanba','har chorshanba','har payshanba','har juma','har shanba'],
@@ -539,7 +539,7 @@ async function submit(){
     c.pi&&`Расписание: ${WDF.ru[c.pl.step==2?2:1][D[val('day')].getDay()]} в ${val('tm')} (первая уборка ${ds(D[val('day')])})`,`Куда: ${g('ds')} р-н, ${g('ad')}`,`Оплата: ${CFG.pay[val('pay')||0].toLowerCase()}`,/^(Payme|Click)$/.test(CFG.pay[val('pay')||0])&&'Статус оплаты: ожидает оплаты',GEO&&`Карта: ${GEO}`,
     `Клиент: ${g('nm')}, ${g('ph')}`,LANG!='ru'&&`Язык клиента: ${LANG.toUpperCase()}`,P2.pets&&'Питомцы дома: есть',P2.door&&`Как войти: ${P2.door}`,g('cm')&&`Комментарий: ${g('cm')}`,
     disc&&`Промокод: ${$('#pc').value.trim().toUpperCase()}`,c.bon&&`Бонусы: −${fmt(c.bon)} сум`,REF&&`Код друга: ${REF}`,c.pi&&`Следующие уборки: ${fmt(c.perVisit)} сум`,`Итого: ${fmt(c.total)} сум${c.off?` (скидка ${c.pct}%, −${fmt(c.off)} сум)`:''}`].filter(Boolean).join('\n');
-  const a=load('toza_orders',[]),sel={obj:val('obj'),typ:val('typ'),area:$('#area').value,ext:$$('[name=ext]:checked').map(e=>e.value),plan:c.pi,dow:D[val('day')].getDay(),tm:val('tm'),date:isoD(D[val('day')]),vp:c.perVisit,pn:c.pl.name,pm:c.pl.n,ps:c.pl.step==2?2:1};
+  const a=load('toza_orders',[]),sel={obj:val('obj'),typ:val('typ'),area:$('#area').value,ext:$$('[name=ext]:checked').map(e=>e.value),plan:c.pi,dow:D[val('day')].getDay(),tm:val('tm')};
   a.unshift({id,at:new Date().toLocaleDateString('ru-RU'),t:text,total:c.total,sel});
   if(!user)store('toza_orders',a.slice(0,30));
   if(user)sb.auth.updateUser({data:P2});
