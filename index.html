@@ -367,6 +367,7 @@ const L=[
 ['Да. Сообщите нам заранее по телефону или в Telegram. Условия:','Ha. Oldindan telefon yoki Telegram orqali xabar bering. Shartlar:','Yes. Let us know in advance by phone or Telegram. The terms:'],['договор-оферта','oferta shartnomasi','offer agreement'],
 ['Публичная оферта','Ommaviy oferta','Public offer'],
 ['максимум {1}% по всем скидкам','Barcha chegirmalar boʻyicha maksimum {1}%','Max {1}% across all discounts'],
+['Заказ в Telegram-боте','Telegram-botda buyurtma','Order in the Telegram bot'],
 ['Разово или абонемент?','Bir martalik yoki abonement?','One-time or subscription?'],
 ['Разовая уборка','Bir martalik tozalash','One-time cleaning'],
 ['Без обязательств','Majburiyatsiz','No commitment'],
@@ -724,6 +725,7 @@ function renderHome(){
   const ph=CFG.photos||[];$('#h-phs').hidden=!ph.length;
   $('#h-ph').innerHTML=ph.map(p=>`<img loading="lazy" src="${H(p.src||p)}" alt="${H(p.alt||'Результат уборки Tozavoy')}">`).join('');
   const ct=[['📞',T_('Телефон'),`<a href="tel:${H(CFG.phone)}">${H(C.phone||CFG.phone)}</a>`],['💬','Telegram',`<a href="https://t.me/${H(CFG.tg)}" target="_blank" rel="noopener">@${H(CFG.tg)}</a>`],
+    CFG.bot&&['🤖',T_('Заказ в Telegram-боте'),`<a href="https://t.me/${H(CFG.bot)}" target="_blank" rel="noopener">@${H(CFG.bot)}</a>`],
     C.address&&['📍',T_('Адрес'),H(C.address)],C.email&&['✉️','E-mail',`<a href="mailto:${H(C.email)}">${H(C.email)}</a>`],C.hours&&['🕘',T_('Часы работы'),H(C.hours)]].filter(Boolean);
   $('#h-ct').innerHTML=ct.map(c=>`<div><small>${c[0]} ${c[1]}</small>${c[2]}</div>`).join('');
   if(LDDONE)return;LDDONE=1;
