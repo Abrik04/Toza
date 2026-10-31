@@ -41,15 +41,19 @@ main{max-width:560px;margin:0 auto;padding:14px 16px}
 .wr summary b{font:700 16px Unbounded,sans-serif}.wr summary i{grid-column:2;font-style:normal;font-size:12px;opacity:.65}.wr summary em{grid-row:1/3;grid-column:3;font-style:normal}
 .wr .c{margin:0;border:0;border-top:1px solid var(--ln);border-radius:0 0 14px 14px;box-shadow:none}
 .toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:#fff;padding:11px 20px;border-radius:99px;font-weight:700;z-index:50;max-width:90vw}
+dialog{border:0;border-radius:20px;padding:18px;width:min(380px,92vw);color:var(--ink);background:#fff;box-shadow:0 20px 60px #0007}dialog::backdrop{background:#0b2e3399}
+dialog h3{font:700 17px Unbounded,sans-serif;margin:0 0 6px}dialog label{display:grid;gap:4px;font-size:13px;margin-top:10px}dialog input{padding:12px;border:2px solid var(--ln);border-radius:12px;font-size:16px;background:#fff;color:var(--ink)}
+dialog .ac{display:grid;gap:8px;margin-top:14px}.lnk{background:none;border:0;color:#fff;font-weight:700;font-size:14px;cursor:pointer;padding:6px;text-decoration:underline}.warnp{color:var(--red)}
 </style></head><body>
-<div id="lg"><div class="lg"><button data-l="ru" type="button">RU</button><button data-l="uz" type="button">UZ</button></div><div class="logo">Tozavoy<i>.</i></div><p>Вход для клинеров</p><input id="em" type="email" placeholder="Почта" autocomplete="email"><input id="pw" type="password" placeholder="Пароль" autocomplete="current-password"><button class="big" id="li" type="button">Войти</button><p id="m" role="alert"></p></div>
+<div id="lg"><div class="lg"><button data-l="ru" type="button">RU</button><button data-l="uz" type="button">UZ</button></div><div class="logo">Tozavoy<i>.</i></div><p>Вход для клинеров</p><input id="em" type="email" placeholder="Почта" autocomplete="email"><input id="pw" type="password" placeholder="Пароль" autocomplete="current-password"><button class="big" id="li" type="button">Войти</button><button class="lnk" id="fp" type="button">Забыли пароль?</button><p id="m" role="alert"></p></div>
 <div id="app" hidden>
   <header><div class="top"><div class="logo">Tozavoy<i>.</i></div><div class="who" id="who"></div><div class="lg"><button data-l="ru" type="button">RU</button><button data-l="uz" type="button">UZ</button></div><button id="rf" type="button" aria-label="Обновить">⟳</button><button id="out" type="button">Выйти</button></div>
     <div class="sum" id="sum"></div>
-    <nav class="seg"><button data-t="today" class="on">Сегодня<i id="c1"></i></button><button data-t="soon">Скоро<i id="c2"></i></button><button data-t="done">Готово<i id="c3"></i></button><button data-t="week">Неделя</button></nav></header>
+    <nav class="seg"><button data-t="today" class="on">Сегодня<i id="c1"></i></button><button data-t="soon">Скоро<i id="c2"></i></button><button data-t="done">Готово<i id="c3"></i></button><button data-t="week">Неделя</button><button data-t="cash">Касса<i id="c4"></i></button></nav></header>
   <div id="off" class="off" hidden>Нет связи. Показан последний сохранённый список.</div>
   <main id="ls"></main>
 </div>
+<dialog id="cd"><h3>Получили наличные?</h3><p id="cdi"></p><label>Сколько денег вы получили, сум<input id="cda" type="number" inputmode="numeric" min="0"></label><label id="cdnl" hidden>Почему сумма отличается?<input id="cdn" maxlength="140"></label><p id="cde" class="warnp" role="alert"></p><div class="ac"><button class="big" id="cdok" type="button">Подтвердить</button><button class="bt" id="cdx" type="button">Отмена</button></div></dialog>
 <div id="tt" class="toast" hidden></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="config.js"></script>
@@ -73,7 +77,17 @@ const M={'Вход для клинеров':'Tozalovchilar uchun kirish','Поч
 'На сегодня заказов нет. Проверьте вкладку «Скоро».':'Bugunga buyurtmalar yoʻq. «Tez orada» boʻlimini tekshiring.','Ближайших заказов пока нет.':'Yaqin orada buyurtmalar yoʻq.','Выполненных заказов пока нет.':'Bajarilgan buyurtmalar hozircha yoʻq.',
 'Неделя':'Hafta','Мои':'Meniki','Все':'Hammasi','На этой неделе заказов нет.':'Bu haftada buyurtmalar yoʻq.','абонемент':'abonement','Квартира':'Kvartira','Дом':'Uy','Офис':'Ofis','Поддерживающая уборка':'Muntazam tozalash','Генеральная уборка':'Chuqur tozalash','После ремонта уборка':'Taʼmirdan keyingi tozalash','регулярная уборка':'muntazam tozalash',
 'Окна (до 5 шт)':'Derazalar (5 tagacha)','Духовка':'Duxovka','Холодильник':'Muzlatgich','Балкон':'Balkon','Чистка дивана':'Divan tozalash','нет':'yoʻq',
-'наличными':'naqd','картой':'karta bilan','переводом':'oʻtkazma','безналичный расчёт':'naqdsiz hisob-kitob','Питомцы дома':'Uyda hayvonlar','есть':'bor','Как войти':'Qanday kirish','Комментарий':'Izoh'};
+'наличными':'naqd','картой':'karta bilan','переводом':'oʻtkazma','безналичный расчёт':'naqdsiz hisob-kitob','Питомцы дома':'Uyda hayvonlar','есть':'bor','Как войти':'Qanday kirish','Комментарий':'Izoh',
+'Забыли пароль?':'Parolni unutdingizmi?','Введите почту и нажмите «Забыли пароль?» ещё раз':'E-pochtani kiriting va «Parolni unutdingizmi?» tugmasini yana bosing','Отправляем письмо…':'Xat yuborilmoqda…',
+'Если такая почта есть в системе, мы отправили письмо со ссылкой. Откройте её, задайте новый пароль и войдите здесь.':'Agar bu e-pochta tizimda boʻlsa, havola bilan xat yubordik. Uni oching, yangi parol qoʻying va shu yerda kiring.',
+'Слишком часто. Подождите минуту и попробуйте снова':'Juda tez-tez. Bir daqiqa kutib, qayta urinib koʻring','Касса':'Kassa','Получили наличные?':'Naqd pul oldingizmi?','К оплате':'Toʻlov summasi',
+'Сколько денег вы получили, сум':'Qancha pul oldingiz, soʻm','Почему сумма отличается?':'Nima uchun summa farq qiladi?','Подтвердить':'Tasdiqlash','Отмена':'Bekor qilish','Введите сумму':'Summani kiriting',
+'Объясните, почему сумма отличается от суммы заказа':'Summa buyurtma summasidan nega farq qilishini yozing','Оплата записана ✓':'Toʻlov yozildi ✓','Принято':'Qabul qilindi','сдано':'topshirildi',
+'Внести полученную сумму':'Olingan summani kiritish','Касса пока не подключена.':'Kassa hali ulanmagan.','У вас на руках':'Qoʻlingizdagi pul','заказов':'buyurtma','сдать до':'topshirish muddati',
+'Срок сдачи прошёл':'Topshirish muddati oʻtdi','Я сдал деньги владельцу':'Pulni egasiga topshirdim','Вы передали владельцу {1} сум?':'Egasiga {1} soʻm topshirdingizmi?',
+'Деньги отправлены на подтверждение владельцу':'Pul egasiga tasdiqlash uchun yuborildi','Ждёт подтверждения владельцем':'Egasi tasdiqlashini kutmoqda','Принято владельцем':'Egasi qabul qildi','Недостача':'Kamomad',
+'Не внесена сумма':'Summa kiritilmagan','Клиент говорит, что заплатил: внесите сумму':'Mijoz toʻladim deydi: summani kiriting','Расхождение с клиентом: свяжитесь с владельцем':'Mijoz bilan nomuvofiqlik: egasiga murojaat qiling',
+'Просрочено':'Muddati oʻtdi','Эта оплата уже сдана, исправить нельзя':'Bu toʻlov topshirilgan, tuzatib boʻlmaydi','Нет доступа к этому заказу':'Bu buyurtmaga ruxsat yoʻq','Нечего сдавать':'Topshiradigan narsa yoʻq','Нет доступа':'Ruxsat yoʻq'};
 const t=(s,a)=>(LANG=='uz'?M[s]||s:s).replace('{1}',a);
 const tj=s=>{if(LANG=='ru')return s;const i=s.indexOf(': '),r=s.slice(i+2).split(', ');return t(s.slice(0,i))+': '+t(r[0])+r.slice(1).map(x=>', '+x.replace('м²','m²')).join('')};
 const tn=n=>{if(LANG=='ru')return n;const i=n.indexOf(': '),l=n.slice(0,i);return t(l)+': '+(l=='Питомцы дома'?t(n.slice(i+2)):n.slice(i+2))};
@@ -101,6 +115,7 @@ const card=o=>{const p=o.p,d=o.status=='done';return`<article class="c ${o.statu
 <div class="ac"><a class="bt" href="${esc(route(p))}" target="_blank" rel="noopener">${t('🧭 Маршрут')}</a>${p.phone?`<a class="bt" href="tel:+${p.phone}">📞 ${esc(p.name)||t('Позвонить')}</a>`:''}</div>
 <p>🧼 ${esc(tj(p.job))}${p.extra&&p.extra!='нет'?'<br>➕ '+esc(p.extra.split(', ').map(x=>t(x)).join(', ')):''}</p>${p.notes.map(n=>`<p class="n">⚠️ ${esc(tn(n))}</p>`).join('')}
 <p class="pay ${(cash(p)||term(p))&&!d?'cash':''}">${cash(p)&&!d?t('💵 Получить наличными: '):term(p)&&!d?t('💳 Взять терминал: '):'💳 '+esc(t(p.pay))+' · '}<b>${fm(o.total)} ${t('сум')}</b></p>
+${d&&cash(p)&&pay?(payOf(o)&&payOf(o).amount!=null?`<p class="pay">✅ ${t('Принято')}: <b>${fm(payOf(o).amount)} ${t('сум')}</b>${payOf(o).handover_id?' · '+t('сдано'):''}</p>`:`<button class="go way" data-cash="rec" type="button">${t('Внести полученную сумму')}</button>`):''}
 ${d?'':`<button class="go ${o.status}" data-s="${o.status=='new'?'way':'done'}" type="button">${t(o.status=='new'?'Выезжаю':'Выполнено ✓')}</button>`}</article>`};
 function weekH(){
   const b=new Date();b.setHours(0,0,0,0);b.setDate(b.getDate()-((b.getDay()+6)%7)+7*wk);
@@ -118,9 +133,58 @@ function draw(){
   const dt=rows.filter(o=>o.status=='done'&&day(o.p.at)==td),sm=a=>a.filter(o=>cash(o.p)).reduce((s,o)=>s+(o.total||0),0);
   $('#c1').textContent=L.today.length;$('#c2').textContent=L.soon.length;$('#c3').textContent=L.done.length;
   $('#sum').innerHTML=`<div><b>${L.today.length}</b><small>${t('осталось сегодня')}</small></div><div><b>${dt.length}</b><small>${t('выполнено')}</small></div><div><b>${fm(sm(dt))}</b><small>${t('наличных собрано, сум')}</small></div>`;
+  $('#c4').textContent=pay?(pay.payments.filter(p=>!p.handover_id&&p.amount>0).length||''):'';
   $$('.seg button').forEach(b=>b.classList.toggle('on',b.dataset.t==tab));
+  if(tab=='cash'){$('#ls').innerHTML=cashH();return}
   if(tab=='week'){$('#ls').innerHTML=weekH();return}
   $('#ls').innerHTML=L[tab].map(card).join('')||`<div class="em">${t({today:'На сегодня заказов нет. Проверьте вкладку «Скоро».',soon:'Ближайших заказов пока нет.',done:'Выполненных заказов пока нет.'}[tab])}</div>`
+}
+/* ---------- Касса клинера: внести полученные наличные и сдать деньги владельцу ---------- */
+let pay=null;
+const PMAP={note_required:'Объясните, почему сумма отличается от суммы заказа',locked:'Эта оплата уже сдана, исправить нельзя',not_yours:'Нет доступа к этому заказу',bad_amount:'Введите сумму',nothing:'Нечего сдавать',forbidden:'Нет доступа'};
+const payOf=o=>pay&&pay.payments.find(p=>p.order_id==o.id);
+const fdt=s=>{const d=new Date(s);return pad2(d.getDate())+'.'+pad2(d.getMonth()+1)+' '+pad2(d.getHours())+':'+pad2(d.getMinutes())};
+async function refreshPay(){const r=await sb.rpc('pay_snapshot',{p_days:90});if(!r.error)pay=r.data;else if(/could not find|does not exist|schema cache/i.test(r.error.message||''))pay=null}
+let cdo=null;
+function cdChange(){$('#cdnl').hidden=!(cdo&&$('#cda').value!==''&&Math.round(+$('#cda').value)!==cdo.o.total)}
+function openCash(o,finish){cdo={o,finish};$('#cdi').textContent=t('К оплате')+': '+fm(o.total)+' '+t('сум')+(o.p.name?' · '+o.p.name:'');$('#cda').value=o.total;$('#cdn').value='';$('#cde').textContent='';cdChange();$('#cd').showModal()}
+async function setStatus(o,s){
+  const old=o.status;o.status=s;draw();
+  const r=await sb.from('orders').update({status:s}).eq('id',o.id);
+  if(r.error){o.status=old;draw();toast(t('Не удалось сохранить. Проверьте интернет.'));return false}
+  toast(t(s=='way'?'Отметили: вы выезжаете':'Заказ выполнен ✓'));return true
+}
+const cerr=m=>$('#cde').textContent=t(m);
+async function cashOk(){
+  const n=Math.round(+$('#cda').value),note=$('#cdn').value.trim();
+  if($('#cda').value===''||!(n>=0))return cerr('Введите сумму');
+  if(n!==cdo.o.total&&note.length<3)return cerr('Объясните, почему сумма отличается от суммы заказа');
+  const b=$('#cdok');b.disabled=true;
+  const r=await sb.rpc('pay_record',{p_order:cdo.o.id,p_amount:n,p_note:note||null});
+  b.disabled=false;
+  if(r.error){const m=(r.error.message||'').trim();return cerr(PMAP[m]||'Не удалось сохранить. Проверьте интернет.')}
+  $('#cd').close();
+  if(cdo.finish)await setStatus(cdo.o,'done');
+  await refreshPay();draw();toast(t('Оплата записана ✓'))
+}
+const PFL={client_paid_unrecorded:'Клиент говорит, что заплатил: внесите сумму',unrecorded:'Не внесена сумма',overdue:'Просрочено',conflict:'Расхождение с клиентом: свяжитесь с владельцем'};
+function cashH(){
+  if(!pay)return`<div class="em">${t('Касса пока не подключена.')}</div>`;
+  const P=pay.payments,H=pay.handovers,held=P.filter(p=>!p.handover_id&&p.amount>0),sum=a=>a.reduce((s,p)=>s+p.amount,0),od=held.filter(p=>(p.flags||[]).includes('overdue'));
+  const unrec=P.filter(p=>p.amount==null),rep=H.filter(h=>!h.confirmed_at),done=H.filter(h=>h.confirmed_at).slice(0,4),due=held.map(p=>p.due_at).filter(Boolean).sort()[0];
+  let h=`<article class="c ${od.length?'late':''}"><p class="pay"><b>${fm(sum(held))} ${t('сум')}</b> · ${t('У вас на руках')}</p><p class="n">${held.length} ${t('заказов')}${due?' · '+t('сдать до')+': '+fdt(due):''}</p>${od.length?`<p class="n">⚠️ ${t('Срок сдачи прошёл')}: ${od.length}</p>`:''}<button class="go done" data-hand="1" type="button" ${held.length?'':'disabled'}>${t('Я сдал деньги владельцу')}</button></article>`;
+  if(unrec.length)h+=unrec.map(p=>`<article class="c"><p><b>${esc(p.code)}</b> · ${esc(p.client||'')}</p><p class="n">⚠️ ${t(p.flags&&p.flags.includes('client_paid_unrecorded')?PFL.client_paid_unrecorded:PFL.unrecorded)}</p><button class="go way" data-cash="rec" data-oid="${esc(p.order_id)}" data-exp="${p.expected}" data-nm="${esc(p.client||'')}" type="button">${t('Внести полученную сумму')}</button></article>`).join('');
+  if(rep.length)h+=`<p class="n" style="margin:10px 4px">${t('Ждёт подтверждения владельцем')}</p>`+rep.map(x=>`<article class="c"><p class="pay"><b>${fm(x.amount)} ${t('сум')}</b> · ${fdt(x.reported_at)}</p></article>`).join('');
+  if(done.length)h+=`<p class="n" style="margin:10px 4px">${t('Принято владельцем')}</p>`+done.map(x=>`<article class="c"><p class="pay"><b>${fm(x.received_amount)} ${t('сум')}</b> · ${fdt(x.confirmed_at)}${x.received_amount<x.amount?` · ⚠️ ${t('Недостача')}: ${fm(x.amount-x.received_amount)}`:''}</p></article>`).join('');
+  h+=held.map(p=>`<article class="c"><p><b>${esc(p.code)}</b> · ${esc(p.client||'')}</p><p class="pay">💵 <b>${fm(p.amount)} ${t('сум')}</b>${(p.flags||[]).filter(f=>PFL[f]&&f!='unrecorded').map(f=>' · '+t(PFL[f])).join('')}</p></article>`).join('');
+  return h
+}
+async function handOver(){
+  const held=pay.payments.filter(p=>!p.handover_id&&p.amount>0),s=held.reduce((a,p)=>a+p.amount,0);
+  if(!confirm(t('Вы передали владельцу {1} сум?',fm(s))))return;
+  const r=await sb.rpc('pay_handover_report',{p_note:null});
+  if(r.error)return toast(t(PMAP[(r.error.message||'').trim()]||'Не удалось сохранить. Проверьте интернет.'));
+  await refreshPay();draw();toast(t('Деньги отправлены на подтверждение владельцу'))
 }
 function toast(t){const e=$('#tt');e.textContent=t;e.hidden=false;clearTimeout(toast.i);toast.i=setTimeout(()=>e.hidden=true,3000)}
 function show(name,raw){
@@ -144,18 +208,21 @@ async function load(){
   let r=await sb.from('orders').select('id,code,details,total,status,assignee,sel,created_at').order('created_at',{ascending:false}).limit(400);
   if(r.error)r=await sb.from('orders').select('id,code,details,total,status,created_at').order('created_at',{ascending:false}).limit(300);
   if(r.error)return offline();
+  await refreshPay();
   try{localStorage.setItem('cl',JSON.stringify({name:c.data[0].name,rows:r.data||[]}))}catch(e){}
   $('#off').hidden=true;show(c.data[0].name,r.data||[])
 }
 $('#ls').onclick=async e=>{
   const nb=e.target.closest('[data-wk]');if(nb){wk=+nb.dataset.wk?wk+ +nb.dataset.wk:0;draw();return}
   const mb=e.target.closest('[data-mine]');if(mb){mine=mb.dataset.mine=='1';draw();return}
+  if(e.target.closest('[data-hand]')){handOver();return}
+  const cb=e.target.closest('[data-cash]');
+  if(cb){const c0=cb.closest('[data-id]'),o0=c0?rows.find(x=>x.id==c0.dataset.id):(rows.find(x=>x.id==cb.dataset.oid)||{id:cb.dataset.oid,total:+cb.dataset.exp,p:{name:cb.dataset.nm}});if(o0)openCash(o0,false);return}
   const b=e.target.closest('[data-s]'),c=e.target.closest('[data-id]');if(!b||!c)return;
   const o=rows.find(x=>x.id==c.dataset.id),s=b.dataset.s;
+  if(s=='done'&&cash(o.p)&&pay){openCash(o,true);return}
   if(s=='done'&&!confirm(t('Заказ выполнен?')))return;
-  const old=o.status;o.status=s;draw();
-  const r=await sb.from('orders').update({status:s}).eq('id',o.id);
-  if(r.error){o.status=old;draw();toast(t('Не удалось сохранить. Проверьте интернет.'))}else toast(t(s=='way'?'Отметили: вы выезжаете':'Заказ выполнен ✓'))
+  await setStatus(o,s)
 };
 $$('.seg button').forEach(b=>b.onclick=()=>{tab=b.dataset.t;draw();scrollTo(0,0)});
 $('#rf').onclick=()=>{load();toast(t('Обновляем…'))};
@@ -164,8 +231,16 @@ $('#li').onclick=async()=>{
   if(r.error)$('#m').textContent=t('Неверная почта или пароль');else load()
 };
 $('#out').onclick=async()=>{await sb.auth.signOut();try{localStorage.removeItem('cl')}catch(e){}location.reload()};
+$('#fp').onclick=async()=>{
+  const em=$('#em').value.trim(),m=x=>$('#m').textContent=t(x);
+  if(!em)return m('Введите почту и нажмите «Забыли пароль?» ещё раз');
+  m('Отправляем письмо…');
+  const r=await sb.auth.resetPasswordForEmail(em,{redirectTo:location.origin+'/'});
+  m(r.error?(/rate|seconds|limit/i.test(r.error.message)?'Слишком часто. Подождите минуту и попробуйте снова':'Нет связи. Проверьте интернет.'):'Если такая почта есть в системе, мы отправили письмо со ссылкой. Откройте её, задайте новый пароль и войдите здесь.')
+};
+$('#cda').oninput=cdChange;$('#cdx').onclick=()=>$('#cd').close();$('#cdok').onclick=cashOk;
 function tx(){
-  ['#lg','header','#off'].forEach(s=>{
+  ['#lg','header','#off','#cd'].forEach(s=>{
     const w=document.createTreeWalker($(s),NodeFilter.SHOW_TEXT);let n;
     while(n=w.nextNode()){if(n._o==null)n._o=n.nodeValue;const x=n._o.trim();if(!x)continue;const v=n._o.replace(x,()=>t(x));if(n.nodeValue!==v)n.nodeValue=v}
     $(s).querySelectorAll('[placeholder]').forEach(e=>{e._p=e._p||e.placeholder;e.placeholder=t(e._p)})

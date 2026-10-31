@@ -61,11 +61,14 @@ details summary{cursor:pointer;color:var(--mut);font-size:13px}pre{white-space:p
 .sd{margin-top:14px}.sf label{display:grid;gap:2px;font-size:12px;color:var(--mut)}.sf input{min-width:130px;border-radius:12px}
 .pill.s-act{background:#2e9e6b24;color:var(--grn)}.pill.s-pen{background:#f4b63f30;color:#b57a00}.pill.s-pau{background:#0e8c8c24;color:var(--tq)}
 @media(max-width:780px){.app{grid-template-columns:1fr}.sb{position:fixed;inset:auto 0 0 0;height:auto;flex-direction:row;z-index:20;padding:6px 8px calc(6px + env(safe-area-inset-bottom));border-radius:20px 20px 0 0}.sb .logo,.me,.sp{display:none}.nv{flex:1;flex-direction:column;gap:0;font-size:11px;padding:6px;align-items:center}main{padding-bottom:100px}.rw{grid-template-columns:1fr auto}.rw span{display:none}}
+.lnk{background:none;border:0;color:var(--tq);font-weight:700;font-size:13px;cursor:pointer;padding:4px}
+.pill.r{background:#c0392b24;color:var(--red)}.pill.y{background:#f4b63f30;color:#b57a00}.pill.g{background:#2e9e6b24;color:var(--grn)}
+.fl{display:flex;gap:4px;flex-wrap:wrap}.dt input.ci{width:110px}
 </style></head><body>
-<div id="lg" class="lgn"><div class="card"><div class="logo">Tozavoy<i>.</i></div><input id="em" type="email" placeholder="Почта"><input id="pw" type="password" placeholder="Пароль"><button class="go" id="li" type="button">Войти</button><p id="m" class="mut"></p></div></div>
+<div id="lg" class="lgn"><div class="card"><div class="logo">Tozavoy<i>.</i></div><input id="em" type="email" placeholder="Почта"><input id="pw" type="password" placeholder="Пароль"><button class="go" id="li" type="button">Войти</button><button class="lnk" id="fp" type="button">Забыли пароль?</button><p id="m" class="mut"></p></div></div>
 <div class="app" id="app" hidden>
   <nav class="sb"><div class="logo">Tozavoy<i>.</i></div>
-    <button class="nv on" data-p="dash">📊 <span>Дашборд</span></button><button class="nv" data-p="ord">📋 <span>Заказы</span></button><button class="nv" data-p="sch">📅 <span>График</span></button><button class="nv" data-p="sub">🔁 <span>Абонементы</span></button><button class="nv" data-p="cli">👥 <span>Клиенты</span></button>
+    <button class="nv on" data-p="dash">📊 <span>Дашборд</span></button><button class="nv" data-p="ord">📋 <span>Заказы</span></button><button class="nv" data-p="sch">📅 <span>График</span></button><button class="nv" data-p="sub">🔁 <span>Абонементы</span></button><button class="nv" data-p="cash">💵 <span>Касса</span></button><button class="nv" data-p="cli">👥 <span>Клиенты</span></button>
     <div class="sp"></div><div class="me" id="me"></div></nav>
   <main><div class="top"><h1 id="ttl"></h1>
     <select id="days" class="ctl"><option value="7">7 дней</option><option value="30" selected>30 дней</option><option value="90">90 дней</option><option value="365">Год</option></select>
@@ -150,7 +153,7 @@ function cli(){
 const DOW=['Вс','Пн','Вт','Ср','Чт','Пт','Сб'],MON=['янв','фев','мар','апр','мая','июн','июл','авг','сен','окт','ноя','дек'],WDN=['воскресенье','понедельник','вторник','среду','четверг','пятницу','субботу'];
 const pad=n=>String(n).padStart(2,'0'),dk=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate()),d0=d=>new Date(d.getFullYear(),d.getMonth(),d.getDate());
 const tkey=o=>pad(o.at.getHours())+':'+pad(o.at.getMinutes()),shortT=t=>({'Поддерживающая':'П','Генеральная':'Г','После ремонта':'Р'}[t]||(t||'?')[0]);
-let cur=d0(new Date()),sv='wk',who='all',scn=0,ssel=null,subs=[],subErr=null;
+let cur=d0(new Date()),sv='wk',who='all',scn=0,ssel=null,subs=[],subErr=null,pay=null,payErr=null,pcf='all',editAt=0;
 function when_(o){
   const s=o.sel||{},p=o.p,cr=new Date(o.created_at);
   if(s.date&&/^\d{4}-\d\d-\d\d/.test(s.date)){const m=String(s.tm||p.k&&p.k[3]+':'+p.k[4]||'00:00').split(':');return new Date(+s.date.slice(0,4),+s.date.slice(5,7)-1,+s.date.slice(8,10),+m[0]||0,+m[1]||0)}
@@ -191,8 +194,8 @@ function subCard(s){
 <div class="om">📍 ${esc(p.district)}, ${esc(p.addr)}</div>
 <div class="om">🗓 ${s.step==2?'раз в 2 недели':'каждую неделю'}, ${WDN[nd.getDay()]} в ${esc(s.tm)} · первая уборка ${pad(fs.getDate())}.${pad(fs.getMonth()+1)}</div>
 ${nv?`<div class="om">➡ Ближайшие: ${nv}</div>`:''}${paused?`<div class="om">⏸ Пауза с ${esc(s.pause_from)}${s.pause_to?' по '+esc(s.pause_to):''}</div>`:''}
-${s.status=='cancelled'?'':`<div class="row sf"><label>Следующая уборка<input type="date" data-f="nd" value="${esc(s.next_date)}"></label><label>Время<input type="time" data-f="tm" value="${esc(s.tm)}"></label><label>Бригада<input list="cn" data-f="as" value="${esc(s.assignee||'')}"></label><button class="s on" data-act="${s.status=='pending'?'confirm':'save'}">${s.status=='pending'?'Подтвердить':'Сохранить'}</button></div>`}
-${s.status=='active'?`<div class="row sf">${paused?'<button class="s" data-act="resume">Снять паузу</button>':'<label>Пауза с<input type="date" data-f="pf"></label><label>по<input type="date" data-f="pt"></label><button class="s" data-act="pause">Поставить на паузу</button>'}<button class="s" data-act="cancel" style="color:var(--red)">Отменить абонемент</button></div>`:''}
+${s.status=='cancelled'?'':`<div class="row sf"><label>Следующая уборка<input type="date" data-sf="nd" value="${esc(s.next_date)}"></label><label>Время<input type="time" data-sf="tm" value="${esc(s.tm)}"></label><label>Бригада<input list="cn" data-sf="as" value="${esc(s.assignee||'')}"></label><button class="s on" data-act="${s.status=='pending'?'confirm':'save'}">${s.status=='pending'?'Подтвердить':'Сохранить'}</button></div>`}
+${s.status=='active'?`<div class="row sf">${paused?'<button class="s" data-act="resume">Снять паузу</button>':'<label>Пауза с<input type="date" data-sf="pf"></label><label>по<input type="date" data-sf="pt"></label><button class="s" data-act="pause">Поставить на паузу</button>'}<button class="s" data-act="cancel" style="color:var(--red)">Отменить абонемент</button></div>`:''}
 ${s.status=='pending'?'<div class="row sf"><button class="s" data-act="cancel" style="color:var(--red)">Отклонить</button></div>':''}</div>`
 }
 function sub(){
@@ -201,8 +204,44 @@ function sub(){
   $('#v').innerHTML=`<div class="chips"><button class="chip on" data-act="gen">⟳ Создать уборки на 4 недели вперёд</button><span class="mut" style="align-self:center">Активных: ${g('active').length} · ждут подтверждения: ${g('pending').length}</span></div>`
    +(sec('Ждут подтверждения',g('pending'))+sec('Активные',g('active'))+sec('Отменённые',g('cancelled'))||'<p class="mut">Абонементов пока нет. Заявка появится здесь сама, когда клиент оформит заказ с абонементом.</p>')
 }
+/* ---------- Касса: наличные у клинеров, подтверждение клиентом, сдача денег ---------- */
+const PF={conflict:['Расхождение: клиент и клинер назвали разные суммы','r'],client_paid_unrecorded:['Клиент заплатил, клинер не внёс','r'],
+  overdue:['Просрочена сдача денег','r'],unrecorded:['Клинер не внёс оплату','r'],short:['Принято меньше суммы заказа','y'],unconfirmed:['Клиент не подтвердил','y']};
+const ANS={ok:'Отдал всю сумму',other:'Назвал другую сумму',none:'Не платил'};
+const dtm=s=>s?new Date(s).toLocaleString('ru-RU',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}):'—';
+const redP=p=>(p.flags||[]).some(f=>PF[f]&&PF[f][1]=='r');
+function payAlerts(){return pay.payments.filter(redP).length+pay.handovers.filter(h=>!h.confirmed_at).length}
+function cash(){
+  if(payErr||!pay){$('#v').innerHTML=`<div class="card"><b>Касса не подключена.</b><p class="mut" style="margin-top:6px">Выполните файл supabase_stage8.sql в Supabase (SQL Editor → New query → Run), затем нажмите ⟳.</p><small class="mut">${esc(payErr||'')}</small></div>`;return}
+  const P=pay.payments,H=pay.handovers,held=P.filter(p=>!p.handover_id&&p.amount>0),rep=H.filter(h=>!h.confirmed_at),sum=a=>a.reduce((s,p)=>s+(p.amount||0),0);
+  const over=held.filter(p=>(p.flags||[]).includes('overdue')),bad=P.filter(redP),unc=P.filter(p=>(p.flags||[]).includes('unconfirmed'));
+  const k=(l,v,s,c)=>`<div class="card"><div class="kl">${l}</div><div class="kv" ${c?`style="color:var(--red)"`:''}>${v}</div><small class="mut">${s}</small></div>`;
+  let h=`<div class="kpis">${k('Наличные у клинеров',fm(sum(held))+' <small>сум</small>',held.length+' заказов не сдано')}${k('Просрочена сдача',over.length,fm(sum(over))+' сум',over.length)}${k('Ждёт вашего подтверждения',fm(rep.reduce((s,x)=>s+x.amount,0))+' <small>сум</small>',rep.length+' сдач')}${k('Расхождения и вопросы',bad.length,'клиент и клинер не совпали или оплата не внесена',bad.length)}${k('Клиент не подтвердил',unc.length,'нет ответа в Telegram-боте')}</div>`;
+  const by={};held.forEach(p=>{(by[p.cleaner||'без клинера']=by[p.cleaner||'без клинера']||[]).push(p)});
+  if(rep.length)h+=`<h2 style="margin:6px 0 10px;font-size:15px">Клинер сообщил, что сдал деньги</h2>`+rep.map(x=>`<div class="card oc" data-hid="${esc(x.id)}"><div class="oh"><b>${esc(x.cleaner)}</b><span class="pill y">Ждёт подтверждения</span><b class="sm">${fm(x.amount)} сум</b></div><small class="mut">Сообщил ${dtm(x.reported_at)}${x.note?' · '+esc(x.note):''}</small><div class="row sf"><label>Принято, сум<input type="number" inputmode="numeric" data-pf="hr" value="${x.amount}"></label><button class="s on" data-pact="hconfirm" data-hid="${esc(x.id)}">Подтвердить получение</button></div></div>`).join('');
+  h+=`<h2 style="margin:18px 0 10px;font-size:15px">Деньги на руках у клинеров</h2>`+(Object.keys(by).sort().map(n=>{const a=by[n],od=a.filter(p=>(p.flags||[]).includes('overdue')).length,due=a.map(p=>p.due_at).filter(Boolean).sort()[0];
+    return`<div class="card oc" data-cl="${esc(n)}"><div class="oh"><b>${esc(n)}</b><span class="pill ${od?'r':'g'}">${od?'Просрочено: '+od:'в срок'}</span><b class="sm">${fm(sum(a))} сум · ${a.length} зак.</b></div><small class="mut">Ближайший срок сдачи: ${dtm(due)}</small><div class="row sf"><label>Принято, сум<input type="number" inputmode="numeric" data-pf="rc" value="${sum(a)}"></label><button class="s on" data-pact="collect" data-cl="${esc(n)}">Принял деньги у клинера</button></div></div>`}).join('')||'<p class="mut">Все наличные сданы.</p>');
+  const fl={all:()=>1,red:redP,held:p=>!p.handover_id&&p.amount>0,unc:p=>(p.flags||[]).includes('unconfirmed')},ch=(k,t)=>`<button class="chip ${pcf==k?'on':''}" data-pcf="${k}">${t}</button>`;
+  const rows=P.filter(fl[pcf]||fl.all).slice(0,300);
+  h+=`<h2 style="margin:18px 0 10px;font-size:15px">Оплаты по заказам</h2><div class="chips">${ch('all','Все')}${ch('red','Проблемные · '+bad.length)}${ch('held','Не сданы · '+held.length)}${ch('unc','Не подтверждены клиентом · '+unc.length)}</div>`
+   +`<div class="tw"><table class="dt"><thead><tr><th>Заказ</th><th>Клиент</th><th>Клинер</th><th>К оплате</th><th>Принял клинер</th><th>Ответ клиента</th><th>Статус</th><th></th></tr></thead><tbody>`
+   +(rows.map(p=>`<tr><td><b>${esc(p.code)}</b><br><small class="mut">${dtm(p.done_at)}</small></td><td>${esc(p.client)||'—'}</td><td>${esc(p.cleaner)||'—'}</td><td>${fm(p.expected)}</td><td>${p.amount==null?'—':fm(p.amount)}${p.note?`<br><small class="mut">${esc(p.note)}</small>`:''}</td><td>${p.client_answer?esc(ANS[p.client_answer])+(p.client_answer=='other'?': '+fm(p.client_amount):''):'—'}<br><small class="mut">${p.client_at?dtm(p.client_at):''}</small></td><td><div class="fl">${p.verified?'<span class="pill g">✓ подтверждено</span>':''}${(p.flags||[]).map(f=>PF[f]?`<span class="pill ${PF[f][1]}">${PF[f][0]}</span>`:'').join('')}${p.handover_id?'<span class="pill s-way">сдано</span>':''}</div></td><td>${p.handover_id?'':`<button class="s" data-pact="rec" data-oid="${esc(p.order_id)}" data-exp="${p.expected}">${p.amount==null?'Внести':'Исправить'}</button>`}</td></tr>`).join('')||'<tr><td colspan="8" class="mut">Пока ничего нет</td></tr>')
+   +`</tbody></table></div><div class="card sd"><b>Правила</b><div class="row sf"><label>Срок сдачи наличных, часов<input type="number" inputmode="numeric" data-pf="dh" value="${pay.cfg.due_hours}"></label><button class="s" data-pact="dh">Сохранить</button></div><small class="mut">Если клинер не сдал деньги за этот срок, заказ получает красную метку «Просрочена сдача».</small></div>`;
+  $('#v').innerHTML=h
+}
+const PERR={note_required:'Если сумма отличается от суммы заказа, укажите причину',locked:'Деньги уже сданы, исправить нельзя',bad_amount:'Проверьте сумму',nothing:'Нечего сдавать',forbidden:'Нет доступа',not_found:'Уже подтверждено',bad_value:'Введите число от 1 до 720'};
+async function payAct(b){
+  const act=b.dataset.pact,card=(b.parentElement||b).closest('[data-cl],[data-hid],.sd'),val=k=>{const e=card&&card.querySelector(`[data-pf=${k}]`);return e?e.value:''};let r;
+  if(act=='collect'){const n=+val('rc');if(!(n>=0)||val('rc')==='')return toast('Введите, сколько денег вы приняли');r=await sb.rpc('pay_owner_collect',{p_cleaner:b.dataset.cl,p_received:n,p_note:null})}
+  else if(act=='hconfirm'){const n=+val('hr');if(!(n>=0)||val('hr')==='')return toast('Введите, сколько денег вы приняли');r=await sb.rpc('pay_handover_confirm',{p_id:b.dataset.hid,p_received:n,p_note:null})}
+  else if(act=='dh'){r=await sb.rpc('pay_setting_set',{p_key:'due_hours',p_value:+val('dh')})}
+  else if(act=='rec'){const a=prompt('Сколько наличных получил клинер, сум?',b.dataset.exp);if(a===null)return;const n=+String(a).replace(/\D/g,'');const nt=n!=+b.dataset.exp?prompt('Причина, если сумма отличается от суммы заказа:',''):'';if(n!=+b.dataset.exp&&!nt)return toast('Нужна причина');r=await sb.rpc('pay_record',{p_order:b.dataset.oid,p_amount:n,p_note:nt||null})}
+  if(!r)return;
+  if(r.error)return toast(PERR[(r.error.message||'').trim()]||'Ошибка: '+r.error.message);
+  toast('Готово ✓');load()
+}
 async function subAct(c,act){
-  const s=subs.find(x=>x.id==(c&&c.dataset.sid)),f=k=>((c&&c.querySelector(`[data-f=${k}]`))||{}).value||'';let r;
+  const s=subs.find(x=>x.id==(c&&c.dataset.sid)),f=k=>((c&&c.querySelector(`[data-sf=${k}]`))||{}).value||'';let r;
   if(act=='gen')r=await sb.rpc('abon_generate',{p_horizon:28});
   else if(!s)return;
   else if(act=='confirm'||act=='save'){if(!f('nd'))return toast('Укажите дату следующей уборки');r=await sb.rpc('abon_set',{p_id:s.id,p_next:f('nd'),p_tm:f('tm'),p_assignee:f('as')})}
@@ -213,12 +252,13 @@ async function subAct(c,act){
   if(r.error)return toast('Ошибка: '+r.error.message);
   toast(act=='gen'?'Создано уборок: '+(r.data||0):'Готово ✓');load()
 }
-const TT={dash:'Дашборд',ord:'Заказы',sch:'График уборок',sub:'Абонементы',cli:'Клиенты'};
+const TT={dash:'Дашборд',ord:'Заказы',sch:'График уборок',sub:'Абонементы',cash:'Касса',cli:'Клиенты'};
 function render(){
   $$('.nv').forEach(b=>b.classList.toggle('on',b.dataset.p==pg));
-  $('#ttl').textContent=TT[pg];$('#days').hidden=pg!='dash';$('#q').hidden=pg=='dash'||pg=='sch'||pg=='sub';
+  $('#ttl').textContent=TT[pg];$('#days').hidden=pg!='dash';$('#q').hidden=pg=='dash'||pg=='sch'||pg=='sub'||pg=='cash';
   const pn=subs.filter(s=>s.status=='pending').length;$('[data-p=sub] span').textContent='Абонементы'+(pn?' · '+pn:'');
-  ({dash,ord,sch,sub,cli})[pg]()
+  const cn=pay?payAlerts():0;$('[data-p=cash] span').textContent='Касса'+(cn?' · '+cn:'');
+  ({dash,ord,sch,sub,cash,cli})[pg]()
 }
 function toast(t){const e=$('#tt');e.textContent=t;e.hidden=false;clearTimeout(toast.i);toast.i=setTimeout(()=>e.hidden=true,3500)}
 async function load(){
@@ -230,6 +270,7 @@ async function load(){
   const r=await sb.from('orders').select('id,code,details,total,status,assignee,sel,created_at').order('created_at',{ascending:false}).limit(1500);
   all=(r.data||[]).map(o=>{const x={...o,c:+new Date(o.created_at),p:parse(o)};x.visit=!!(o.sel&&o.sel.sub);x.at=when_(x);x.t=x.visit?+x.at:x.c;return x});
   const sr=await sb.from('subscriptions').select('*').order('created_at',{ascending:false});subs=sr.data||[];subErr=sr.error?sr.error.message:null;
+  const pr=await sb.rpc('pay_snapshot',{p_days:90});pay=pr.error?null:pr.data;payErr=pr.error?pr.error.message:null;
   const mx=all.reduce((m,o)=>Math.max(m,o.c),0),nw=all.filter(o=>o.c>seen&&!o.visit).length;
   if(!first&&mx>seen&&nw)toast('Новых заказов: '+nw);
   seen=mx;first=0;render()
@@ -241,13 +282,15 @@ $('#v').onclick=async e=>{
     const r=await sb.from('orders').update({status:o.status}).eq('id',o.id);
     if(r.error){o.status=old;render();toast('Не удалось сохранить статус')}
   }
-  if(t.dataset.f){flt=t.dataset.f;render()}
+  if(t.dataset.f&&t.tagName!='INPUT'){flt=t.dataset.f;render()}
   const bw=t.closest('[data-w]');if(bw){const n=+bw.dataset.w;cur=n?new Date(cur.getFullYear(),cur.getMonth(),cur.getDate()+n*(sv=='wk'?7:1)):d0(new Date());render()}
   const bs=t.closest('[data-sv]');if(bs){sv=bs.dataset.sv;render()}
   const bd=t.closest('[data-day]');if(bd){const p=bd.dataset.day.split('-');cur=new Date(+p[0],p[1]-1,+p[2]);sv='day';render()}
   const be=t.closest('[data-ev]');if(be){ssel=ssel==be.dataset.ev?null:be.dataset.ev;render()}
   if(t.closest('[data-nb]')){who='-';render()}
   const ba=t.closest('[data-act]');if(ba){subAct(ba.closest('[data-sid]'),ba.dataset.act)}
+  const bp=t.closest('[data-pact]');if(bp){payAct(bp)}
+  const bc=t.closest('[data-pcf]');if(bc){pcf=bc.dataset.pcf;render()}
   if(t.closest('[data-m]')){metric=t.closest('[data-m]').dataset.m;render()}
 };
 $('#v').onchange=async e=>{
@@ -271,6 +314,16 @@ $('#csv').onclick=()=>{
 };
 $('#li').onclick=async()=>{const r=await sb.auth.signInWithPassword({email:$('#em').value.trim(),password:$('#pw').value});r.error?$('#m').textContent='Неверная почта или пароль':load()};
 $('#out').onclick=async()=>{await sb.auth.signOut();location.reload()};
+$('#fp').onclick=async()=>{
+  const em=$('#em').value.trim(),m=t=>$('#m').textContent=t;
+  if(!em)return m('Введите почту и нажмите «Забыли пароль?» ещё раз');
+  m('Отправляем письмо…');
+  const r=await sb.auth.resetPasswordForEmail(em,{redirectTo:location.origin+'/'});
+  m(r.error?(/rate|seconds|limit/i.test(r.error.message)?'Слишком часто. Подождите минуту и попробуйте снова':'Не удалось отправить письмо: '+r.error.message)
+    :'Если такая почта есть в системе, мы отправили письмо со ссылкой. Откройте её, задайте новый пароль и войдите здесь.')
+};
 sb.auth.getSession().then(({data})=>data.session&&load());
-setInterval(()=>{!$('#app').hidden&&!/INPUT|SELECT/.test(document.activeElement.tagName)&&load()},30000);
+const touch=e=>{if(e.target&&e.target.matches&&e.target.matches('[data-sf],[data-pf]'))editAt=Date.now()};
+document.addEventListener('focusin',touch);document.addEventListener('input',touch);document.addEventListener('change',touch);
+setInterval(()=>{!$('#app').hidden&&!/INPUT|SELECT/.test(document.activeElement.tagName)&&Date.now()-editAt>120000&&load()},30000);
 </script></body></html>

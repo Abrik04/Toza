@@ -122,6 +122,7 @@ dialog{border:0;border-radius:26px;width:min(94vw,460px);padding:24px;color:var(
 dialog::backdrop{background:#0b2e3399}
 #sum{white-space:pre-wrap;font:inherit;font-size:14px;background:var(--tile);border-radius:14px;padding:14px;margin:12px 0}
 @media(prefers-reduced-motion:reduce){*{transition:none!important}}
+.fpl{background:none;border:0;color:var(--tq,#0e8c8c);font:700 14px Manrope,sans-serif;padding:8px 0 0;cursor:pointer;text-align:left}
 </style>
 </head>
 <body>
@@ -192,7 +193,7 @@ dialog::backdrop{background:#0b2e3399}
     <div class="lvl"><span id="lvn"></span><div class="pb"><i id="lvb"></i></div><small id="lvx"></small></div>
   </div>
   <div id="auth" class="card" hidden>
-    <div id="in" class="f"><b>Войдите, чтобы данные и заказы были на любом телефоне</b><input id="em" type="email" placeholder="Эл. почта" autocomplete="email"><input id="pw" type="password" placeholder="Пароль, от 6 символов" autocomplete="current-password"><div class="acts"><button class="btn" id="li" type="button">Войти</button><button class="btn alt" id="su" type="button">Регистрация</button></div></div>
+    <div id="in" class="f"><b>Войдите, чтобы данные и заказы были на любом телефоне</b><input id="em" type="email" placeholder="Эл. почта" autocomplete="email"><input id="pw" type="password" placeholder="Пароль, от 6 символов" autocomplete="current-password"><div class="acts"><button class="btn" id="li" type="button">Войти</button><button class="btn alt" id="su" type="button">Регистрация</button></div><button class="fpl" id="fp" type="button">Забыли пароль?</button></div>
     <div id="out" hidden><p>Вы вошли как <b id="who"></b></p><div id="rf" class="rf"><small>Ваш код друга</small><b id="rfc"></b><small id="rfn"></small>
       <div class="acts" style="margin-top:10px"><button class="btn alt" id="rcp" type="button">Скопировать код</button><button class="btn" id="rsh" type="button">Поделиться</button></div>
       <div class="rst"><div><b id="r1">0</b><small>Приглашено</small></div><div><b id="r2">0</b><small>Ждут выполнения</small></div><div><b id="r3">0</b><small>Заработано, сум</small></div></div></div>
@@ -225,11 +226,12 @@ dialog::backdrop{background:#0b2e3399}
   <div class="dz"><button class="btn alt" id="s-exp" type="button">Скачать мои данные</button><a href="privacy.html" target="_blank">Политика конфиденциальности</a><a href="oferta.html" target="_blank">Публичная оферта</a>
     <button class="btn alt" id="clr" type="button">Стереть данные на этом устройстве</button><button class="lnk" id="del" type="button" hidden>Удалить аккаунт</button></div>
 </dialog>
+<dialog id="rp"><div class="sh"><h2>Новый пароль</h2></div><div class="f"><input id="np" type="password" placeholder="Новый пароль, от 6 символов" autocomplete="new-password"><input id="np2" type="password" placeholder="Повторите пароль" autocomplete="new-password"><p id="rm" role="alert"></p><div class="acts"><button class="btn" id="rs" type="button">Сохранить пароль</button></div></div></dialog>
 <div id="tt" class="toast" hidden></div>
 <dialog id="ok">
   <h2 style="margin-top:0"><span>Заказ</span> <span id="oid"></span></h2>
   <p id="dtx"></p><p id="dsm" style="font-weight:700"></p>
-  <div class="acts"><a class="btn" id="tg" target="_blank" rel="noopener" hidden>Отправить в Telegram</a><a class="btn" id="paynow" target="_blank" rel="noopener" hidden>Оплатить онлайн</a><a class="btn alt" id="dcall">Позвонить</a><a class="btn alt" id="dsup" target="_blank" rel="noopener">Написать</a><button class="btn" id="cl" type="button">Готово</button></div>
+  <div class="acts"><a class="btn" id="tg" target="_blank" rel="noopener" hidden>Отправить в Telegram</a><a class="btn" id="paynow" target="_blank" rel="noopener" hidden>Оплатить онлайн</a><a class="btn alt" id="dcall">Позвонить</a><a class="btn alt" id="dsup" target="_blank" rel="noopener">Написать</a><a class="btn alt" id="dbot" target="_blank" rel="noopener" hidden>Следить за заказом в Telegram</a><button class="btn" id="cl" type="button">Готово</button></div>
 </dialog>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -284,6 +286,25 @@ const L=[
 ['Эл. почта','E-pochta','Email'],['Пароль, от 6 символов','Parol, kamida 6 belgi','Password, 6+ characters'],
 ['Войти','Kirish','Sign in'],['Регистрация','Roʻyxatdan oʻtish','Sign up'],['Вы вошли как','Siz quyidagi hisobdasiz:','Signed in as'],['Выйти','Chiqish','Sign out'],
 ['Введите почту и пароль от 6 символов','E-pochta va kamida 6 belgili parolni kiriting','Enter your email and a password of 6+ characters'],
+['Забыли пароль?','Parolni unutdingizmi?','Forgot password?'],
+['Введите почту и нажмите «Забыли пароль?» ещё раз','E-pochtani kiriting va «Parolni unutdingizmi?» tugmasini yana bosing','Enter your email and tap “Forgot password?” again'],
+['Отправляем письмо…','Xat yuborilmoqda…','Sending the email…'],
+['Если такая почта зарегистрирована, мы отправили письмо со ссылкой для нового пароля. Проверьте папку «Спам».','Agar bu e-pochta roʻyxatdan oʻtgan boʻlsa, yangi parol uchun havola bilan xat yubordik. «Spam» papkasini ham tekshiring.','If this email is registered, we sent a link to set a new password. Check your Spam folder too.'],
+['Письмо уже отправлено. Подождите минуту и попробуйте снова','Xat yuborildi. Bir daqiqa kutib, qayta urinib koʻring','The email was already sent. Wait a minute and try again'],
+['Слишком часто. Подождите минуту и попробуйте снова','Juda tez-tez. Bir daqiqa kutib, qayta urinib koʻring','Too many attempts. Wait a minute and try again'],
+['Не получилось отправить письмо. Проверьте интернет и попробуйте ещё раз','Xatni yuborib boʻlmadi. Internetni tekshirib, qayta urinib koʻring','Could not send the email. Check your connection and try again'],
+['Новый пароль','Yangi parol','New password'],
+['Новый пароль, от 6 символов','Yangi parol, kamida 6 belgi','New password, 6+ characters'],
+['Повторите пароль','Parolni takrorlang','Repeat the password'],
+['Сохранить пароль','Parolni saqlash','Save password'],
+['Пароль должен быть не короче 6 символов','Parol kamida 6 belgidan iborat boʻlishi kerak','The password must be at least 6 characters'],
+['Пароли не совпадают','Parollar mos kelmadi','The passwords do not match'],
+['Сохраняем…','Saqlanmoqda…','Saving…'],
+['Новый пароль должен отличаться от старого','Yangi parol eskisidan farq qilishi kerak','The new password must differ from the old one'],
+['Пароль слишком простой. Придумайте другой','Parol juda oddiy. Boshqasini oʻylab toping','The password is too weak. Pick another one'],
+['Не получилось сохранить. Откройте ссылку из письма ещё раз','Saqlab boʻlmadi. Xatdagi havolani qayta oching','Could not save. Open the link from the email again'],
+['Пароль изменён. Вы вошли в аккаунт','Parol oʻzgartirildi. Akkauntga kirdingiz','Password changed. You are signed in'],
+['Следить за заказом в Telegram','Buyurtmani Telegramda kuzatish','Track the order in Telegram'],
 ['Подождите…','Kuting…','Please wait…'],['Неверная почта или пароль','E-pochta yoki parol notoʻgʻri','Wrong email or password'],
 ['Сначала подтвердите почту: откройте письмо, которое мы отправили','Avval e-pochtani tasdiqlang: biz yuborgan xatni oching','Please confirm your email first: open the message we sent'],
 ['Нет связи с сервером. Проверьте интернет и попробуйте ещё раз','Serverga ulanib boʻlmadi. Internetni tekshirib, qayta urinib koʻring','Can’t reach the server. Check your connection and try again'],
@@ -551,7 +572,7 @@ async function submit(){
   $('#oid').textContent=id;
   $('#dtx').textContent=ok?(oid?'Заказ принят. Оплатите онлайн по кнопке ниже.':c.pi?'Заявка на абонемент принята. Мы свяжемся с вами, подтвердим день и время и закрепим бригаду.':'Заказ принят. Мы свяжемся с вами, чтобы подтвердить время.'):'Не удалось отправить заказ. Нажмите «Отправить в Telegram», и мы его получим.';
   $('#tg').hidden=ok;$('#paynow').hidden=!(ok&&oid);if(ok&&oid)$('#paynow').href=payLink(pm,oid,c.total);$('#dsm').textContent=tr('Итого')+': '+fmt(c.total)+' '+tr('сум')+(c.off?` (−${c.pct}%)`:'');$('#tg').href=`https://t.me/${CFG.tg}?text=${encodeURIComponent(text)}`;
-  $('#dcall').href='tel:'+CFG.phone;$('#dsup').href='https://t.me/'+CFG.tg;
+  $('#dcall').href='tel:'+CFG.phone;$('#dsup').href='https://t.me/'+CFG.tg;$('#dbot').hidden=!CFG.bot;if(CFG.bot)$('#dbot').href='https://t.me/'+CFG.bot;
   $('#ok').showModal();me()
 }
 $('#cl').onclick=()=>{$('#ok').close();show(0);tab('hist')};
@@ -771,6 +792,25 @@ async function auth(up){
   }
   am(up&&!r.data.session?'Мы отправили письмо: подтвердите почту и затем войдите':'')
 }
+let RECOV=/type=recovery/.test(location.hash+location.search),fpAt=0;
+async function resetPw(){
+  const email=$('#em').value.trim(),am=t=>$('#am').textContent=t;
+  if(!email)return am('Введите почту и нажмите «Забыли пароль?» ещё раз');
+  if(Date.now()-fpAt<60000)return am('Письмо уже отправлено. Подождите минуту и попробуйте снова');
+  am('Отправляем письмо…');fpAt=Date.now();
+  let r;try{r=await sb.auth.resetPasswordForEmail(email,{redirectTo:location.origin+'/'})}catch(e){r={error:e}}
+  if(r.error){fpAt=0;return am(/rate|seconds|limit/i.test(String(r.error.message||r.error))?'Слишком часто. Подождите минуту и попробуйте снова':'Не получилось отправить письмо. Проверьте интернет и попробуйте ещё раз')}
+  am('Если такая почта зарегистрирована, мы отправили письмо со ссылкой для нового пароля. Проверьте папку «Спам».')
+}
+async function savePw(){
+  const a=$('#np').value,b=$('#np2').value,m=t=>$('#rm').textContent=t;
+  if(a.length<6)return m('Пароль должен быть не короче 6 символов');
+  if(a!==b)return m('Пароли не совпадают');
+  m('Сохраняем…');
+  let r;try{r=await sb.auth.updateUser({password:a})}catch(e){r={error:e}}
+  if(r.error){const x=String(r.error.message||r.error);return m(/same|different/i.test(x)?'Новый пароль должен отличаться от старого':/weak|short|least/i.test(x)?'Пароль слишком простой. Придумайте другой':'Не получилось сохранить. Откройте ссылку из письма ещё раз')}
+  $('#rp').close();try{history.replaceState(null,'',location.pathname)}catch(e){}toast('Пароль изменён. Вы вошли в аккаунт')
+}
 const SBU=(()=>{
   let u=(CFG.sb.url||'').trim().replace(/^['"\s]+|['"\s]+$/g,'');
   if(!/^https?:\/\//i.test(u))u='https://'+u;
@@ -779,8 +819,9 @@ const SBU=(()=>{
 if(CFG.sb.url&&window.supabase){
   try{sb=supabase.createClient(SBU,(CFG.sb.key||'').trim())}catch(e){console.warn(e)}
   $('#auth').hidden=false;
-  $('#li').onclick=()=>auth(0);$('#su').onclick=()=>auth(1);$('#lo').onclick=()=>sb.auth.signOut();
+  $('#li').onclick=()=>auth(0);$('#su').onclick=()=>auth(1);$('#lo').onclick=()=>sb.auth.signOut();$('#fp').onclick=resetPw;$('#rs').onclick=savePw;
   sb&&sb.auth.onAuthStateChange((ev,se)=>{
+    if(ev=='PASSWORD_RECOVERY'||(RECOV&&ev=='SIGNED_IN')){RECOV=0;$('#np').value=$('#np2').value=$('#rm').textContent='';$('#rp').showModal()}
     if(ev=='SIGNED_OUT'){store('toza');store('toza_uid');store('toza_bal');REF='';REFD=0;['nm','ph','ds','ad','pc'].forEach(k=>$('#'+k).value='');fillP()}
     user=se?se.user:null;authUI()
   })
