@@ -130,7 +130,7 @@ function dash(){
    +`<div class="card"><h2>Бригады</h2>${hb(cur,o=>o.assignee||'не назначено')}</div><div class="card"><h2>Оплата</h2>${hb(cur,o=>o.p.pay)}</div>`
    +`<div class="card wide"><h2>Последние заказы</h2>${all.filter(o=>!(o.visit&&o.t>now)).slice(0,6).map(row).join('')||'<p class="mut">Заказов пока нет</p>'}</div></div>`
 }
-const card=o=>{const p=o.p;return`<div class="card oc" data-id="${o.id}"><div class="oh"><b>${esc(o.code)}</b>${pill(o.status)}<small class="mut">${fd(o.t)}</small><b class="sm">${fm(o.total)} сум</b></div>
+const card=o=>{const p=o.p;return`<div class="card oc" data-id="${o.id}"><div class="oh"><b>${esc(o.code)}</b>${pill(o.status)}${o.paid_at?'<span class="pill g">💳 Оплачено онлайн</span>':(/Payme|Click/i.test(p.pay||'')&&o.status!='cancel'?'<span class="pill y">Ждёт онлайн-оплаты</span>':'')}<small class="mut">${fd(o.t)}</small><b class="sm">${fm(o.total)} сум</b></div>
 <div class="om">👤 ${esc(p.name)||'—'} ${p.phone?`<a href="tel:+${p.phone}">+${p.phone}</a>`:''}</div>
 <div class="om">📍 ${esc(p.district)}, ${esc(p.addr)} ${/^https:\/\/maps\.google\.com\//.test(p.map)?`<a href="${esc(p.map)}" target="_blank" rel="noopener">на карте</a>`:''}</div>
 <div class="om">🧼 ${esc(p.obj)} · ${esc(p.type)} · ${esc(p.when)} · ${esc(p.pay)}</div>
@@ -153,7 +153,7 @@ function cli(){
 const DOW=['Вс','Пн','Вт','Ср','Чт','Пт','Сб'],MON=['янв','фев','мар','апр','мая','июн','июл','авг','сен','окт','ноя','дек'],WDN=['воскресенье','понедельник','вторник','среду','четверг','пятницу','субботу'];
 const pad=n=>String(n).padStart(2,'0'),dk=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate()),d0=d=>new Date(d.getFullYear(),d.getMonth(),d.getDate());
 const tkey=o=>pad(o.at.getHours())+':'+pad(o.at.getMinutes()),shortT=t=>({'Поддерживающая':'П','Генеральная':'Г','После ремонта':'Р'}[t]||(t||'?')[0]);
-let cur=d0(new Date()),sv='wk',who='all',scn=0,ssel=null,subs=[],subErr=null,pay=null,payErr=null,pcf='all',editAt=0;
+let cur=d0(new Date()),sv='wk',who='all',scn=0,ssel=null,subs=[],subErr=null,pay=null,payErr=null,onl=null,pcf='all',editAt=0;
 function when_(o){
   const s=o.sel||{},p=o.p,cr=new Date(o.created_at);
   if(s.date&&/^\d{4}-\d\d-\d\d/.test(s.date)){const m=String(s.tm||p.k&&p.k[3]+':'+p.k[4]||'00:00').split(':');return new Date(+s.date.slice(0,4),+s.date.slice(5,7)-1,+s.date.slice(8,10),+m[0]||0,+m[1]||0)}
@@ -216,7 +216,7 @@ function cash(){
   const P=pay.payments,H=pay.handovers,held=P.filter(p=>!p.handover_id&&p.amount>0),rep=H.filter(h=>!h.confirmed_at),sum=a=>a.reduce((s,p)=>s+(p.amount||0),0);
   const over=held.filter(p=>(p.flags||[]).includes('overdue')),bad=P.filter(redP),unc=P.filter(p=>(p.flags||[]).includes('unconfirmed'));
   const k=(l,v,s,c)=>`<div class="card"><div class="kl">${l}</div><div class="kv" ${c?`style="color:var(--red)"`:''}>${v}</div><small class="mut">${s}</small></div>`;
-  let h=`<div class="kpis">${k('Наличные у клинеров',fm(sum(held))+' <small>сум</small>',held.length+' заказов не сдано')}${k('Просрочена сдача',over.length,fm(sum(over))+' сум',over.length)}${k('Ждёт вашего подтверждения',fm(rep.reduce((s,x)=>s+x.amount,0))+' <small>сум</small>',rep.length+' сдач')}${k('Расхождения и вопросы',bad.length,'клиент и клинер не совпали или оплата не внесена',bad.length)}${k('Клиент не подтвердил',unc.length,'нет ответа в Telegram-боте')}</div>`;
+  let h=`<div class="kpis">${k('Наличные у клинеров',fm(sum(held))+' <small>сум</small>',held.length+' заказов не сдано')}${k('Просрочена сдача',over.length,fm(sum(over))+' сум',over.length)}${k('Ждёт вашего подтверждения',fm(rep.reduce((s,x)=>s+x.amount,0))+' <small>сум</small>',rep.length+' сдач')}${k('Расхождения и вопросы',bad.length,'клиент и клинер не совпали или оплата не внесена',bad.length)}${k('Клиент не подтвердил',unc.length,'нет ответа в Telegram-боте')}${onl?k('Оплачено онлайн',fm(onl.filter(x=>x.state==2).reduce((s,x)=>s+x.amount,0))+' <small>сум</small>',onl.filter(x=>x.state==2).length+' платежей, Payme и Click'):''}</div>`;
   const by={};held.forEach(p=>{(by[p.cleaner||'без клинера']=by[p.cleaner||'без клинера']||[]).push(p)});
   if(rep.length)h+=`<h2 style="margin:6px 0 10px;font-size:15px">Клинер сообщил, что сдал деньги</h2>`+rep.map(x=>`<div class="card oc" data-hid="${esc(x.id)}"><div class="oh"><b>${esc(x.cleaner)}</b><span class="pill y">Ждёт подтверждения</span><b class="sm">${fm(x.amount)} сум</b></div><small class="mut">Сообщил ${dtm(x.reported_at)}${x.note?' · '+esc(x.note):''}</small><div class="row sf"><label>Принято, сум<input type="number" inputmode="numeric" data-pf="hr" value="${x.amount}"></label><button class="s on" data-pact="hconfirm" data-hid="${esc(x.id)}">Подтвердить получение</button></div></div>`).join('');
   h+=`<h2 style="margin:18px 0 10px;font-size:15px">Деньги на руках у клинеров</h2>`+(Object.keys(by).sort().map(n=>{const a=by[n],od=a.filter(p=>(p.flags||[]).includes('overdue')).length,due=a.map(p=>p.due_at).filter(Boolean).sort()[0];
@@ -226,8 +226,15 @@ function cash(){
   h+=`<h2 style="margin:18px 0 10px;font-size:15px">Оплаты по заказам</h2><div class="chips">${ch('all','Все')}${ch('red','Проблемные · '+bad.length)}${ch('held','Не сданы · '+held.length)}${ch('unc','Не подтверждены клиентом · '+unc.length)}</div>`
    +`<div class="tw"><table class="dt"><thead><tr><th>Заказ</th><th>Клиент</th><th>Клинер</th><th>К оплате</th><th>Принял клинер</th><th>Ответ клиента</th><th>Статус</th><th></th></tr></thead><tbody>`
    +(rows.map(p=>`<tr><td><b>${esc(p.code)}</b><br><small class="mut">${dtm(p.done_at)}</small></td><td>${esc(p.client)||'—'}</td><td>${esc(p.cleaner)||'—'}</td><td>${fm(p.expected)}</td><td>${p.amount==null?'—':fm(p.amount)}${p.note?`<br><small class="mut">${esc(p.note)}</small>`:''}</td><td>${p.client_answer?esc(ANS[p.client_answer])+(p.client_answer=='other'?': '+fm(p.client_amount):''):'—'}<br><small class="mut">${p.client_at?dtm(p.client_at):''}</small></td><td><div class="fl">${p.verified?'<span class="pill g">✓ подтверждено</span>':''}${(p.flags||[]).map(f=>PF[f]?`<span class="pill ${PF[f][1]}">${PF[f][0]}</span>`:'').join('')}${p.handover_id?'<span class="pill s-way">сдано</span>':''}</div></td><td>${p.handover_id?'':`<button class="s" data-pact="rec" data-oid="${esc(p.order_id)}" data-exp="${p.expected}">${p.amount==null?'Внести':'Исправить'}</button>`}</td></tr>`).join('')||'<tr><td colspan="8" class="mut">Пока ничего нет</td></tr>')
-   +`</tbody></table></div><div class="card sd"><b>Правила</b><div class="row sf"><label>Срок сдачи наличных, часов<input type="number" inputmode="numeric" data-pf="dh" value="${pay.cfg.due_hours}"></label><button class="s" data-pact="dh">Сохранить</button></div><small class="mut">Если клинер не сдал деньги за этот срок, заказ получает красную метку «Просрочена сдача».</small></div>`;
+   +`</tbody></table></div>`+onlineH()+`<div class="card sd"><b>Правила</b><div class="row sf"><label>Срок сдачи наличных, часов<input type="number" inputmode="numeric" data-pf="dh" value="${pay.cfg.due_hours}"></label><button class="s" data-pact="dh">Сохранить</button></div><small class="mut">Если клинер не сдал деньги за этот срок, заказ получает красную метку «Просрочена сдача».</small></div>`;
   $('#v').innerHTML=h
+}
+const OST={1:['Ожидает оплаты','y'],2:['Оплачено','g'],'-1':['Отменена','r'],'-2':['Возврат','r']};
+function onlineH(){
+  if(!onl)return'<p class="mut" style="margin-top:14px">Онлайн-оплаты (Payme и Click) появятся здесь после запуска supabase_stage9.sql.</p>';
+  return`<h2 style="margin:18px 0 10px;font-size:15px">Онлайн-оплаты: Payme и Click</h2><div class="tw"><table class="dt"><thead><tr><th>Заказ</th><th>Клиент</th><th>Система</th><th>Сумма</th><th>Статус</th><th>Время</th></tr></thead><tbody>`
+   +(onl.slice(0,200).map(x=>`<tr><td><b>${esc(x.code)}</b></td><td>${esc(x.client)||'—'}</td><td>${x.provider=='payme'?'Payme':'Click'}</td><td>${fm(x.amount)}</td><td><span class="pill ${(OST[x.state]||['?','y'])[1]}">${(OST[x.state]||['Статус '+x.state])[0]}</span></td><td><small class="mut">${dtm(x.perform_time||x.create_time)}</small></td></tr>`).join('')||'<tr><td colspan="6" class="mut">Пока нет онлайн-платежей</td></tr>')
+   +`</tbody></table></div>`
 }
 const PERR={note_required:'Если сумма отличается от суммы заказа, укажите причину',locked:'Деньги уже сданы, исправить нельзя',bad_amount:'Проверьте сумму',nothing:'Нечего сдавать',forbidden:'Нет доступа',not_found:'Уже подтверждено',bad_value:'Введите число от 1 до 720'};
 async function payAct(b){
@@ -267,10 +274,12 @@ async function load(){
   $('#lg').hidden=true;$('#app').hidden=false;
   const cn=await sb.from('cleaners').select('name');$('#cn').innerHTML=(cn.data||[]).map(x=>`<option value="${esc(x.name)}">`).join('');
   const s=await sb.auth.getSession();$('#me').textContent=s.data.session?s.data.session.user.email:'';
-  const r=await sb.from('orders').select('id,code,details,total,status,assignee,sel,created_at').order('created_at',{ascending:false}).limit(1500);
+  let r=await sb.from('orders').select('id,code,details,total,status,assignee,sel,created_at,paid_at').order('created_at',{ascending:false}).limit(1500);
+  if(r.error)r=await sb.from('orders').select('id,code,details,total,status,assignee,sel,created_at').order('created_at',{ascending:false}).limit(1500);   /* до этапа 9 поля paid_at нет */
   all=(r.data||[]).map(o=>{const x={...o,c:+new Date(o.created_at),p:parse(o)};x.visit=!!(o.sel&&o.sel.sub);x.at=when_(x);x.t=x.visit?+x.at:x.c;return x});
   const sr=await sb.from('subscriptions').select('*').order('created_at',{ascending:false});subs=sr.data||[];subErr=sr.error?sr.error.message:null;
   const pr=await sb.rpc('pay_snapshot',{p_days:90});pay=pr.error?null:pr.data;payErr=pr.error?pr.error.message:null;
+  const orr=await sb.rpc('pay_online_list',{p_days:90});onl=orr.error||!Array.isArray(orr.data)?null:orr.data;
   const mx=all.reduce((m,o)=>Math.max(m,o.c),0),nw=all.filter(o=>o.c>seen&&!o.visit).length;
   if(!first&&mx>seen&&nw)toast('Новых заказов: '+nw);
   seen=mx;first=0;render()

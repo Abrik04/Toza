@@ -78,7 +78,7 @@ const M={'Вход для клинеров':'Tozalovchilar uchun kirish','Поч
 'Неделя':'Hafta','Мои':'Meniki','Все':'Hammasi','На этой неделе заказов нет.':'Bu haftada buyurtmalar yoʻq.','абонемент':'abonement','Квартира':'Kvartira','Дом':'Uy','Офис':'Ofis','Поддерживающая уборка':'Muntazam tozalash','Генеральная уборка':'Chuqur tozalash','После ремонта уборка':'Taʼmirdan keyingi tozalash','регулярная уборка':'muntazam tozalash',
 'Окна (до 5 шт)':'Derazalar (5 tagacha)','Духовка':'Duxovka','Холодильник':'Muzlatgich','Балкон':'Balkon','Чистка дивана':'Divan tozalash','нет':'yoʻq',
 'наличными':'naqd','картой':'karta bilan','переводом':'oʻtkazma','безналичный расчёт':'naqdsiz hisob-kitob','Питомцы дома':'Uyda hayvonlar','есть':'bor','Как войти':'Qanday kirish','Комментарий':'Izoh',
-'Забыли пароль?':'Parolni unutdingizmi?','Введите почту и нажмите «Забыли пароль?» ещё раз':'E-pochtani kiriting va «Parolni unutdingizmi?» tugmasini yana bosing','Отправляем письмо…':'Xat yuborilmoqda…',
+'Оплачено онлайн':'Onlayn toʻlangan','Онлайн-оплата ещё не поступила':'Onlayn toʻlov hali kelmadi','Забыли пароль?':'Parolni unutdingizmi?','Введите почту и нажмите «Забыли пароль?» ещё раз':'E-pochtani kiriting va «Parolni unutdingizmi?» tugmasini yana bosing','Отправляем письмо…':'Xat yuborilmoqda…',
 'Если такая почта есть в системе, мы отправили письмо со ссылкой. Откройте её, задайте новый пароль и войдите здесь.':'Agar bu e-pochta tizimda boʻlsa, havola bilan xat yubordik. Uni oching, yangi parol qoʻying va shu yerda kiring.',
 'Слишком часто. Подождите минуту и попробуйте снова':'Juda tez-tez. Bir daqiqa kutib, qayta urinib koʻring','Касса':'Kassa','Получили наличные?':'Naqd pul oldingizmi?','К оплате':'Toʻlov summasi',
 'Сколько денег вы получили, сум':'Qancha pul oldingiz, soʻm','Почему сумма отличается?':'Nima uchun summa farq qiladi?','Подтвердить':'Tasdiqlash','Отмена':'Bekor qilish','Введите сумму':'Summani kiriting',
@@ -115,6 +115,7 @@ const card=o=>{const p=o.p,d=o.status=='done';return`<article class="c ${o.statu
 <div class="ac"><a class="bt" href="${esc(route(p))}" target="_blank" rel="noopener">${t('🧭 Маршрут')}</a>${p.phone?`<a class="bt" href="tel:+${p.phone}">📞 ${esc(p.name)||t('Позвонить')}</a>`:''}</div>
 <p>🧼 ${esc(tj(p.job))}${p.extra&&p.extra!='нет'?'<br>➕ '+esc(p.extra.split(', ').map(x=>t(x)).join(', ')):''}</p>${p.notes.map(n=>`<p class="n">⚠️ ${esc(tn(n))}</p>`).join('')}
 <p class="pay ${(cash(p)||term(p))&&!d?'cash':''}">${cash(p)&&!d?t('💵 Получить наличными: '):term(p)&&!d?t('💳 Взять терминал: '):'💳 '+esc(t(p.pay))+' · '}<b>${fm(o.total)} ${t('сум')}</b></p>
+${/payme|click/i.test(p.pay||'')?(o.paid_at?`<p class="pay">✅ ${t('Оплачено онлайн')}</p>`:`<p class="pay warnp">⚠️ ${t('Онлайн-оплата ещё не поступила')}</p>`):''}
 ${d&&cash(p)&&pay?(payOf(o)&&payOf(o).amount!=null?`<p class="pay">✅ ${t('Принято')}: <b>${fm(payOf(o).amount)} ${t('сум')}</b>${payOf(o).handover_id?' · '+t('сдано'):''}</p>`:`<button class="go way" data-cash="rec" type="button">${t('Внести полученную сумму')}</button>`):''}
 ${d?'':`<button class="go ${o.status}" data-s="${o.status=='new'?'way':'done'}" type="button">${t(o.status=='new'?'Выезжаю':'Выполнено ✓')}</button>`}</article>`};
 function weekH(){
@@ -205,7 +206,8 @@ async function load(){
   const c=await sb.from('cleaners').select('name');
   if(c.error)return offline();
   if(!c.data||!c.data.length){$('#m').textContent=t('Нет доступа: эта почта не добавлена в список клинеров.');return}
-  let r=await sb.from('orders').select('id,code,details,total,status,assignee,sel,created_at').order('created_at',{ascending:false}).limit(400);
+  let r=await sb.from('orders').select('id,code,details,total,status,assignee,sel,created_at,paid_at').order('created_at',{ascending:false}).limit(400);
+  if(r.error)r=await sb.from('orders').select('id,code,details,total,status,assignee,sel,created_at').order('created_at',{ascending:false}).limit(400);   /* до этапа 9 поля paid_at нет */
   if(r.error)r=await sb.from('orders').select('id,code,details,total,status,created_at').order('created_at',{ascending:false}).limit(300);
   if(r.error)return offline();
   await refreshPay();

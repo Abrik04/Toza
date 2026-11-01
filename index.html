@@ -123,6 +123,7 @@ dialog::backdrop{background:#0b2e3399}
 #sum{white-space:pre-wrap;font:inherit;font-size:14px;background:var(--tile);border-radius:14px;padding:14px;margin:12px 0}
 @media(prefers-reduced-motion:reduce){*{transition:none!important}}
 .fpl{background:none;border:0;color:var(--tq,#0e8c8c);font:700 14px Manrope,sans-serif;padding:8px 0 0;cursor:pointer;text-align:left}
+#rp [hidden]{display:none!important}#rp .f{display:grid;gap:10px}#rp #rm{min-height:1.2em;color:var(--red,#c0392b);font-size:13px;margin:0}
 </style>
 </head>
 <body>
@@ -194,10 +195,10 @@ dialog::backdrop{background:#0b2e3399}
   </div>
   <div id="auth" class="card" hidden>
     <div id="in" class="f"><b>Войдите, чтобы данные и заказы были на любом телефоне</b><input id="em" type="email" placeholder="Эл. почта" autocomplete="email"><input id="pw" type="password" placeholder="Пароль, от 6 символов" autocomplete="current-password"><div class="acts"><button class="btn" id="li" type="button">Войти</button><button class="btn alt" id="su" type="button">Регистрация</button></div><button class="fpl" id="fp" type="button">Забыли пароль?</button></div>
-    <div id="out" hidden><p>Вы вошли как <b id="who"></b></p><div id="rf" class="rf"><small>Ваш код друга</small><b id="rfc"></b><small id="rfn"></small>
+    <div id="out" hidden><p>Вы вошли как <b id="who"></b></p><div id="rpn" class="rf" hidden><b>Вы вошли по ссылке из письма.</b><small>Задайте новый пароль, чтобы дальше входить с ним.</small><div class="acts" style="margin-top:10px"><button class="btn" id="rpb" type="button">Задать новый пароль</button></div></div><div id="rf" class="rf"><small>Ваш код друга</small><b id="rfc"></b><small id="rfn"></small>
       <div class="acts" style="margin-top:10px"><button class="btn alt" id="rcp" type="button">Скопировать код</button><button class="btn" id="rsh" type="button">Поделиться</button></div>
       <div class="rst"><div><b id="r1">0</b><small>Приглашено</small></div><div><b id="r2">0</b><small>Ждут выполнения</small></div><div><b id="r3">0</b><small>Заработано, сум</small></div></div></div>
-    <div class="acts"><button class="btn alt" id="lo" type="button">Выйти</button></div></div>
+    <div class="acts"><button class="btn alt" id="chpw2" type="button">Изменить пароль</button><button class="btn alt" id="lo" type="button">Выйти</button></div></div>
     <p id="am"></p>
   </div>
   <div class="card" id="pfc">
@@ -223,10 +224,10 @@ dialog::backdrop{background:#0b2e3399}
   <div class="lab">Обычная площадь</div><div class="area"><output><span id="s-av">60</span> м²</output><input type="range" id="s-ar" min="20" max="300" step="5" value="60" aria-label="Площадь, м²"></div>
   <small class="mut">Мы подставим это в новый заказ, останется только выбрать день.</small>
   <div id="insb"><div class="lab">Приложение на экране</div><p id="ins"></p><button class="btn alt" id="inst" type="button" hidden>Установить</button></div>
-  <div class="dz"><button class="btn alt" id="s-exp" type="button">Скачать мои данные</button><a href="privacy.html" target="_blank">Политика конфиденциальности</a><a href="oferta.html" target="_blank">Публичная оферта</a>
+  <div class="dz"><button class="btn alt" id="chpw" type="button" hidden>Изменить пароль</button><button class="btn alt" id="s-exp" type="button">Скачать мои данные</button><a href="privacy.html" target="_blank">Политика конфиденциальности</a><a href="oferta.html" target="_blank">Публичная оферта</a>
     <button class="btn alt" id="clr" type="button">Стереть данные на этом устройстве</button><button class="lnk" id="del" type="button" hidden>Удалить аккаунт</button></div>
 </dialog>
-<dialog id="rp"><div class="sh"><h2>Новый пароль</h2></div><div class="f"><input id="np" type="password" placeholder="Новый пароль, от 6 символов" autocomplete="new-password"><input id="np2" type="password" placeholder="Повторите пароль" autocomplete="new-password"><p id="rm" role="alert"></p><div class="acts"><button class="btn" id="rs" type="button">Сохранить пароль</button></div></div></dialog>
+<dialog id="rp"><div class="sh"><h2 id="rph">Новый пароль</h2><button class="x" id="rx" type="button" aria-label="Закрыть">✕</button></div><div class="f"><input id="cp" type="password" placeholder="Текущий пароль" autocomplete="current-password" hidden><input id="np" type="password" placeholder="Новый пароль, от 6 символов" autocomplete="new-password"><input id="np2" type="password" placeholder="Повторите пароль" autocomplete="new-password"><p id="rm" role="alert"></p><div class="acts"><button class="btn" id="rs" type="button">Сохранить пароль</button></div><button class="fpl" id="fpc" type="button" hidden>Забыли текущий пароль?</button></div></dialog>
 <div id="tt" class="toast" hidden></div>
 <dialog id="ok">
   <h2 style="margin-top:0"><span>Заказ</span> <span id="oid"></span></h2>
@@ -286,6 +287,18 @@ const L=[
 ['Эл. почта','E-pochta','Email'],['Пароль, от 6 символов','Parol, kamida 6 belgi','Password, 6+ characters'],
 ['Войти','Kirish','Sign in'],['Регистрация','Roʻyxatdan oʻtish','Sign up'],['Вы вошли как','Siz quyidagi hisobdasiz:','Signed in as'],['Выйти','Chiqish','Sign out'],
 ['Введите почту и пароль от 6 символов','E-pochta va kamida 6 belgili parolni kiriting','Enter your email and a password of 6+ characters'],
+['Изменить пароль','Parolni oʻzgartirish','Change password'],
+['Текущий пароль','Joriy parol','Current password'],
+['Введите текущий пароль','Joriy parolni kiriting','Enter your current password'],
+['Текущий пароль неверный','Joriy parol notoʻgʻri','The current password is incorrect'],
+['Забыли текущий пароль?','Joriy parolni unutdingizmi?','Forgot the current password?'],
+['Вы вошли по ссылке из письма.','Siz xatdagi havola orqali kirdingiz.','You signed in with the email link.'],
+['Задайте новый пароль, чтобы дальше входить с ним.','Keyingi kirishlar uchun yangi parol qoʻying.','Set a new password to sign in with it from now on.'],
+['Задать новый пароль','Yangi parol qoʻyish','Set a new password'],
+['Ссылка из письма устарела или уже использована. Запросите новое письмо кнопкой «Забыли пароль?»','Xatdagi havola eskirgan yoki ishlatilgan. «Parolni unutdingizmi?» tugmasi bilan yangi xat soʻrang','The email link has expired or was already used. Request a new email with “Forgot password?”'],
+['Нет связи. Проверьте интернет','Aloqa yoʻq. Internetni tekshiring','No connection. Check your internet'],
+['Оплачено онлайн','Onlayn toʻlangan','Paid online'],
+['Ждёт оплаты','Toʻlov kutilmoqda','Awaiting payment'],
 ['Забыли пароль?','Parolni unutdingizmi?','Forgot password?'],
 ['Введите почту и нажмите «Забыли пароль?» ещё раз','E-pochtani kiriting va «Parolni unutdingizmi?» tugmasini yana bosing','Enter your email and tap “Forgot password?” again'],
 ['Отправляем письмо…','Xat yuborilmoqda…','Sending the email…'],
@@ -581,12 +594,18 @@ $('#cl').onclick=()=>{$('#ok').close();show(0);tab('hist')};
 let ORD=[];
 async function orders(){
   if(!user)return load('toza_orders',[]);
-  const r=await sb.from('orders').select('code,details,total,sel,created_at,status').eq('user_id',user.id).order('created_at',{ascending:false}).limit(30);
-  return (r.data||[]).map(o=>({id:o.code,at:new Date(o.created_at).toLocaleDateString('ru-RU'),t:o.details,total:o.total,sel:o.sel,status:o.status}))
+  const q=c=>sb.from('orders').select(c).eq('user_id',user.id).order('created_at',{ascending:false}).limit(30);
+  let r=await q('id,code,details,total,sel,created_at,status,paid_at');
+  if(r.error)r=await q('code,details,total,sel,created_at,status');   /* до этапа 9 поля paid_at ещё нет */
+  return (r.data||[]).map(o=>({id:o.code,oid:o.id,paid:!!o.paid_at,at:new Date(o.created_at).toLocaleDateString('ru-RU'),t:o.details,total:o.total,sel:o.sel,status:o.status}))
 }
+const onlineM=o=>{const m=/Оплата:\s*(Payme|Click)/i.exec(o.t||'');return m?(m[1].toLowerCase()=='payme'?'Payme':'Click'):null};
+const onlineOn=m=>m=='Payme'?!!CFG.online.payme:!!(CFG.online.click&&CFG.online.click.service);
+const payBadge=o=>{const m=onlineM(o);return m?(o.paid?'<span class="st">Оплачено онлайн</span>':(o.status=='cancel'?'':'<span class="st">Ждёт оплаты</span>')):''};
+const payBtn=o=>{const m=onlineM(o);return m&&!o.paid&&o.oid&&o.status!='cancel'&&onlineOn(m)?`<a class="btn" target="_blank" rel="noopener" href="${payLink(m,o.oid,o.total)}">Оплатить онлайн</a>`:''};
 async function hist(){
   const a=ORD=await orders();
-  $('#v-hist').innerHTML=a.length?a.map((o,i)=>`<div class="card"><b>${o.id}</b> <small>${o.at}</small>${o.status?`<span class="st">${ST[o.status]||o.status}</span>`:''}${o.sel&&o.sel.plan?'<span class="st">Абонемент</span>':''}<p>${o.t.split('\n').slice(1,4).join('<br>')}</p><div class="t">${fmt(o.total)} <span>сум</span></div><div class="acts"><button class="btn alt" data-r="${i}" type="button">Повторить</button>${o.sel&&o.sel.plan?`<a class="btn alt" target="_blank" rel="noopener" href="https://t.me/${CFG.tg}?text=${encodeURIComponent('Абонемент '+o.id+': ')}">Управлять абонементом</a>`:''}</div></div>`).join('')
+  $('#v-hist').innerHTML=a.length?a.map((o,i)=>`<div class="card"><b>${o.id}</b> <small>${o.at}</small>${o.status?`<span class="st">${ST[o.status]||o.status}</span>`:''}${o.sel&&o.sel.plan?'<span class="st">Абонемент</span>':''}${payBadge(o)}<p>${o.t.split('\n').slice(1,4).join('<br>')}</p><div class="t">${fmt(o.total)} <span>сум</span></div><div class="acts">${payBtn(o)}<button class="btn alt" data-r="${i}" type="button">Повторить</button>${o.sel&&o.sel.plan?`<a class="btn alt" target="_blank" rel="noopener" href="https://t.me/${CFG.tg}?text=${encodeURIComponent('Абонемент '+o.id+': ')}">Управлять абонементом</a>`:''}</div></div>`).join('')
    :'<div class="empty"><b>Заказов пока нет</b><br>Оформите первый, и в следующий раз его можно будет повторить одним нажатием.</div>'
 }
 $('#v-hist').onclick=e=>{
@@ -662,7 +681,7 @@ async function me(){
 /* онлайн-оплата: ссылки Payme и Click (нужны договор и серверная часть, см. README) */
 function payLink(m,oid,total){
   const back=location.origin+location.pathname;
-  if(m=='Payme')return 'https://checkout.paycom.uz/'+btoa(`m=${CFG.online.payme};ac.order_id=${oid};a=${total*100};l=${LANG};c=${back}`);
+  if(m=='Payme')return (CFG.online.test?'https://test.paycom.uz/':'https://checkout.paycom.uz/')+btoa(`m=${CFG.online.payme};ac.order_id=${oid};a=${total*100};l=${LANG};c=${back}`);
   return `https://my.click.uz/services/pay?service_id=${CFG.online.click.service}&merchant_id=${CFG.online.click.merchant}&amount=${total}&transaction_param=${oid}&return_url=${encodeURIComponent(back)}`
 }
 /* реферальная программа */
@@ -764,7 +783,7 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-go]');if(b
 /* вход и регистрация (Supabase) */
 let sb=null,user=null;
 function authUI(){
-  $('#in').hidden=!!user;$('#out').hidden=!user;$('#del').hidden=!user;
+  $('#in').hidden=!!user;$('#out').hidden=!user;$('#del').hidden=!user;$('#chpw').hidden=!user;$('#rpn').hidden=!(user&&recovPending());
   if(user){
     $('#who').textContent=user.email;
     const m=user.user_metadata||{},prev=load('toza_uid',''),sw=prev&&prev!==user.id;
@@ -792,25 +811,48 @@ async function auth(up){
   }
   am(up&&!r.data.session?'Мы отправили письмо: подтвердите почту и затем войдите':'')
 }
-let RECOV=/type=recovery/.test(location.hash+location.search),fpAt=0;
-async function resetPw(){
-  const email=$('#em').value.trim(),am=t=>$('#am').textContent=t;
-  if(!email)return am('Введите почту и нажмите «Забыли пароль?» ещё раз');
-  if(Date.now()-fpAt<60000)return am('Письмо уже отправлено. Подождите минуту и попробуйте снова');
-  am('Отправляем письмо…');fpAt=Date.now();
-  let r;try{r=await sb.auth.resetPasswordForEmail(email,{redirectTo:location.origin+'/'})}catch(e){r={error:e}}
-  if(r.error){fpAt=0;return am(/rate|seconds|limit/i.test(String(r.error.message||r.error))?'Слишком часто. Подождите минуту и попробуйте снова':'Не получилось отправить письмо. Проверьте интернет и попробуйте ещё раз')}
-  am('Если такая почта зарегистрирована, мы отправили письмо со ссылкой для нового пароля. Проверьте папку «Спам».')
+/* восстановление и смена пароля */
+const RK='toza_recov';
+let RECOV=/type=recovery/.test(location.hash+location.search),fpAt=0,PWMODE='recovery',PWSHOWN=0;
+if(RECOV){try{sessionStorage.setItem(RK,String(Date.now()))}catch(e){}}
+function recovPending(){try{const t=+sessionStorage.getItem(RK);return !!t&&Date.now()-t<3600e3}catch(e){return RECOV}}
+function recovDone(){RECOV=0;try{sessionStorage.removeItem(RK)}catch(e){}}
+function openPw(mode){
+  PWMODE=mode;const rec=mode=='recovery';
+  $('#rph').textContent=rec?'Новый пароль':'Изменить пароль';
+  $('#cp').hidden=rec;$('#fpc').hidden=rec;
+  $('#cp').value=$('#np').value=$('#np2').value='';$('#rm').textContent='';
+  try{$('#set').close()}catch(e){}
+  if(!$('#rp').open)$('#rp').showModal()
 }
+function maybeRecovery(){if(user&&recovPending()&&!PWSHOWN&&!$('#rp').open){PWSHOWN=1;openPw('recovery')}}
+async function sendReset(email,say){
+  if(!email)return say('Введите почту и нажмите «Забыли пароль?» ещё раз');
+  if(Date.now()-fpAt<60000)return say('Письмо уже отправлено. Подождите минуту и попробуйте снова');
+  say('Отправляем письмо…');fpAt=Date.now();
+  let r;try{r=await sb.auth.resetPasswordForEmail(email,{redirectTo:location.origin+'/'})}catch(e){r={error:e}}
+  if(r.error){fpAt=0;return say(/rate|seconds|limit/i.test(String(r.error.message||r.error))?'Слишком часто. Подождите минуту и попробуйте снова':'Не получилось отправить письмо. Проверьте интернет и попробуйте ещё раз')}
+  say('Если такая почта зарегистрирована, мы отправили письмо со ссылкой для нового пароля. Проверьте папку «Спам».')
+}
+const resetPw=()=>sendReset($('#em').value.trim(),t=>$('#am').textContent=t);
 async function savePw(){
-  const a=$('#np').value,b=$('#np2').value,m=t=>$('#rm').textContent=t;
+  const cur=$('#cp').value,a=$('#np').value,b=$('#np2').value,m=t=>$('#rm').textContent=t,ch=PWMODE=='change';
+  if(ch&&!cur)return m('Введите текущий пароль');
   if(a.length<6)return m('Пароль должен быть не короче 6 символов');
   if(a!==b)return m('Пароли не совпадают');
+  if(ch&&a===cur)return m('Новый пароль должен отличаться от старого');
   m('Сохраняем…');
+  if(ch){
+    let s1;try{s1=await sb.auth.signInWithPassword({email:user.email,password:cur})}catch(e){s1={error:e}}
+    if(s1.error)return m(/invalid|credentials/i.test(String(s1.error.message||''))?'Текущий пароль неверный':'Нет связи. Проверьте интернет')
+  }
   let r;try{r=await sb.auth.updateUser({password:a})}catch(e){r={error:e}}
   if(r.error){const x=String(r.error.message||r.error);return m(/same|different/i.test(x)?'Новый пароль должен отличаться от старого':/weak|short|least/i.test(x)?'Пароль слишком простой. Придумайте другой':'Не получилось сохранить. Откройте ссылку из письма ещё раз')}
-  $('#rp').close();try{history.replaceState(null,'',location.pathname)}catch(e){}toast('Пароль изменён. Вы вошли в аккаунт')
+  recovDone();$('#rpn').hidden=true;$('#rp').close();try{history.replaceState(null,'',location.pathname)}catch(e){}toast('Пароль изменён. Вы вошли в аккаунт')
 }
+/* ссылка из письма устарела или уже использована */
+if(/error_code=otp_expired|error=access_denied/.test(location.hash+location.search)){RECOV=0;try{sessionStorage.removeItem(RK)}catch(e){}
+  setTimeout(()=>{tab('me');$('#am').textContent='Ссылка из письма устарела или уже использована. Запросите новое письмо кнопкой «Забыли пароль?»'},300)}
 const SBU=(()=>{
   let u=(CFG.sb.url||'').trim().replace(/^['"\s]+|['"\s]+$/g,'');
   if(!/^https?:\/\//i.test(u))u='https://'+u;
@@ -819,12 +861,15 @@ const SBU=(()=>{
 if(CFG.sb.url&&window.supabase){
   try{sb=supabase.createClient(SBU,(CFG.sb.key||'').trim())}catch(e){console.warn(e)}
   $('#auth').hidden=false;
-  $('#li').onclick=()=>auth(0);$('#su').onclick=()=>auth(1);$('#lo').onclick=()=>sb.auth.signOut();$('#fp').onclick=resetPw;$('#rs').onclick=savePw;
+  $('#li').onclick=()=>auth(0);$('#su').onclick=()=>auth(1);$('#lo').onclick=()=>sb.auth.signOut();$('#fp').onclick=resetPw;$('#rs').onclick=savePw;$('#rx').onclick=()=>$('#rp').close();$('#rpb').onclick=()=>openPw('recovery');
+  $('#chpw').onclick=$('#chpw2').onclick=()=>openPw(recovPending()?'recovery':'change');$('#fpc').onclick=()=>sendReset(user&&user.email,t=>$('#rm').textContent=t);
   sb&&sb.auth.onAuthStateChange((ev,se)=>{
-    if(ev=='PASSWORD_RECOVERY'||(RECOV&&ev=='SIGNED_IN')){RECOV=0;$('#np').value=$('#np2').value=$('#rm').textContent='';$('#rp').showModal()}
+    if(ev=='PASSWORD_RECOVERY'){try{sessionStorage.setItem(RK,String(Date.now()))}catch(e){}RECOV=1}
     if(ev=='SIGNED_OUT'){store('toza');store('toza_uid');store('toza_bal');REF='';REFD=0;['nm','ph','ds','ad','pc'].forEach(k=>$('#'+k).value='');fillP()}
-    user=se?se.user:null;authUI()
-  })
+    user=se?se.user:null;authUI();maybeRecovery()
+  });
+  /* запасной путь: если событие не пришло, окно всё равно откроется */
+  setTimeout(()=>maybeRecovery(),2500)
 }
 
 /* язык */
