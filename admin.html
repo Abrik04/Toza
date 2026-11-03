@@ -78,7 +78,7 @@ details summary{cursor:pointer;color:var(--mut);font-size:13px}pre{white-space:p
 </div>
 <datalist id="cn"></datalist>
 <div id="tt" class="toast" hidden></div>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0"></script>
 <script src="config.js"></script>
 <script>
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
@@ -88,7 +88,8 @@ const sh=s=>s>=1e6?(s/1e6).toFixed(1)+' млн':Math.round(s/1e3)+' тыс';
 const fd=t=>new Date(t).toLocaleString('ru-RU',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
 const sum=a=>a.filter(o=>o.status!='cancel').reduce((s,o)=>s+(o.total||0),0);
 const ST={new:['Принят','#f4b63f'],way:['Выезжаем','#0e8c8c'],done:['Выполнен','#2e9e6b'],cancel:['Отменён','#c0392b']};
-const pill=s=>`<span class="pill s-${s}">${(ST[s]||[s])[0]}</span>`;
+const cls=s=>String(s==null?'':s).replace(/[^a-z0-9_-]/gi,'');
+const pill=s=>`<span class="pill s-${cls(s)}">${esc((ST[s]||[s])[0])}</span>`;
 const dl=(c,p)=>{if(!p)return'';const d=(c-p)/p*100;return`<span class="dl ${d>=0?'up':'dn'}">${d>=0?'▲':'▼'} ${Math.abs(Math.round(d))}%</span>`};
 const U=new URL(/^https?:/i.test(CFG.sb.url.trim())?CFG.sb.url.trim():'https://'+CFG.sb.url.trim()).origin;
 const sb=supabase.createClient(U,CFG.sb.key.trim());
@@ -161,7 +162,7 @@ function when_(o){
   return cr
 }
 const mon0=d=>{const x=d0(d);x.setDate(x.getDate()-((x.getDay()+6)%7));return x};
-const chipH=o=>`<button class="ev s-${o.status}${ssel==o.id?' sel':''}" data-ev="${o.id}"><b>${o.visit||(o.sel&&o.sel.plan)?'🔁 ':''}${esc(o.p.district)}</b><small>${esc(shortT(o.p.type))} · ${esc(o.p.name)}</small><small class="${o.assignee?'':'nb'}">${o.assignee?'👷 '+esc(o.assignee):'без бригады'}</small></button>`;
+const chipH=o=>`<button class="ev s-${cls(o.status)}${ssel==o.id?' sel':''}" data-ev="${o.id}"><b>${o.visit||(o.sel&&o.sel.plan)?'🔁 ':''}${esc(o.p.district)}</b><small>${esc(shortT(o.p.type))} · ${esc(o.p.name)}</small><small class="${o.assignee?'':'nb'}">${o.assignee?'👷 '+esc(o.assignee):'без бригады'}</small></button>`;
 function sch(){
   const b=mon0(cur),days=[...Array(7)].map((_,i)=>{const d=new Date(b);d.setDate(b.getDate()+i);return d}),end=new Date(days[6]);end.setDate(end.getDate()+1);
   const names=[...new Set(all.map(o=>o.assignee).filter(Boolean))].sort();
@@ -180,7 +181,7 @@ function sch(){
   }else{
     const L=inw.filter(o=>dk(o.at)==dk(cur)).sort((x,y)=>x.at-y.at),p=o=>o.p;
     h+=`<div class="tw"><table class="dt"><thead><tr><th>Время</th><th>Клиент</th><th>Адрес</th><th>Уборка</th><th>Сумма</th><th>Бригада</th><th>Статус</th><th>Тип</th></tr></thead><tbody>`
-     +(L.length?L.map(o=>`<tr data-id="${o.id}"><td><b>${tkey(o)}</b></td><td>${esc(p(o).name)||'—'}${p(o).phone?`<br><a href="tel:+${p(o).phone}">+${p(o).phone}</a>`:''}</td><td>${esc(p(o).district)}, ${esc(p(o).addr)}</td><td>${esc(p(o).obj)} · ${esc(p(o).type)}</td><td>${fm(o.total)}</td><td><input class="ci" list="cn" value="${esc(o.assignee)}" data-a placeholder="бригада"></td><td><select class="ci" data-st>${Object.keys(ST).map(k=>`<option value="${k}"${o.status==k?' selected':''}>${ST[k][0]}</option>`).join('')}</select></td><td>${o.visit?'🔁 уборка №'+(o.sel.visit||''):(o.sel&&o.sel.plan?'🔁 абонемент (1-я)':'разовый')}</td></tr>`).join(''):`<tr><td colspan="8" class="mut" style="text-align:center;padding:24px">На этот день заказов нет</td></tr>`)
+     +(L.length?L.map(o=>`<tr data-id="${o.id}"><td><b>${tkey(o)}</b></td><td>${esc(p(o).name)||'—'}${p(o).phone?`<br><a href="tel:+${p(o).phone}">+${p(o).phone}</a>`:''}</td><td>${esc(p(o).district)}, ${esc(p(o).addr)}</td><td>${esc(p(o).obj)} · ${esc(p(o).type)}</td><td>${fm(o.total)}</td><td><input class="ci" list="cn" value="${esc(o.assignee)}" data-a placeholder="бригада"></td><td><select class="ci" data-st>${Object.keys(ST).map(k=>`<option value="${k}"${o.status==k?' selected':''}>${ST[k][0]}</option>`).join('')}</select></td><td>${o.visit?'🔁 уборка №'+esc(o.sel.visit||''):(o.sel&&o.sel.plan?'🔁 абонемент (1-я)':'разовый')}</td></tr>`).join(''):`<tr><td colspan="8" class="mut" style="text-align:center;padding:24px">На этот день заказов нет</td></tr>`)
      +`</tbody><tfoot><tr><td colspan="4">Всего за день: ${L.filter(o=>o.status!='cancel').length}</td><td>${fm(sumD(L))}</td><td colspan="3"></td></tr></tfoot></table></div>`
   }
   $('#v').innerHTML=h
@@ -190,7 +191,7 @@ function subCard(s){
   const nv=all.filter(o=>o.sel&&o.sel.sub==s.id&&o.status=='new'&&o.at>=d0(new Date())).sort((x,y)=>x.at-y.at).slice(0,3).map(o=>pad(o.at.getDate())+'.'+pad(o.at.getMonth()+1)).join(', ');
   const st={pending:['s-pen','Ждёт подтверждения'],active:[paused?'s-pau':'s-act',paused?'На паузе':'Активен'],cancelled:['s-cancel','Отменён']}[s.status]||['',s.status];
   const fs=new Date(s.start_date+'T00:00');
-  return`<div class="card oc" data-sid="${s.id}"><div class="oh"><b>${esc(p.name)||'—'}</b>${p.phone?`<a href="tel:+${p.phone}">+${p.phone}</a>`:''}<span class="pill ${st[0]}">${st[1]}</span><small class="mut">${esc(s.code)} · ${esc(s.plan_name)}</small><b class="sm">${fm(s.price)} сум · ≈ ${fm(s.price*(s.n||0))} в месяц</b></div>
+  return`<div class="card oc" data-sid="${s.id}"><div class="oh"><b>${esc(p.name)||'—'}</b>${p.phone?`<a href="tel:+${p.phone}">+${p.phone}</a>`:''}<span class="pill ${cls(st[0])}">${esc(st[1])}</span><small class="mut">${esc(s.code)} · ${esc(s.plan_name)}</small><b class="sm">${fm(s.price)} сум · ≈ ${fm(s.price*(s.n||0))} в месяц</b></div>
 <div class="om">📍 ${esc(p.district)}, ${esc(p.addr)}</div>
 <div class="om">🗓 ${s.step==2?'раз в 2 недели':'каждую неделю'}, ${WDN[nd.getDay()]} в ${esc(s.tm)} · первая уборка ${pad(fs.getDate())}.${pad(fs.getMonth()+1)}</div>
 ${nv?`<div class="om">➡ Ближайшие: ${nv}</div>`:''}${paused?`<div class="om">⏸ Пауза с ${esc(s.pause_from)}${s.pause_to?' по '+esc(s.pause_to):''}</div>`:''}

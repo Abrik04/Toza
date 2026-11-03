@@ -235,7 +235,7 @@ dialog::backdrop{background:#0b2e3399}
   <div class="acts"><a class="btn" id="tg" target="_blank" rel="noopener" hidden>Отправить в Telegram</a><a class="btn" id="paynow" target="_blank" rel="noopener" hidden>Оплатить онлайн</a><a class="btn alt" id="dcall">Позвонить</a><a class="btn alt" id="dsup" target="_blank" rel="noopener">Написать</a><a class="btn alt" id="dbot" target="_blank" rel="noopener" hidden>Следить за заказом в Telegram</a><button class="btn" id="cl" type="button">Готово</button></div>
 </dialog>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0"></script>
 <script src="config.js"></script>
 <script>
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
@@ -605,7 +605,7 @@ const payBadge=o=>{const m=onlineM(o);return m?(o.paid?'<span class="st">Опл�
 const payBtn=o=>{const m=onlineM(o);return m&&!o.paid&&o.oid&&o.status!='cancel'&&onlineOn(m)?`<a class="btn" target="_blank" rel="noopener" href="${payLink(m,o.oid,o.total)}">Оплатить онлайн</a>`:''};
 async function hist(){
   const a=ORD=await orders();
-  $('#v-hist').innerHTML=a.length?a.map((o,i)=>`<div class="card"><b>${o.id}</b> <small>${o.at}</small>${o.status?`<span class="st">${ST[o.status]||o.status}</span>`:''}${o.sel&&o.sel.plan?'<span class="st">Абонемент</span>':''}${payBadge(o)}<p>${o.t.split('\n').slice(1,4).join('<br>')}</p><div class="t">${fmt(o.total)} <span>сум</span></div><div class="acts">${payBtn(o)}<button class="btn alt" data-r="${i}" type="button">Повторить</button>${o.sel&&o.sel.plan?`<a class="btn alt" target="_blank" rel="noopener" href="https://t.me/${CFG.tg}?text=${encodeURIComponent('Абонемент '+o.id+': ')}">Управлять абонементом</a>`:''}</div></div>`).join('')
+  $('#v-hist').innerHTML=a.length?a.map((o,i)=>`<div class="card"><b>${H(o.id)}</b> <small>${H(o.at)}</small>${o.status?`<span class="st">${H(ST[o.status]||o.status)}</span>`:''}${o.sel&&o.sel.plan?'<span class="st">Абонемент</span>':''}${payBadge(o)}<p>${String(o.t||'').split('\n').slice(1,4).map(H).join('<br>')}</p><div class="t">${fmt(o.total)} <span>сум</span></div><div class="acts">${payBtn(o)}<button class="btn alt" data-r="${i}" type="button">Повторить</button>${o.sel&&o.sel.plan?`<a class="btn alt" target="_blank" rel="noopener" href="https://t.me/${H(CFG.tg)}?text=${encodeURIComponent('Абонемент '+o.id+': ')}">Управлять абонементом</a>`:''}</div></div>`).join('')
    :'<div class="empty"><b>Заказов пока нет</b><br>Оформите первый, и в следующий раз его можно будет повторить одним нажатием.</div>'
 }
 $('#v-hist').onclick=e=>{
@@ -742,7 +742,7 @@ $('#geo').onclick=()=>navigator.geolocation?navigator.geolocation.getCurrentPosi
   ()=>$('#gm').textContent='Не удалось определить, укажите адрес словами'):0;
 
 /* главная страница */
-const H=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const H=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const INC=CFG.included||[
  ['Сухая и влажная уборка полов','Протирка пыли с поверхностей','Кухня: раковина, плита, фасады','Санузел: унитаз, раковина, душ или ванна','Вынос мусора'],
  ['Всё из поддерживающей уборки','Мытьё труднодоступных мест и плинтусов','Протирка дверей, выключателей и подоконников','Чистка фасадов кухни и техники снаружи','Тщательная чистка санузла и сантехники'],

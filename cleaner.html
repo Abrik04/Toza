@@ -55,7 +55,7 @@ dialog .ac{display:grid;gap:8px;margin-top:14px}.lnk{background:none;border:0;co
 </div>
 <dialog id="cd"><h3>Получили наличные?</h3><p id="cdi"></p><label>Сколько денег вы получили, сум<input id="cda" type="number" inputmode="numeric" min="0"></label><label id="cdnl" hidden>Почему сумма отличается?<input id="cdn" maxlength="140"></label><p id="cde" class="warnp" role="alert"></p><div class="ac"><button class="big" id="cdok" type="button">Подтвердить</button><button class="bt" id="cdx" type="button">Отмена</button></div></dialog>
 <div id="tt" class="toast" hidden></div>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0"></script>
 <script src="config.js"></script>
 <script>
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
@@ -109,15 +109,16 @@ const rel=o=>{
   const m=Math.round((o.p.at-Date.now())/6e4);
   return m>=0?`<span class="rl">${t('через {1}',dur(m))}</span>`:`<span class="rl late">${t('опаздываем на {1}',dur(-m))}</span>`
 };
-const card=o=>{const p=o.p,d=o.status=='done';return`<article class="c ${o.status}" data-id="${o.id}">
-<div class="h"><span class="t">${esc(p.time)||'—'}</span><div class="hd"><b>${esc(p.district)||'—'}</b><small>${fd(p.at)}${o.sel&&o.sel.plan?' · 🔁 '+t('абонемент'):''}</small></div>${rel(o)||`<span class="pill ${o.status}">${t({new:'Новый',way:'В пути',done:'Выполнен'}[o.status])}</span>`}</div>
+const cls=s=>String(s==null?'':s).replace(/[^a-z0-9_-]/gi,'');
+const card=o=>{const p=o.p,d=o.status=='done';return`<article class="c ${cls(o.status)}" data-id="${esc(o.id)}">
+<div class="h"><span class="t">${esc(p.time)||'—'}</span><div class="hd"><b>${esc(p.district)||'—'}</b><small>${fd(p.at)}${o.sel&&o.sel.plan?' · 🔁 '+t('абонемент'):''}</small></div>${rel(o)||`<span class="pill ${cls(o.status)}">${esc(t({new:'Новый',way:'В пути',done:'Выполнен'}[o.status]||o.status))}</span>`}</div>
 <p class="ad">📍 ${esc(p.addr)}</p>
 <div class="ac"><a class="bt" href="${esc(route(p))}" target="_blank" rel="noopener">${t('🧭 Маршрут')}</a>${p.phone?`<a class="bt" href="tel:+${p.phone}">📞 ${esc(p.name)||t('Позвонить')}</a>`:''}</div>
 <p>🧼 ${esc(tj(p.job))}${p.extra&&p.extra!='нет'?'<br>➕ '+esc(p.extra.split(', ').map(x=>t(x)).join(', ')):''}</p>${p.notes.map(n=>`<p class="n">⚠️ ${esc(tn(n))}</p>`).join('')}
 <p class="pay ${(cash(p)||term(p))&&!d?'cash':''}">${cash(p)&&!d?t('💵 Получить наличными: '):term(p)&&!d?t('💳 Взять терминал: '):'💳 '+esc(t(p.pay))+' · '}<b>${fm(o.total)} ${t('сум')}</b></p>
 ${/payme|click/i.test(p.pay||'')?(o.paid_at?`<p class="pay">✅ ${t('Оплачено онлайн')}</p>`:`<p class="pay warnp">⚠️ ${t('Онлайн-оплата ещё не поступила')}</p>`):''}
 ${d&&cash(p)&&pay?(payOf(o)&&payOf(o).amount!=null?`<p class="pay">✅ ${t('Принято')}: <b>${fm(payOf(o).amount)} ${t('сум')}</b>${payOf(o).handover_id?' · '+t('сдано'):''}</p>`:`<button class="go way" data-cash="rec" type="button">${t('Внести полученную сумму')}</button>`):''}
-${d?'':`<button class="go ${o.status}" data-s="${o.status=='new'?'way':'done'}" type="button">${t(o.status=='new'?'Выезжаю':'Выполнено ✓')}</button>`}</article>`};
+${d?'':`<button class="go ${cls(o.status)}" data-s="${o.status=='new'?'way':'done'}" type="button">${t(o.status=='new'?'Выезжаю':'Выполнено ✓')}</button>`}</article>`};
 function weekH(){
   const b=new Date();b.setHours(0,0,0,0);b.setDate(b.getDate()-((b.getDay()+6)%7)+7*wk);
   const days=[...Array(7)].map((_,i)=>{const d=new Date(b);d.setDate(b.getDate()+i);return d}),end=new Date(days[6]);end.setDate(end.getDate()+1);
