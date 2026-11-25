@@ -121,6 +121,42 @@ body.home main{max-width:1040px}
 dialog{border:0;border-radius:26px;width:min(94vw,460px);padding:24px;color:var(--ink)}
 dialog::backdrop{background:#0b2e3399}
 #sum{white-space:pre-wrap;font:inherit;font-size:14px;background:var(--tile);border-radius:14px;padding:14px;margin:12px 0}
+.svc-action{display:block;width:100%;font:inherit;color:inherit;text-align:left;cursor:pointer}
+.svc-action .pz{display:block}
+.svc-action:hover,.svc-action:focus-visible{border-color:var(--tq)}
+.svc-action:focus-visible,.order-options summary:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.area-row{display:grid;grid-template-columns:1fr 72px;gap:8px;align-items:center;margin:8px 0}
+.area-row input{min-width:0;margin:0;padding:9px;border:2px solid var(--ln);border-radius:12px;color:var(--ink);font:inherit}
+.opts.sm.area-presets{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.area-presets .btn{padding:10px 3px;font-size:14px}
+.area-presets .btn[aria-pressed="true"]{background:var(--deep);color:#fff}
+.area-price{font:700 22px Unbounded,sans-serif;color:var(--deep);margin:10px 0 2px}
+.order-options{margin-top:12px;padding:12px 14px;border:2px solid var(--ln);border-radius:14px;background:#fff}
+.order-options summary{font-weight:700;cursor:pointer}
+.order-options summary+*{margin-top:10px}
+.order-options ul{padding-left:20px}
+#v-order .f{gap:5px}#v-order .f label:not(:first-child){margin-top:6px}
+#schedule-pick,#day,#tm{margin-top:10px}
+.order-note{font-size:14px;margin:10px 0}
+#payment-label{color:var(--deep);margin-left:6px}
+#sumc .sl b{text-align:right;overflow-wrap:anywhere}
+#nx:disabled{opacity:.6;cursor:wait}
+@media(max-width:480px){
+  body:not(.home){padding-bottom:calc(145px + var(--sb))}
+  .top{padding-left:12px;padding-right:12px}
+  #obj{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+  #obj .opt{padding:8px;align-items:center;font-size:14px}
+  #obj .opt>span{font-size:21px}
+  #typ{grid-template-columns:1fr;gap:7px}
+  #typ .opt{display:grid;grid-template-columns:24px minmax(0,1fr) auto;align-items:center;gap:5px;padding:8px 10px;font-size:14px}
+  #typ .opt>span{font-size:19px}
+  #typ .opt>small:not(.pr){display:none}
+  #typ .opt .pr{margin:0;font-size:12px}
+  .tabs button{min-width:0}.tabs button span{padding:0 9px}
+  .bar{gap:6px;padding:8px 10px}.bar b{font-size:14px}.bar .btn{font-size:13px;padding:11px 10px}.bar .nav{gap:5px}
+  .order-confirm .bar>div:first-child{display:none}.order-confirm .bar .nav,.order-confirm #nx{width:100%}
+  .order-confirm #bk{flex:none}
+}
 @media(prefers-reduced-motion:reduce){*{transition:none!important}}
 .fpl{background:none;border:0;color:var(--tq,#0e8c8c);font:700 14px Manrope,sans-serif;padding:8px 0 0;cursor:pointer;text-align:left}
 #rp [hidden]{display:none!important}#rp .f{display:grid;gap:10px}#rp #rm{min-height:1.2em;color:var(--red,#c0392b);font-size:13px;margin:0}
@@ -159,18 +195,61 @@ dialog::backdrop{background:#0b2e3399}
   <footer class="hf">© Tozavoy · <a href="privacy.html">Политика конфиденциальности</a> · <a href="oferta.html">Публичная оферта</a></footer>
 </div>
 <div id="v-order" hidden>
-  <div class="step"><h2>Что убираем?</h2><div class="opts" id="obj"></div><h2>Какая уборка нужна?</h2><div class="opts" id="typ"></div></div>
-  <div class="step"><h2>Какая площадь?</h2><div class="area"><output><span id="av">60</span> м²</output><input type="range" id="area" min="20" max="300" step="5" value="60" aria-label="Площадь, м²"></div><h2>Что добавить?</h2><div class="opts" id="ext"></div><h2>Разово или абонемент?</h2><div class="opts plans" id="rep"></div><div class="pinfo" id="pinfo" hidden></div></div>
-  <div class="step"><h2>Выберите день</h2><div class="opts sm" id="day"></div><h2>Выберите время</h2><div class="opts sm" id="tm"></div><p class="pinfo" id="recur" hidden></p></div>
-  <div class="step"><h2>Куда приезжать?</h2>
-    <div class="f"><input id="nm" placeholder="Ваше имя" autocomplete="name"><input id="ph" placeholder="Телефон, +998" inputmode="tel" autocomplete="tel"><select id="ds" aria-label="Район"></select><input id="ad" placeholder="Улица, дом, квартира или офис" autocomplete="street-address"><textarea id="cm" rows="2" placeholder="Комментарий: домофон, питомцы, что важно"></textarea></div>
-    <div class="promo"><input id="pc" placeholder="Промокод"><button class="btn" id="pa" type="button">Применить</button><span id="pm"></span></div>
-    <div class="lab">Оплата</div><div class="opts sm" id="pay"></div>
-    <div class="promo"><button class="btn alt" id="geo" type="button">📍 Отметить, где я</button><small id="gm"></small></div>
+  <section class="step">
+    <h2 tabindex="-1">Рассчитайте уборку</h2>
+    <div class="area">
+      <label for="area">Площадь, м²</label>
+      <div class="area-row">
+        <div class="opts sm area-presets" id="area-presets">
+          <button class="btn alt" type="button" data-area="40">40 м²</button>
+          <button class="btn alt" type="button" data-area="60">60 м²</button>
+          <button class="btn alt" type="button" data-area="80">80 м²</button>
+        </div>
+        <input type="number" id="area" required min="20" max="300" step="1" value="60" inputmode="numeric" aria-describedby="area-help">
+      </div>
+      <small id="area-help">Укажите площадь от 20 до 300 м²</small>
+      <p class="area-price"><strong id="area-price" aria-live="polite"></strong></p>
+      <small id="minimum" hidden></small>
+    </div>
+    <h2>Что убираем?</h2><div class="opts" id="obj"></div>
+    <h2>Какая уборка нужна?</h2><div class="opts" id="typ"></div>
+    <details class="order-options"><summary>Что входит в уборку</summary><ul id="order-included"></ul></details>
+    <details class="order-options" id="extra-options"><summary>Добавить к уборке</summary><div class="opts" id="ext"></div></details>
+    <details class="order-options" id="plan-options"><summary>Разово или абонемент?</summary><div class="opts plans" id="rep"></div><div class="pinfo" id="pinfo" hidden></div></details>
+  </section>
+  <section class="step" hidden>
+    <h2 tabindex="-1">Куда приезжать?</h2>
+    <div class="f">
+      <label for="ph">Телефон</label><input id="ph" type="tel" placeholder="Телефон, +998" inputmode="tel" autocomplete="tel">
+      <label for="ds">Район</label><select id="ds"></select>
+      <label for="ad">Адрес</label><input id="ad" placeholder="Улица, дом, квартира или офис" autocomplete="street-address">
+    </div>
+    <h2>Когда нужна уборка?</h2>
+    <div class="opts" id="schedule">
+      <label id="asap-option"><input type="radio" name="schedule" value="asap" checked><span class="opt">Как можно скорее</span></label>
+      <label><input type="radio" name="schedule" value="pick"><span class="opt">Выбрать день и время</span></label>
+    </div>
+    <div id="schedule-pick" hidden>
+      <div class="lab">Выберите день</div><div class="opts sm" id="day"></div>
+      <div class="lab">Желаемое время</div><div class="opts sm" id="tm"></div>
+      <p class="pinfo" id="recur" hidden></p>
+    </div>
+    <p class="mut order-note">После заявки свяжемся с вами и подтвердим время.</p>
+    <details class="order-options" id="contact-options"><summary>Имя, комментарий и геопозиция</summary>
+      <div class="f">
+        <label for="nm">Ваше имя</label><input id="nm" placeholder="Ваше имя" autocomplete="name">
+        <label for="cm">Комментарий</label><textarea id="cm" rows="2" placeholder="Комментарий: домофон, питомцы, что важно"></textarea>
+      </div>
+      <div class="promo"><button class="btn alt" id="geo" type="button">📍 Отметить, где я</button><small id="gm"></small></div>
+    </details>
+    <details class="order-options" id="payment-options"><summary>Оплата и промокод <small id="payment-label"></small></summary>
+      <div class="opts sm" id="pay"></div>
+      <div class="promo"><label for="pc">Промокод</label><input id="pc" placeholder="Промокод"><button class="btn" id="pa" type="button">Применить</button><span id="pm"></span></div>
+    </details>
     <h2>Ваш заказ</h2><div id="sumc" class="card"></div>
-    <label class="ag"><input type="checkbox" id="agr"><span><span>Принимаю оферту и согласен на обработку персональных данных</span> <a href="oferta.html" target="_blank">оферта</a>, <a href="privacy.html" target="_blank">политика</a></span></label>
+    <label class="ag"><input type="checkbox" id="agr"><span><span>Принимаю оферту и согласен на обработку персональных данных</span> <a href="oferta.html" target="_blank" rel="noopener">оферта</a>, <a href="privacy.html" target="_blank" rel="noopener">политика</a></span></label>
     <div id="err" role="alert"></div>
-  </div>
+  </section>
 </div>
 <div id="v-hist" hidden></div>
 <div id="v-biz" hidden>
@@ -213,7 +292,7 @@ dialog::backdrop{background:#0b2e3399}
 </div>
 </main>
 
-<div class="bar" id="bar" hidden><div><small>Стоимость</small><b><s id="old"></s> <span id="tot">0</span> сум</b><small id="bd" class="dg"></small><small id="bn"></small></div><div class="nav"><button class="btn alt" id="bk" type="button">Назад</button><button class="btn" id="nx" type="button">Далее</button></div></div>
+<div class="bar" id="bar" hidden><div><small id="bar-area"></small><b><s id="old"></s> <span id="tot">0</span> сум</b><small id="bd" class="dg"></small><small id="bn"></small></div><div class="nav"><button class="btn alt" id="bk" type="button">Назад</button><button class="btn" id="nx" type="button">Далее</button></div></div>
 
 <nav class="tabs"><button data-v="home" class="on"><span>🏠</span>Главная</button><button data-v="order"><span>🧼</span>Заказ</button><button data-v="hist"><span>🕘</span>Заказы</button><button data-v="biz"><span>🏢</span>Офисам</button><button data-v="me"><span>👤</span>Профиль</button></nav>
 
@@ -229,8 +308,8 @@ dialog::backdrop{background:#0b2e3399}
 </dialog>
 <dialog id="rp"><div class="sh"><h2 id="rph">Новый пароль</h2><button class="x" id="rx" type="button" aria-label="Закрыть">✕</button></div><div class="f"><input id="cp" type="password" placeholder="Текущий пароль" autocomplete="current-password" hidden><input id="np" type="password" placeholder="Новый пароль, от 6 символов" autocomplete="new-password"><input id="np2" type="password" placeholder="Повторите пароль" autocomplete="new-password"><p id="rm" role="alert"></p><div class="acts"><button class="btn" id="rs" type="button">Сохранить пароль</button></div><button class="fpl" id="fpc" type="button" hidden>Забыли текущий пароль?</button></div></dialog>
 <div id="tt" class="toast" hidden></div>
-<dialog id="ok">
-  <h2 style="margin-top:0"><span>Заказ</span> <span id="oid"></span></h2>
+<dialog id="ok" aria-labelledby="order-result">
+  <h2 style="margin-top:0"><span id="order-result">Заказ</span> <span id="oid"></span></h2>
   <p id="dtx"></p><p id="dsm" style="font-weight:700"></p>
   <div class="acts"><a class="btn" id="tg" target="_blank" rel="noopener" hidden>Отправить в Telegram</a><a class="btn" id="paynow" target="_blank" rel="noopener" hidden>Оплатить онлайн</a><a class="btn alt" id="dcall">Позвонить</a><a class="btn alt" id="dsup" target="_blank" rel="noopener">Написать</a><a class="btn alt" id="dbot" target="_blank" rel="noopener" hidden>Следить за заказом в Telegram</a><button class="btn" id="cl" type="button">Готово</button></div>
 </dialog>
@@ -246,7 +325,33 @@ const store=(k,v)=>{try{v===undefined?localStorage.removeItem(k):localStorage.se
 const load=(k,d)=>{try{return JSON.parse(localStorage.getItem(k))||d}catch(e){return d}};
 const L=[
 ['Заказ','Buyurtma','Order'],['Заказы','Buyurtmalar','Orders'],['Профиль','Profil','Profile'],['Мои заказы','Buyurtmalarim','My orders'],
-['Шаг {1} из 4','{1}-qadam / 4','Step {1} of 4'],
+['Шаг {1} из 2','{1}-qadam / 2','Step {1} of 2'],
+['Рассчитайте уборку','Tozalash narxini hisoblang','Get your cleaning price'],
+['Укажите площадь от 20 до 300 м²','20–300 m² oraligʻidagi maydonni kiriting','Enter an area between 20 and 300 m²'],
+['Добавить к уборке','Tozalashga qoʻshish','Add to your cleaning'],
+['Когда нужна уборка?','Tozalash qachon kerak?','When do you need cleaning?'],
+['Как можно скорее','Imkon qadar tezroq','As soon as possible'],
+['Выбрать день и время','Kun va vaqtni tanlash','Choose a day and time'],
+['Желаемое время','Qulay vaqt','Preferred time'],
+['После заявки свяжемся с вами и подтвердим время.','Arizadan soʻng siz bilan bogʻlanib, vaqtni tasdiqlaymiz.','We’ll contact you to confirm the time after you request a booking.'],
+['Имя, комментарий и геопозиция','Ism, izoh va joylashuv','Name, notes and location'],
+['Комментарий','Izoh','Notes'],
+['Оплата и промокод','Toʻlov va promokod','Payment and promo code'],
+['К заявке','Arizaga oʻtish','Continue to request'],
+['Отправить заявку на {1} сум','{1} soʻmga ariza yuborish','Request for {1} UZS'],
+['Отправляем…','Yuborilmoqda…','Sending…'],
+['Введите номер телефона.','Telefon raqamini kiriting.','Enter a phone number.'],
+['Выберите район.','Tumanni tanlang.','Choose a district.'],
+['Укажите адрес.','Manzilni kiriting.','Enter the address.'],
+['Выберите новое время.','Yangi vaqtni tanlang.','Choose a new time.'],
+['Бонусы недоступны. Проверьте новую сумму и отправьте заявку.','Bonuslardan foydalanib boʻlmadi. Yangi summani tekshirib, arizani yuboring.','Bonuses are unavailable. Review the new total and submit again.'],
+['Повторить уборку','Tozalashni takrorlash','Book this cleaning again'],
+['Заявка получена','Ariza qabul qilindi','Request received'],
+['Заявка не отправлена','Ariza yuborilmadi','Request not sent'],
+['Перейти к заказам','Buyurtmalarga oʻtish','Go to orders'],
+['Вернуться к заявке','Arizaga qaytish','Back to request'],
+['Дата и время','Sana va vaqt','Date and time'],
+['Заявка принята. Мы свяжемся с вами, чтобы подтвердить время.','Ariza qabul qilindi. Vaqtni tasdiqlash uchun siz bilan bogʻlanamiz.','Your request is in. We’ll contact you to confirm the time.'],
 ['Что убираем?','Nimani tozalaymiz?','What are we cleaning?'],['Какая уборка нужна?','Qanday tozalash kerak?','Which cleaning do you need?'],
 ['Квартира','Kvartira','Apartment'],['Дом','Uy','House'],['Офис','Ofis','Office'],
 ['Поддерживающая','Muntazam','Regular'],['Генеральная','Chuqur tozalash','Deep cleaning'],['После ремонта','Taʼmirdan keyin','After renovation'],
@@ -453,7 +558,7 @@ CFG.levels=CFG.levels||[[0,'Новичок',0],[3,'Постоянный клие
 CFG.plans=CFG.plans||[{name:'Разовая уборка',n:0,d:0},
   {name:'Раз в 2 недели',n:2,d:0.07,step:2,free:12,team:0,prio:0},
   {name:'Каждую неделю',n:4,d:0.10,step:1,free:6,team:1,prio:1}];
-const PLOCK=3,PAUSE=14,isoD=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+const PLOCK=3,PAUSE=14;
 const WDF={ru:{1:['каждое воскресенье','каждый понедельник','каждый вторник','каждую среду','каждый четверг','каждую пятницу','каждую субботу'],
  2:['раз в 2 недели по воскресеньям','раз в 2 недели по понедельникам','раз в 2 недели по вторникам','раз в 2 недели по средам','раз в 2 недели по четвергам','раз в 2 недели по пятницам','раз в 2 недели по субботам']},
  uz:{1:['har yakshanba','har dushanba','har seshanba','har chorshanba','har payshanba','har juma','har shanba'],
@@ -470,10 +575,47 @@ const ST={new:'Принят',way:'Выезжаем',done:'Выполнен',canc
 
 $('#pay').innerHTML=CFG.pay.map((o,i)=>opt('pay',i,`<b>${o}</b>`,0,!i)).join('');
 const wd=['вс','пн','вт','ср','чт','пт','сб'];
-const D=[...Array(7)].map((_,i)=>{const d=new Date();d.setDate(d.getDate()+i);return d});
-const ds=d=>d.getDate()+'.'+String(d.getMonth()+1).padStart(2,'0');
-$('#day').innerHTML=D.map((d,i)=>opt('day',i,`<small>${i?wd[d.getDay()]:'сегодня'}</small><b>${ds(d)}</b>`,0,!i)).join('');
-$('#tm').innerHTML=TIMES.map((t,i)=>opt('tm',t,`<b>${t}</b>`,0,i==1)).join('');
+const cityClock=new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Tashkent',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hourCycle:'h23'});
+function cityNow(){
+  const {year,month,day,hour,minute}=Object.fromEntries(cityClock.formatToParts().map(p=>[p.type,p.value]));
+  return {day:year+'-'+month+'-'+day,time:hour+':'+minute};
+}
+const dayLabel=day=>day.slice(8,10)+'.'+day.slice(5,7);
+const weekDay=day=>new Date(day+'T00:00:00Z').getUTCDay();
+function resetPreferredVisit(){
+  $('#day').replaceChildren();$('#tm').replaceChildren();delete $('#schedule-pick').dataset.rendered;
+}
+const area=$('#area');
+const validArea=()=>area.value!==''&&area.validity.valid;
+function selectRadio(name,value){
+  const option=$$('input[name="'+name+'"]').find(x=>x.value===String(value)&&!x.disabled);
+  if(option)option.checked=true;
+  return !!option;
+}
+function refreshSchedule(preferred){
+  const isPlan=+val('rep')>0;
+  $('#asap-option').hidden=isPlan;
+  if(isPlan)selectRadio('schedule','pick');
+  const picking=val('schedule')==='pick';
+  $('#schedule-pick').hidden=!picking;
+  if(!picking)return;
+  const now=cityNow(),available=day=>TIMES.filter(t=>day>now.day||day===now.day&&t>now.time);
+  const days=Array.from({length:7},(_,i)=>new Date(Date.parse(now.day+'T00:00:00Z')+i*86400000).toISOString().slice(0,10)).filter(d=>available(d).length);
+  const current=val('day'),day=days.includes(current)?current:days[0];
+  const times=day?available(day):[],time=val('tm')||preferred;
+  const key=LANG+'|'+days.join(',')+'|'+day+'|'+times.join(',');
+  if($('#schedule-pick').dataset.rendered!==key){
+    $('#schedule-pick').dataset.rendered=key;
+    $('#day').innerHTML=days.map(d=>opt('day',d,`<small>${tr(d===now.day?'сегодня':wd[weekDay(d)])}</small><b>${dayLabel(d)}</b>`,0,d===day)).join('');
+    $('#tm').innerHTML=times.map(t=>opt('tm',t,`<b>${t}</b>`,0,t===time)).join('');
+  }else if(preferred&&!val('tm'))selectRadio('tm',preferred);
+}
+function preferredVisit(){
+  if(val('schedule')!=='pick')return {day:null,time:null};
+  const day=val('day'),time=val('tm'),now=cityNow();
+  if(day&&TIMES.includes(time)&&(day>now.day||day===now.day&&time>now.time))return {day,time};
+  return null;
+}
 $('#ds').innerHTML='<option value="">Район</option>'+DIST.map(d=>`<option value="${d}">${d}</option>`).join('');
 $('#call').href='tel:'+CFG.phone;$('#tgc').href='https://t.me/'+CFG.tg;
 
@@ -481,25 +623,45 @@ let LV=0,CNT=0,disc=0,REF='',REFD=0,BAL=0,rTry='';
 function calc(pi){
   const dflt=pi==null;pi=dflt?(+val('rep')||0):pi;if(dflt&&+val('typ')!=0)pi=0;
   const pl=CFG.plans[pi]||CFG.plans[0],o=OBJ[val('obj')],t=TYPES[val('typ')],a=+$('#area').value;
-  const base=Math.max(CFG.min,Math.round(a*t[3]*o[2]/1000)*1000);
+  const calculated=Math.round(a*t[3]*o[2]/1000)*1000,base=Math.max(CFG.min,calculated);
   const ex=$$('[name=ext]:checked').reduce((s,e)=>s+EXTRA[e.value][1],0);
   const lv=CFG.levels[LV][2],rp=pl.d||0,mx=Math.max(disc,REFD,lv),p0=mx+rp,p=Math.min(p0,CFG.maxDisc);
   const off=Math.round(base*p/1000)*1000,bon=Math.min(BAL,Math.round(base*0.5/1000)*1000),parts=[];
   if(mx)parts.push((mx==disc?tr('промокод'):mx==REFD?tr('код друга'):tr('уровень «{1}»',tr(CFG.levels[LV][1])))+' '+Math.round(mx*100)+'%');
   if(rp)parts.push(tr('абонемент')+' '+Math.round(rp*100)+'%');
   if(p0>p){parts.length=0;parts.push(tr('максимум {1}% по всем скидкам',Math.round(p*100)))}
-  return{o,t,a,base,ex,gross:base+ex,off,bon,pct:Math.round(p*100),parts,total:base+ex-off-bon,pi,pl,perVisit:base-off}
+  return{o,t,a,base,calculated,ex,gross:base+ex,off,bon,pct:Math.round(p*100),parts,total:base+ex-off-bon,pi,pl,perVisit:base-off}
 }
 function upd(){
   const ok=+val('typ')==0;
   $$('[name=rep]').forEach(x=>{x.disabled=+x.value>0&&!ok});
   if(!ok&&+val('rep')>0){const z=$('[name=rep][value="0"]');if(z)z.checked=true}
+  refreshSchedule();
   const c=calc(),u=' '+tr('сум'),r=(l,v,k)=>`<div class="sl ${k||''}"><span>${l}</span><b>${v}</b></div>`;
-  $('#av').textContent=c.a;$('#tot').textContent=fmt(c.total);
+  const price=validArea()?fmt(c.total)+u:'—';
+  if($('#area-price').textContent!==price)$('#area-price').textContent=price;
+  $('#tot').textContent=validArea()?fmt(c.total):'—';
+  $('#bar-area').textContent=validArea()?c.a+' м²':tr('Площадь, м²');
+  $('#minimum').hidden=!validArea()||c.calculated>=CFG.min;
+  $('#minimum').textContent=tr('Минимальный заказ:')+' '+fmt(CFG.min)+u;
+  $$('#area-presets button').forEach(b=>b.setAttribute('aria-pressed',String(+b.dataset.area===c.a)));
+  const service=+val('typ'),includes=$('#order-included'),includeKey=LANG+'|'+service;
+  if(includes.dataset.key!==includeKey){
+    includes.dataset.key=includeKey;
+    includes.innerHTML=(INC[service]||[]).map(x=>`<li>${H(tr(x))}</li>`).join('');
+  }
+  const pm=CFG.pay[val('pay')||0],when=val('schedule')==='pick'?(val('tm')?dayLabel(val('day'))+' · '+val('tm'):'—'):tr('Как можно скорее');
+  $('#payment-label').textContent=tr(pm);
+  const address=[$('#ds').value&&tr($('#ds').value),$('#ad').value.trim()].filter(Boolean).join(', ');
+  const extras=$$('[name=ext]:checked').map(e=>tr(EXTRA[e.value][0])).join(', ');
+  const details=r(H(tr(c.o[1])),H(tr(c.t[1]))+' · '+c.a+' м²')+r(tr('Дата и время'),H(when))
+    +(address?r(tr('Адрес'),H(address)):'')+(extras?r(tr('Допуслуги'),H(extras)):'')
+    +(c.pi?r(tr('Абонемент'),H(tr(c.pl.name))):'');
+  setOrderButton(c);
   $('#old').textContent=c.off||c.bon?fmt(c.gross):'';
   $('#bd').textContent=c.off?`−${c.pct}% · −${fmt(c.off)}${u}`:'';
   $('#bn').textContent=c.bon?tr('Бонусы: −{1} сум',fmt(c.bon)):'';
-  $('#sumc').innerHTML=r(tr('Уборка'),fmt(c.base)+u)+(c.ex?r(tr('Допуслуги'),'+'+fmt(c.ex)+u):'')
+  $('#sumc').innerHTML=details+r(tr('Уборка'),fmt(c.base)+u)+(c.ex?r(tr('Допуслуги'),'+'+fmt(c.ex)+u):'')
     +(c.off?r(tr('Скидка {1}% на уборку',c.pct),'−'+fmt(c.off)+u,'g')+`<small class="mut">${c.parts.join(' + ')}</small>`:'')
     +(c.bon?r(tr('Бонусы'),'−'+fmt(c.bon)+u,'g'):'')+r(tr('Итого'),fmt(c.total)+u,'tt')
     +(c.pi?r(tr('Следующие уборки'),fmt(c.perVisit)+u)+r(tr('В месяц, примерно'),'≈ '+fmt(c.perVisit*c.pl.n)+u)+((c.ex||c.bon)?`<small class="mut">${tr('Допуслуги и бонусы учитываются только в первой уборке.')}</small>`:''):'');
@@ -510,7 +672,7 @@ function upd(){
   if(!ok){inf.hidden=false;inf.innerHTML=`<p>${H(tr('Абонемент доступен для поддерживающей уборки. Если квартира давно не убиралась, сначала закажите генеральную, а затем перейдите на абонемент.'))}</p>`}
   else if(pi){inf.hidden=false;inf.innerHTML=`<b>${H(tr(pl.name))}</b><ul>${planPerks(pl).map(x=>`<li>${H(x)}</li>`).join('')}</ul><p>${H(tr('Оплата после каждой уборки, предоплата не нужна.'))} <a href="oferta.html#abonement" target="_blank">${H(tr('Условия абонемента'))}</a></p>`}
   else inf.hidden=true;
-  if(pi&&D[val('day')]){rc.hidden=false;rc.textContent=tr('Дальше приезжаем {1} в {2}.',(WDF[LANG]||WDF.ru)[pl.step==2?2:1][D[val('day')].getDay()],val('tm')||'')}
+  if(pi&&val('day')&&val('tm')){rc.hidden=false;rc.textContent=tr('Дальше приезжаем {1} в {2}.',(WDF[LANG]||WDF.ru)[pl.step==2?2:1][weekDay(val('day'))],val('tm'))}
   else rc.hidden=true
 }
 function renderPlans(){
@@ -518,7 +680,7 @@ function renderPlans(){
   $('#rep').innerHTML=CFG.plans.map((p,i)=>`<label><input type="radio" name="rep" value="${i}"${i==cur?' checked':''}><div class="opt plan">${p.n&&i==best?`<span class="best">${H(tr('Лучшая цена'))}</span>`:''}<b>${H(tr(p.name))}</b>${p.n?`<span class="chip">−${Math.round(Math.min(p.d,CFG.maxDisc)*100)}%</span><small>${H(planN(p))}</small>`:`<small>${H(tr('Без обязательств'))}</small>`}<span class="pp" id="pp${i}"></span></div></label>`).join('');
   upd()
 }
-document.addEventListener('input',upd);upd();
+
 
 async function applyCode(){
   const k=$('#pc').value.trim().toUpperCase();let ok=0,msg;
@@ -533,62 +695,132 @@ async function applyCode(){
 }
 $('#pa').onclick=applyCode;
 
-/* шаги */
-let s=0,view='home';const S=$$('.step');
-function show(n){
-  s=n;S.forEach((e,i)=>e.hidden=i!=n);
-  $('#prog i').style.width=(n+1)*25+'%';
-  $('#bk').hidden=!n;$('#nx').textContent=n==3?'Заказать':'Далее';
-  head();scrollTo(0,0)
+/* расчёт и оформление */
+let s=0,view='home',sending=false;const S=$$('.step'),draftKey='toza_order_draft';
+function setOrderButton(c){
+  $('#nx').textContent=sending?tr('Отправляем…'):s===1&&validArea()?tr('Отправить заявку на {1} сум',fmt(c.total)):tr('К заявке');
 }
-function head(){$('#stp').textContent=view=='order'?tr('Шаг {1} из 4',s+1):{home:'',hist:tr('Мои заказы'),biz:tr('Офисам'),me:tr('Профиль')}[view]}
-$('#nx').onclick=()=>s<3?show(s+1):submit();
-$('#bk').onclick=()=>show(s-1);
+function show(n,focus=false){
+  s=n;S.forEach((e,i)=>e.hidden=i!==n);
+  $('#prog i').style.width=(n+1)*50+'%';
+  $('#bk').hidden=!n;
+  document.body.classList.toggle('order-confirm',view==='order'&&s===1);
+  upd();head();scrollTo(0,0);
+  if(focus)S[n].querySelector('h2').focus({preventScroll:true});
+}
+function head(){$('#stp').textContent=view==='order'?tr('Шаг {1} из 2',s+1):{home:'',hist:tr('Мои заказы'),biz:tr('Офисам'),me:tr('Профиль')}[view]}
+function saveDraft(){
+  if(!validArea())return;
+  store(draftKey,{obj:val('obj'),typ:val('typ'),area:area.value,ext:$$('[name=ext]:checked').map(e=>e.value),plan:+val('rep')||0});
+}
+function fillCalculator(selection){
+  selectRadio('obj',selection.obj);selectRadio('typ',selection.typ);
+  if(Number.isInteger(+selection.area)&&+selection.area>=+area.min&&+selection.area<=+area.max)area.value=selection.area;
+  $$('[name=ext]').forEach(x=>x.checked=Array.isArray(selection.ext)&&selection.ext.some(i=>String(i)===x.value));
+  $$('[name=rep]').forEach(x=>x.disabled=+x.value>0&&+val('typ')!==0);
+  if(!selectRadio('rep',selection.plan))selectRadio('rep',0);
+  $('#extra-options').open=$$('[name=ext]:checked').length>0;
+  $('#plan-options').open=+val('rep')>0;
+}
+$('#area-presets').onclick=e=>{
+  const b=e.target.closest('[data-area]');if(!b)return;
+  area.value=b.dataset.area;saveDraft();upd();
+};
+$('#v-order').addEventListener('input',e=>{
+  if(s===1)$('#err').textContent='';
+  upd();
+  if(e.target.matches('#area,[name=obj],[name=typ],[name=ext],[name=rep]'))saveDraft();
+});
+$('#nx').onclick=()=>{
+  if(s===1){submit();return}
+  if(!validArea()){area.reportValidity();area.focus();return}
+  saveDraft();show(1,true);refreshSchedule(load('toza_set',{}).tm);upd();
+};
+$('#bk').onclick=()=>show(0,true);
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&view==='order')upd()});
+setInterval(()=>{if(view==='order'&&s===1)upd()},30000);
 
 /* вкладки */
 function tab(v){
   view=v;document.body.classList.toggle('home',v=='home');['home','order','hist','biz','me'].forEach(k=>$('#v-'+k).hidden=k!=v);
   $$('.tabs button').forEach(b=>b.classList.toggle('on',b.dataset.v==v));
   $('#bar').hidden=$('#prog').hidden=v!='order';
-  if(v=='hist')hist();if(v=='me')me();head();scrollTo(0,0)
+  document.body.classList.toggle('order-confirm',v==='order'&&s===1);
+  if(v==='order')upd();if(v=='hist')hist();if(v=='me')me();head();scrollTo(0,0)
 }
 $$('.tabs button').forEach(b=>b.onclick=()=>tab(b.dataset.v));
 
 /* заказ */
 const saved=load('toza',{});['nm','ph','ds','ad'].forEach(k=>saved[k]&&($('#'+k).value=saved[k]));
-let text='';
-async function submit(){
-  const g=k=>$('#'+k).value.trim();
-  if(!g('nm')||g('ph').replace(/\D/g,'').length<9||!g('ds')||!g('ad')){
-    $('#err').textContent='Заполните имя, телефон, район и адрес — так мы сможем приехать.';return
-  }
-  if(!$('#agr').checked)return $('#err').textContent='Нужно принять оферту и дать согласие на обработку данных.';
-  $('#err').textContent='';
-  const P2=Object.assign(load('toza',{}),{nm:g('nm'),ph:g('ph'),ds:g('ds'),ad:g('ad')});store('toza',P2);
-  const c=calc(),id='№'+Math.floor(1000+Math.random()*9000),pm=CFG.pay[val('pay')||0],oid=/^(Payme|Click)$/.test(pm)&&window.crypto&&crypto.randomUUID?crypto.randomUUID():null;
-  if(c.bon>0){const r=await sb.rpc('use_bonus',{amt:c.bon});if(r.data)BAL-=c.bon;else{BAL=0;c.total+=c.bon;c.bon=0}}
-  const ex=$$('[name=ext]:checked').map(e=>EXTRA[e.value][0]).join(', ')||'нет';
-  text=[`Заказ ${id}`,`${c.o[1]}: ${c.t[1]} уборка, ${c.a} м²`,`Дополнительно: ${ex}${c.pi&&c.ex?' — только на первую уборку':''}`,
-    `Когда: ${ds(D[val('day')])} в ${val('tm')}${c.pi?`, абонемент: ${c.pl.name.toLowerCase()}`:''}`,
-    c.pi&&`Абонемент: «${c.pl.name}» · уборок в месяц: ${c.pl.n} · скидка ${Math.round(Math.min(c.pl.d,CFG.maxDisc)*100)}%`,
-    c.pi&&`Расписание: ${WDF.ru[c.pl.step==2?2:1][D[val('day')].getDay()]} в ${val('tm')} (первая уборка ${ds(D[val('day')])})`,`Куда: ${g('ds')} р-н, ${g('ad')}`,`Оплата: ${CFG.pay[val('pay')||0].toLowerCase()}`,/^(Payme|Click)$/.test(CFG.pay[val('pay')||0])&&'Статус оплаты: ожидает оплаты',GEO&&`Карта: ${GEO}`,
-    `Клиент: ${g('nm')}, ${g('ph')}`,LANG!='ru'&&`Язык клиента: ${LANG.toUpperCase()}`,P2.pets&&'Питомцы дома: есть',P2.door&&`Как войти: ${P2.door}`,g('cm')&&`Комментарий: ${g('cm')}`,
-    disc&&`Промокод: ${$('#pc').value.trim().toUpperCase()}`,c.bon&&`Бонусы: −${fmt(c.bon)} сум`,REF&&`Код друга: ${REF}`,c.pi&&`Следующие уборки: ${fmt(c.perVisit)} сум`,`Итого: ${fmt(c.total)} сум${c.off?` (скидка ${c.pct}%, −${fmt(c.off)} сум)`:''}`].filter(Boolean).join('\n');
-  const a=load('toza_orders',[]),sel={obj:val('obj'),typ:val('typ'),area:$('#area').value,ext:$$('[name=ext]:checked').map(e=>e.value),plan:c.pi,dow:D[val('day')].getDay(),tm:val('tm'),date:isoD(D[val('day')]),vp:c.perVisit,pn:c.pl.name,pm:c.pl.n,ps:c.pl.step==2?2:1};
-  a.unshift({id,at:new Date().toLocaleDateString('ru-RU'),t:text,total:c.total,sel});
-  if(!user)store('toza_orders',a.slice(0,30));
-  if(user)sb.auth.updateUser({data:P2});
-  $('#nx').disabled=true;
-  let ok=false;
-  if(sb){const r=await sb.from('orders').insert(Object.assign({code:id,details:text,total:c.total,sel},oid?{id:oid}:{},REF?{ref:REF}:{}));ok=!r.error;r.error&&console.warn(r.error.message)}
-  $('#nx').disabled=false;if(ok){REF='';REFD=0;$('#pm').textContent=''}
-  $('#oid').textContent=id;
-  $('#dtx').textContent=ok?(oid?'Заказ принят. Оплатите онлайн по кнопке ниже.':c.pi?'Заявка на абонемент принята. Мы свяжемся с вами, подтвердим день и время и закрепим бригаду.':'Заказ принят. Мы свяжемся с вами, чтобы подтвердить время.'):'Не удалось отправить заказ. Нажмите «Отправить в Telegram», и мы его получим.';
-  $('#tg').hidden=ok;$('#paynow').hidden=!(ok&&oid);if(ok&&oid)$('#paynow').href=payLink(pm,oid,c.total);$('#dsm').textContent=tr('Итого')+': '+fmt(c.total)+' '+tr('сум')+(c.off?` (−${c.pct}%)`:'');$('#tg').href=`https://t.me/${CFG.tg}?text=${encodeURIComponent(text)}`;
-  $('#dcall').href='tel:'+CFG.phone;$('#dsup').href='https://t.me/'+CFG.tg;$('#dbot').hidden=!CFG.bot;if(CFG.bot)$('#dbot').href='https://t.me/'+CFG.bot;
-  $('#ok').showModal();me()
+function orderError(message,field){
+  $('#err').textContent=tr(message);
+  if(field)$(field)?.focus();
 }
-$('#cl').onclick=()=>{$('#ok').close();show(0);tab('hist')};
+let orderSent=false;
+async function submit(){
+  if(sending)return;
+  const g=k=>$('#'+k).value.trim().replace(/[\r\n]+/g,' ');
+  if(g('ph').replace(/\D/g,'').length<9)return orderError('Введите номер телефона.','#ph');
+  if(!g('ds'))return orderError('Выберите район.','#ds');
+  if(!g('ad'))return orderError('Укажите адрес.','#ad');
+  if(!$('#agr').checked)return orderError('Нужно принять оферту и дать согласие на обработку данных.','#agr');
+  if(!validArea()){show(0,true);area.reportValidity();return}
+  const visit=preferredVisit();
+  if(!visit){upd();return orderError('Выберите новое время.', '#tm input')}
+  $('#err').textContent='';
+  sending=true;$('#nx').disabled=true;$('#bk').disabled=true;setOrderButton(calc());
+  const P2=Object.assign(load('toza',{}),{nm:g('nm'),ph:g('ph'),ds:g('ds'),ad:g('ad')});
+  const c=calc(),id='№'+Math.floor(1000+Math.random()*9000),pm=CFG.pay[val('pay')||0];
+  const oid=/^(Payme|Click)$/.test(pm)&&window.crypto&&crypto.randomUUID?crypto.randomUUID():null;
+  const dow=visit.day?weekDay(visit.day):null;
+  const ext=$$('[name=ext]:checked').map(e=>e.value);
+  const ex=ext.map(i=>EXTRA[i][0]).join(', ')||'нет';
+  const promo=g('pc').toUpperCase(),comment=g('cm'),map=GEO,lang=LANG,ref=REF;
+  let text='';
+  try{
+    if(c.bon>0){
+      const r=await sb.rpc('use_bonus',{amt:c.bon});
+      if(r.data)BAL-=c.bon;
+      else{BAL=0;return orderError('Бонусы недоступны. Проверьте новую сумму и отправьте заявку.')}
+    }
+    const when=visit.day?dayLabel(visit.day)+' в '+visit.time:'Как можно скорее, время уточняется';
+    text=[`Заказ ${id}`,`${c.o[1]}: ${c.t[1]} уборка, ${c.a} м²`,`Дополнительно: ${ex}${c.pi&&c.ex?' — только на первую уборку':''}`,
+      `Когда: ${when}${c.pi?', абонемент: '+c.pl.name.toLowerCase():''}`,
+      c.pi&&`Абонемент: «${c.pl.name}» · уборок в месяц: ${c.pl.n} · скидка ${Math.round(Math.min(c.pl.d,CFG.maxDisc)*100)}%`,
+      c.pi&&`Расписание: ${WDF.ru[c.pl.step==2?2:1][dow]} в ${visit.time} (первая уборка ${dayLabel(visit.day)})`,
+      `Куда: ${P2.ds} р-н, ${P2.ad}`,`Оплата: ${pm.toLowerCase()}`,/^(Payme|Click)$/.test(pm)&&'Статус оплаты: ожидает оплаты',map&&`Карта: ${map}`,
+      `Клиент: ${P2.nm||'Без имени'}, ${P2.ph}`,lang!='ru'&&`Язык клиента: ${lang.toUpperCase()}`,P2.pets&&'Питомцы дома: есть',P2.door&&`Как войти: ${P2.door}`,comment&&`Комментарий: ${comment}`,
+      disc&&`Промокод: ${promo}`,c.bon&&`Бонусы: −${fmt(c.bon)} сум`,ref&&`Код друга: ${ref}`,c.pi&&`Следующие уборки: ${fmt(c.perVisit)} сум`,`Итого: ${fmt(c.total)} сум${c.off?` (скидка ${c.pct}%, −${fmt(c.off)} сум)`:''}`].filter(Boolean).join('\n');
+    const sel={obj:String(OBJ.indexOf(c.o)),typ:String(TYPES.indexOf(c.t)),area:String(c.a),ext,plan:c.pi,schedule:visit.day?'preferred':'asap',dow,tm:visit.time,date:visit.day,vp:c.perVisit,pn:c.pl.name,pm:c.pl.n,ps:c.pl.step==2?2:1};
+    const row=Object.assign({code:id,details:text,total:c.total,sel},oid?{id:oid}:{},ref?{ref}:{});
+    orderSent=!!sb&&!(await sb.from('orders').insert(row)).error;
+    if(orderSent){
+      store('toza',P2);store(draftKey);
+      if(user)sb.auth.updateUser({data:P2}).catch(()=>{});
+      else store('toza_orders',[{id,at:new Date().toLocaleDateString('ru-RU',{timeZone:'Asia/Tashkent'}),t:text,total:c.total,sel},...load('toza_orders',[])].slice(0,30));
+      REF='';REFD=0;disc=0;$('#pc').value='';$('#pm').textContent='';
+    }
+  }catch(e){orderSent=false}
+  finally{sending=false;$('#nx').disabled=false;$('#bk').disabled=false;upd()}
+  $('#order-result').textContent=tr(orderSent?'Заявка получена':'Заявка не отправлена');
+  $('#oid').textContent=orderSent?id:'';
+  $('#dtx').textContent=tr(orderSent?(oid?'Заказ принят. Оплатите онлайн по кнопке ниже.':c.pi?'Заявка на абонемент принята. Мы свяжемся с вами, подтвердим день и время и закрепим бригаду.':'Заявка принята. Мы свяжемся с вами, чтобы подтвердить время.'):'Не удалось отправить заказ. Нажмите «Отправить в Telegram», и мы его получим.');
+  $('#dsm').textContent=tr('Итого')+': '+fmt(c.total)+' '+tr('сум')+(c.off?` (−${c.pct}%)`:'');
+  $('#tg').hidden=orderSent||!text;if(text)$('#tg').href=`https://t.me/${CFG.tg}?text=${encodeURIComponent(text)}`;
+  $('#paynow').hidden=!(orderSent&&oid);if(orderSent&&oid)$('#paynow').href=payLink(pm,oid,c.total);
+  $('#dcall').href='tel:'+CFG.phone;$('#dsup').href='https://t.me/'+CFG.tg;$('#dbot').hidden=!CFG.bot;if(CFG.bot)$('#dbot').href='https://t.me/'+CFG.bot;
+  $('#cl').textContent=tr(orderSent?'Перейти к заказам':'Вернуться к заявке');
+  $('#ok').showModal();if(orderSent)me()
+}
+$('#cl').onclick=()=>$('#ok').close();
+$('#ok').addEventListener('close',()=>{
+  if(!orderSent)return;
+  orderSent=false;
+  $('#agr').checked=false;$('#cm').value='';GEO='';$('#gm').textContent='';
+  $('#contact-options').open=false;$('#payment-options').open=false;
+  fillCalculator({area:SD().ar,typ:0,plan:0,ext:[]});selectRadio('schedule','asap');resetPreferredVisit();
+  show(0);tab('hist');
+});
 
 /* история */
 let ORD=[];
@@ -601,26 +833,35 @@ async function orders(){
 }
 const onlineM=o=>{const m=/Оплата:\s*(Payme|Click)/i.exec(o.t||'');return m?(m[1].toLowerCase()=='payme'?'Payme':'Click'):null};
 const onlineOn=m=>m=='Payme'?!!CFG.online.payme:!!(CFG.online.click&&CFG.online.click.service);
+function repeatable(o){
+  return !!(o?.sel&&!o.sel.lead&&o.sel.obj!=null&&o.sel.typ!=null&&OBJ[o.sel.obj]&&TYPES[o.sel.typ]&&+o.sel.area>0);
+}
 const payBadge=o=>{const m=onlineM(o);return m?(o.paid?'<span class="st">Оплачено онлайн</span>':(o.status=='cancel'?'':'<span class="st">Ждёт оплаты</span>')):''};
 const payBtn=o=>{const m=onlineM(o);return m&&!o.paid&&o.oid&&o.status!='cancel'&&onlineOn(m)?`<a class="btn" target="_blank" rel="noopener" href="${payLink(m,o.oid,o.total)}">Оплатить онлайн</a>`:''};
 async function hist(){
   const a=ORD=await orders();
-  $('#v-hist').innerHTML=a.length?a.map((o,i)=>`<div class="card"><b>${H(o.id)}</b> <small>${H(o.at)}</small>${o.status?`<span class="st">${H(ST[o.status]||o.status)}</span>`:''}${o.sel&&o.sel.plan?'<span class="st">Абонемент</span>':''}${payBadge(o)}<p>${String(o.t||'').split('\n').slice(1,4).map(H).join('<br>')}</p><div class="t">${fmt(o.total)} <span>сум</span></div><div class="acts">${payBtn(o)}<button class="btn alt" data-r="${i}" type="button">Повторить</button>${o.sel&&o.sel.plan?`<a class="btn alt" target="_blank" rel="noopener" href="https://t.me/${H(CFG.tg)}?text=${encodeURIComponent('Абонемент '+o.id+': ')}">Управлять абонементом</a>`:''}</div></div>`).join('')
+  $('#v-hist').innerHTML=a.length?a.map((o,i)=>`<div class="card"><b>${H(o.id)}</b> <small>${H(o.at)}</small>${o.status?`<span class="st">${H(ST[o.status]||o.status)}</span>`:''}${o.sel&&o.sel.plan?'<span class="st">Абонемент</span>':''}${payBadge(o)}<p>${String(o.t||'').split('\n').slice(1,4).map(H).join('<br>')}</p><div class="t">${fmt(o.total)} <span>сум</span></div><div class="acts">${payBtn(o)}${repeatable(o)?`<button class="btn alt" data-r="${i}" type="button">${H(tr('Повторить уборку'))}</button>`:''}${o.sel&&o.sel.plan?`<a class="btn alt" target="_blank" rel="noopener" href="https://t.me/${H(CFG.tg)}?text=${encodeURIComponent('Абонемент '+o.id+': ')}">Управлять абонементом</a>`:''}</div></div>`).join('')
    :'<div class="empty"><b>Заказов пока нет</b><br>Оформите первый, и в следующий раз его можно будет повторить одним нажатием.</div>'
 }
 $('#v-hist').onclick=e=>{
-  const r=e.target.dataset.r;if(r==null)return;
-  const o=ORD[r].sel;
-  ['obj','typ'].forEach(n=>$$(`[name=${n}]`).forEach(x=>x.checked=x.value==o[n]));
-  $('#area').value=o.area;$$('[name=ext]').forEach(x=>x.checked=o.ext.includes(x.value));
-  upd();tab('order');show(2)
+  const btn=e.target.closest('[data-r]'),o=btn&&ORD[btn.dataset.r];
+  if(!repeatable(o))return;
+  fillCalculator({...o.sel,plan:0});
+  const address=/^Куда: ([^\n]+?) р-н, ([^\n]+)$/m.exec(String(o.t||''));
+  if(address&&DIST.includes(address[1])&&address[2].trim()){
+    $('#ds').value=address[1];$('#ad').value=address[2].trim();
+  }
+  $('#agr').checked=false;$('#err').textContent='';$('#cm').value='';GEO='';$('#gm').textContent='';
+  disc=0;if(!REF)$('#pc').value='';$('#pm').textContent='';
+  selectRadio('schedule','pick');resetPreferredVisit();
+  saveDraft();tab('order');show(1,true);
 };
 
 /* профиль и установка */
 $('#clr').onclick=()=>{
   if(!confirm(tr('Стереть сохранённые данные и историю заказов?')))return;
-  store('toza');store('toza_orders');['nm','ph','ds','ad'].forEach(k=>$('#'+k).value='');
-  store('toza_set');store('toza_ref');fillP();fillSet();applySet();me();$('#clr').textContent='Стёрто';setTimeout(()=>$('#clr').textContent='Стереть данные на этом устройстве',2000)
+  store('toza');store('toza_orders');store(draftKey);['nm','ph','ds','ad'].forEach(k=>$('#'+k).value='');
+  store('toza_set');store('toza_ref');fillCalculator({typ:0,obj:0,plan:0});selectRadio('schedule','asap');resetPreferredVisit();fillP();fillSet();applySet();me();$('#clr').textContent='Стёрто';setTimeout(()=>$('#clr').textContent='Стереть данные на этом устройстве',2000)
 };
 let dp;
 addEventListener('beforeinstallprompt',e=>{e.preventDefault();dp=e;$('#inst').hidden=false;$('#ins').textContent='Установите Tozavoy на экран: открывается без браузера, как обычное приложение.'});
@@ -641,7 +882,7 @@ function fillP(){
   Object.entries(PF).forEach(([k,id])=>$('#'+id).value=P[k]||'');
   $$('[name=ppet]').forEach(x=>x.checked=x.value==(P.pets?1:0));
   $$('[name=pobj]').forEach(x=>x.checked=x.value==(P.obj||0));
-  if(P.obj!=null)$$('[name=obj]').forEach(x=>x.checked=x.value==P.obj)
+  if(P.obj!=null&&!load(draftKey,null))$$('[name=obj]').forEach(x=>x.checked=x.value==P.obj)
 }
 function savP(e){
   const P=load('toza',{});
@@ -693,15 +934,21 @@ $('#rcp').onclick=async()=>{try{await navigator.clipboard.writeText(MYC());flash
 function toast(t){const e=$('#tt');e.textContent=t;e.hidden=false;clearTimeout(toast.i);toast.i=setTimeout(()=>e.hidden=true,3500)}
 
 /* настройки */
-const SD=()=>{const S=Object.assign({pay:0,tm:'11:00',ar:60},load('toza_set',{}));if(S.pay>=CFG.pay.length)S.pay=0;return S};
+const SD=()=>{const S=Object.assign({pay:0,tm:'',ar:60},load('toza_set',{}));if(S.pay>=CFG.pay.length)S.pay=0;return S};
 $('#s-pay').innerHTML=CFG.pay.map((o,i)=>opt('spay',i,`<b>${o}</b>`)).join('');
 $('#s-tm').innerHTML=TIMES.map(x=>opt('stm',x,`<b>${x}</b>`)).join('');
 function fillSet(){const S=SD();$$('[name=spay]').forEach(x=>x.checked=x.value==S.pay);$$('[name=stm]').forEach(x=>x.checked=x.value==S.tm);$('#s-ar').value=S.ar;$('#s-av').textContent=S.ar}
-function applySet(){const S=SD();$$('[name=pay]').forEach(x=>x.checked=x.value==S.pay);$$('[name=tm]').forEach(x=>x.checked=x.value==S.tm);$('#area').value=S.ar;upd()}
+function applySet(){const S=SD();selectRadio('pay',S.pay);area.value=S.ar;refreshSchedule(S.tm);upd()}
 $('#set').addEventListener('input',e=>{
   const S=SD();
   if(e.target.id=='s-ar')S.ar=+e.target.value;if(e.target.name=='spay')S.pay=+e.target.value;if(e.target.name=='stm')S.tm=e.target.value;
-  store('toza_set',S);fillSet();applySet()
+  store('toza_set',S);fillSet();
+  if(e.target.id==='s-ar'||e.target.name==='spay'||e.target.name==='stm'){
+    if(e.target.id==='s-ar'){area.value=S.ar;saveDraft()}
+    if(e.target.name==='spay')selectRadio('pay',S.pay);
+    if(e.target.name==='stm')refreshSchedule(S.tm);
+    upd();
+  }
 });
 $('#opset').onclick=()=>{fillSet();$('#set').showModal()};
 $('#sx').onclick=()=>$('#set').close();
@@ -732,7 +979,7 @@ $('#del').onclick=async()=>{
   if(!confirm(tr('Удалить аккаунт и все ваши данные? Это нельзя отменить.')))return;
   const r=await sb.rpc('delete_my_account');
   if(r.error){$('#am').textContent=tr('Не удалось удалить аккаунт, попробуйте позже');return}
-  await sb.auth.signOut({scope:'local'});store('toza');store('toza_orders');fillP();me();$('#am').textContent=tr('Аккаунт удалён')
+  await sb.auth.signOut({scope:'local'});store('toza');store('toza_orders');store(draftKey);fillP();me();$('#am').textContent=tr('Аккаунт удалён')
 };
 
 /* геопозиция */
@@ -751,7 +998,7 @@ let LDDONE=0;
 function renderHome(){
   const C=CFG.company||{},u=' <span>сум</span>',ex60=Math.max(CFG.min,Math.round(60*TYPES[0][3]*OBJ[0][2]/1000)*1000),T_=x=>H(tr(x));
   $('#h-call').href='tel:'+CFG.phone;
-  $('#h-svc').innerHTML=TYPES.map(t=>`<div class="svc"><span class="e">${t[0]}</span><b>${H(t[1])}</b><span>${H(t[2])}</span><div class="pz"><span>от</span> ${fmt(t[3])}${u}/м²</div></div>`).join('')
+  $('#h-svc').innerHTML=TYPES.map((t,i)=>`<button class="svc svc-action" data-service="${i}" type="button"><span class="e" aria-hidden="true">${t[0]}</span><b>${H(t[1])}</b><span>${H(t[2])}</span><span class="pz"><span>от</span> ${fmt(t[3])}${u}/м²</span></button>`).join('')
     +`<div class="svc"><span class="e">💼</span><b>Офисам</b><span>${T_('Регулярная уборка по договору, безналичный расчёт')}</span><button class="btn alt" data-go="biz" type="button" style="margin-top:10px">Запросить предложение</button></div>`;
   $('#h-inc').innerHTML=INC.map((l,i)=>`<div class="inc"><h3>${H(TYPES[i]?TYPES[i][1]:'')}</h3><ul>${l.map(x=>`<li>${T_(x)}</li>`).join('')}</ul></div>`).join('');
   $('#h-pr').innerHTML=`<div class="tbl">${TYPES.map(t=>`<div class="r"><span>${H(t[1])}</span><b>${fmt(t[3])}${u}/м²</b></div>`).join('')}</div>
@@ -777,8 +1024,17 @@ function renderHome(){
   }catch(e){}
 }
 renderHome();
-document.addEventListener('click',e=>{const b=e.target.closest('[data-go]');if(b){e.preventDefault();tab(b.dataset.go)}
-  const pb=e.target.closest('[data-plan]');if(pb){e.preventDefault();const z=$('[name=typ][value="0"]'),r=$(`[name=rep][value="${pb.dataset.plan}"]`);if(z)z.checked=true;if(r)r.checked=true;upd();tab('order');show(0)}});
+document.addEventListener('click',e=>{
+  const b=e.target.closest('[data-go]');
+  if(b){e.preventDefault();tab(b.dataset.go);if(b.dataset.go==='order')show(0,true)}
+  const service=e.target.closest('[data-service]'),plan=e.target.closest('[data-plan]');
+  if(!service&&!plan)return;
+  selectRadio('typ',service?service.dataset.service:0);
+  const planIndex=plan?+plan.dataset.plan:0;
+  $$('[name=rep]').forEach(x=>x.disabled=false);
+  selectRadio('rep',planIndex);selectRadio('schedule',plan?'pick':'asap');resetPreferredVisit();
+  $('#plan-options').open=!!plan;saveDraft();tab('order');show(0,true);
+});
 
 /* вход и регистрация (Supabase) */
 let sb=null,user=null;
@@ -865,7 +1121,7 @@ if(CFG.sb.url&&window.supabase){
   $('#chpw').onclick=$('#chpw2').onclick=()=>openPw(recovPending()?'recovery':'change');$('#fpc').onclick=()=>sendReset(user&&user.email,t=>$('#rm').textContent=t);
   sb&&sb.auth.onAuthStateChange((ev,se)=>{
     if(ev=='PASSWORD_RECOVERY'){try{sessionStorage.setItem(RK,String(Date.now()))}catch(e){}RECOV=1}
-    if(ev=='SIGNED_OUT'){store('toza');store('toza_uid');store('toza_bal');REF='';REFD=0;['nm','ph','ds','ad','pc'].forEach(k=>$('#'+k).value='');fillP()}
+    if(ev=='SIGNED_OUT'){store('toza');store(draftKey);store('toza_uid');store('toza_bal');REF='';REFD=0;['nm','ph','ds','ad','pc'].forEach(k=>$('#'+k).value='');fillP()}
     user=se?se.user:null;authUI();maybeRecovery()
   });
   /* запасной путь: если событие не пришло, окно всё равно откроется */
@@ -896,6 +1152,8 @@ $$('.lg button').forEach(b=>b.onclick=()=>setLang(b.dataset.l));
 fillP();fillSet();applySet();me();
 show(0);
 setLang(LANG,1);
+const initialDraft=load(draftKey,null);
+if(initialDraft){fillCalculator(initialDraft);upd()}
 {const hv=location.hash.slice(1),sa=matchMedia('(display-mode: standalone)').matches||navigator.standalone;tab(['order','biz','me','hist'].includes(hv)?hv:sa?'order':'home')}
 </script>
 </body>

@@ -153,7 +153,7 @@ function cli(){
 
 const DOW=['Вс','Пн','Вт','Ср','Чт','Пт','Сб'],MON=['янв','фев','мар','апр','мая','июн','июл','авг','сен','окт','ноя','дек'],WDN=['воскресенье','понедельник','вторник','среду','четверг','пятницу','субботу'];
 const pad=n=>String(n).padStart(2,'0'),dk=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate()),d0=d=>new Date(d.getFullYear(),d.getMonth(),d.getDate());
-const tkey=o=>pad(o.at.getHours())+':'+pad(o.at.getMinutes()),shortT=t=>({'Поддерживающая':'П','Генеральная':'Г','После ремонта':'Р'}[t]||(t||'?')[0]);
+const tkey=o=>o.sel?.schedule==='asap'?'Согласовать':pad(o.at.getHours())+':'+pad(o.at.getMinutes()),shortT=t=>({'Поддерживающая':'П','Генеральная':'Г','После ремонта':'Р'}[t]||(t||'?')[0]);
 let cur=d0(new Date()),sv='wk',who='all',scn=0,ssel=null,subs=[],subErr=null,pay=null,payErr=null,onl=null,pcf='all',editAt=0;
 function when_(o){
   const s=o.sel||{},p=o.p,cr=new Date(o.created_at);

@@ -92,6 +92,7 @@ const t=(s,a)=>(LANG=='uz'?M[s]||s:s).replace('{1}',a);
 const tj=s=>{if(LANG=='ru')return s;const i=s.indexOf(': '),r=s.slice(i+2).split(', ');return t(s.slice(0,i))+': '+t(r[0])+r.slice(1).map(x=>', '+x.replace('м²','m²')).join('')};
 const tn=n=>{if(LANG=='ru')return n;const i=n.indexOf(': '),l=n.slice(0,i);return t(l)+': '+(l=='Питомцы дома'?t(n.slice(i+2)):n.slice(i+2))};
 const WD=['yak','du','se','chor','pay','jum','shan'],MO=['yan','fev','mar','apr','may','iyun','iyul','avg','sen','okt','noy','dek'];
+const visitTime=o=>o.sel?.schedule==='asap'?(LANG==='uz'?'Kelishiladi':'Согласовать'):(esc(o.p.time)||'—');
 const fd=d=>LANG=='uz'?`${WD[d.getDay()]}, ${d.getDate()} ${MO[d.getMonth()]}`:d.toLocaleDateString('ru-RU',{weekday:'short',day:'numeric',month:'short'});
 function parse(o){
   const L=(o.details||'').split('\n'),g=p=>{const l=L.find(x=>x.startsWith(p));return l?l.slice(p.length).trim():''};
@@ -105,13 +106,14 @@ const cash=p=>/налич/i.test(p.pay),term=p=>/термин/i.test(p.pay);
 const route=p=>/^https:\/\/maps\.google\.com\//.test(p.map)?p.map:'https://yandex.com/maps/?text='+encodeURIComponent('Ташкент, '+p.district+' район, '+p.addr);
 const dur=m=>(m>=60?Math.floor(m/60)+' '+t('ч')+' ':'')+(m%60)+' '+t('мин');
 const rel=o=>{
+  if(o.sel?.schedule==='asap')return '';
   if(o.status!='new'||day(o.p.at)!=day(new Date()))return'';
   const m=Math.round((o.p.at-Date.now())/6e4);
   return m>=0?`<span class="rl">${t('через {1}',dur(m))}</span>`:`<span class="rl late">${t('опаздываем на {1}',dur(-m))}</span>`
 };
 const cls=s=>String(s==null?'':s).replace(/[^a-z0-9_-]/gi,'');
 const card=o=>{const p=o.p,d=o.status=='done';return`<article class="c ${cls(o.status)}" data-id="${esc(o.id)}">
-<div class="h"><span class="t">${esc(p.time)||'—'}</span><div class="hd"><b>${esc(p.district)||'—'}</b><small>${fd(p.at)}${o.sel&&o.sel.plan?' · 🔁 '+t('абонемент'):''}</small></div>${rel(o)||`<span class="pill ${cls(o.status)}">${esc(t({new:'Новый',way:'В пути',done:'Выполнен'}[o.status]||o.status))}</span>`}</div>
+<div class="h"><span class="t">${visitTime(o)}</span><div class="hd"><b>${esc(p.district)||'—'}</b><small>${fd(p.at)}${o.sel&&o.sel.plan?' · 🔁 '+t('абонемент'):''}</small></div>${rel(o)||`<span class="pill ${cls(o.status)}">${esc(t({new:'Новый',way:'В пути',done:'Выполнен'}[o.status]||o.status))}</span>`}</div>
 <p class="ad">📍 ${esc(p.addr)}</p>
 <div class="ac"><a class="bt" href="${esc(route(p))}" target="_blank" rel="noopener">${t('🧭 Маршрут')}</a>${p.phone?`<a class="bt" href="tel:+${p.phone}">📞 ${esc(p.name)||t('Позвонить')}</a>`:''}</div>
 <p>🧼 ${esc(tj(p.job))}${p.extra&&p.extra!='нет'?'<br>➕ '+esc(p.extra.split(', ').map(x=>t(x)).join(', ')):''}</p>${p.notes.map(n=>`<p class="n">⚠️ ${esc(tn(n))}</p>`).join('')}
@@ -126,7 +128,7 @@ function weekH(){
   const L=rows.filter(o=>o.p.at>=days[0]&&o.p.at<end&&(!mn||nm(o.assignee)==nm(ME))).sort((a,c)=>a.p.at-c.p.at);
   let h=`<div class="wn"><button data-wk="-1" type="button">‹</button><button data-wk="0" type="button">${t('Сегодня')}</button><button data-wk="1" type="button">›</button><span>${fd(days[0])} — ${fd(days[6])}</span>${has?`<span class="mn"><button data-mine="1" class="${mn?'on':''}" type="button">${t('Мои')}</button><button data-mine="0" class="${mn?'':'on'}" type="button">${t('Все')}</button></span>`:''}</div>`;
   h+=days.map(d=>{const D=L.filter(o=>day(o.p.at)==day(d));
-    return`<section class="wd${day(d)==day(new Date())?' td':''}"><h3>${fd(d)}<small>${D.length||''}</small></h3>${D.length?D.map(o=>`<details class="wr ${o.status}"><summary><b>${esc(o.p.time)||'—'}</b><span>${esc(o.p.district)||'—'}${o.sel&&o.sel.plan?' 🔁':''}</span><i>${esc(tj(o.p.job))}</i><em class="pill ${o.status}">${t({new:'Новый',way:'В пути',done:'Выполнен'}[o.status])}</em></summary>${card(o)}</details>`).join(''):'<p class="mut">—</p>'}</section>`}).join('');
+    return`<section class="wd${day(d)==day(new Date())?' td':''}"><h3>${fd(d)}<small>${D.length||''}</small></h3>${D.length?D.map(o=>`<details class="wr ${o.status}"><summary><b>${visitTime(o)}</b><span>${esc(o.p.district)||'—'}${o.sel&&o.sel.plan?' 🔁':''}</span><i>${esc(tj(o.p.job))}</i><em class="pill ${o.status}">${t({new:'Новый',way:'В пути',done:'Выполнен'}[o.status])}</em></summary>${card(o)}</details>`).join(''):'<p class="mut">—</p>'}</section>`}).join('');
   return h+(L.length?'':`<div class="em">${t('На этой неделе заказов нет.')}</div>`)
 }
 function draw(){
